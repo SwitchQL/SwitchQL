@@ -6,7 +6,7 @@ const htmlPlugin = new htmlWebPackPlugin ({
 });
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/client/main.jsx',
   module: {
     rules: [
       {
