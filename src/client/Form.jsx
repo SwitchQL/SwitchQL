@@ -13,13 +13,19 @@ export default class Form extends Component {
 
     handleSubmit() {
       event.preventDefault();
-      fetch('/getInfo'), {
+      fetch('http://localhost:3000/getInfo', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json; charset=utf-8",
         },
-        body: JSON.stringify(this.state.value),
-      }
+        body: JSON.stringify({url: this.state.value}),
+      })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
     }
 
     render() {
