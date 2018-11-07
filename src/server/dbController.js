@@ -70,11 +70,4 @@ module.exports = {
     ORDER BY table_name`,) 
     return info;
   },
-
-  convertSchemaInfo: (req, res, next) => {
-    const { schemaArr } = res.locals;
-    res.locals.schemaObj = converter.tableData(schemaArr);
-    next();
-  },
-  
 }
