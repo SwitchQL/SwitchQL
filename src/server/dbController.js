@@ -66,7 +66,6 @@ module.exports = {
       AND t.table_schema = 'public'
       AND constraint_type = 'FOREIGN KEY'
     ORDER BY table_name`,) 
-    console.log(info);
     return info;
   },
   
