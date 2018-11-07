@@ -168,14 +168,14 @@ html {
 
 .areaOneBox {
     width: 45%;
-    height: 100%;
-    padding: 0 1% 0 0;
+    height: 75%;
+    padding: 0 2% 0 0;
   }
 
 .areaTwoBox {
     width: 45%;
-    height: 100%;
-    padding: 0 0 0 1%;
+    height: 75%;
+    padding: 0 0 0 2%;
 }
 
 .areaOne {
