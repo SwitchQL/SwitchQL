@@ -17,8 +17,9 @@ app.use(function(req, res, next) {
 
 
 app.post('/getInfo', dbController.getSchemaInfo, (req, res) => {
-  console.log(res.locals.schemaInfo)
-  res.status(200).json(res.locals.schemaInfo);
+  console.log(res.locals.schemaArr)
+  // console.log(res.locals.schemaObj)
+  res.status(200).json(res.locals.schemaArr);
 })
 
 app.listen(3000, (err) => {

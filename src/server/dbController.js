@@ -1,3 +1,5 @@
+const converter = require('../index');
+
 const initOptions = {
   connect(client, dc, useCount) {
     const cp = client.connectionParameters;
@@ -67,14 +69,20 @@ module.exports = {
       AND t.table_schema = 'public'
       AND constraint_type = 'FOREIGN KEY'
     ORDER BY table_name`,)
-    .then((data ) => {
-      res.locals.schemaInfo = data;
+    .then((data) => {
+      res.locals.schemaArr = data;
       return next();
     })
     .catch((err) => {
       console.log(err);
       res.status(500).json({ err });
     });
+  },
+
+  convertSchemaInfo: (req, res, next) => {
+    const { schemaArr } = res.locals;
+    res.locals.schemaObj = converter.tableData(schemaArr);
+    next();
   },
   
 }
