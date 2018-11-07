@@ -21,9 +21,12 @@ module.exports = {
       primaryKey: false,
       unique: false,
       required: false,
-      multipleValues: false,
       inRelationship: false,
-      relation: null,
+      relation: {
+        refTable: null,
+        refField: null,
+        refType: null
+      },
       tableNum: 0,
       fieldNum: 0,
     };

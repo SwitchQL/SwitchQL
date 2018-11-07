@@ -19,8 +19,8 @@ export default class Form extends Component {
 
     componentDidMount() {
       ipcRenderer.on('testback', (event, args) => {
-        const dataobj = JSON.parse(args);
-        console.log(dataobj);
+        // const dataobj = JSON.parse(args);
+        console.log(args);
       });
     }
     render() {
