@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from "./styles.css";
 
+
 const Table = () => {
   return (
     <div className={styles.tableText}>
