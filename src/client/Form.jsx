@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import styles from "./styles.css";
 
 export default class Form extends Component {
     constructor(props) {
@@ -7,6 +8,7 @@ export default class Form extends Component {
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
     }
+
     handleChange(event) {
       this.setState({value: event.target.value});
     }
@@ -32,13 +34,11 @@ export default class Form extends Component {
       return (
         <div>
           <form onSubmit={this.handleSubmit}>
-            <label>
-              URL:
-              <input type="text" value={this.state.value} onChange={this.handleChange} />
-            </label>
-              <input type="submit" value="Submit" />
-        </form>
-    </div>
+            <textarea placeholder="Input URL Here..." className={styles.question} required autoComplete="off" type="text" value={this.state.value} onChange={this.handleChange} />
+            <label></label>
+            <input className={styles.submitButton} type="submit" value="Submit" />
+          </form>
+        </div>
         );
       }
     }
