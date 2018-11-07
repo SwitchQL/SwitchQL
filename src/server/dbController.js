@@ -18,14 +18,13 @@ const initOptions = {
 };
 
 const pgp = require('pg-promise')(initOptions);
-
+const mysql = require('mysql');
 
 module.exports = {
-  getSchemaInfo: (req, res, next) => {
-    const { url } = req.body;
-    const db = pgp(url);
-
-    db.any(`SELECT
+  getSchemaInfo: async (data) => {
+    const url = data;
+    let db = pgp(url);
+    const info = await db.any(`SELECT
       t.table_name,
       c.column_name,
       c.is_nullable,
@@ -68,15 +67,8 @@ module.exports = {
     WHERE table_type = 'BASE TABLE'
       AND t.table_schema = 'public'
       AND constraint_type = 'FOREIGN KEY'
-    ORDER BY table_name`,)
-    .then((data) => {
-      res.locals.schemaArr = data;
-      return next();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ err });
-    });
+    ORDER BY table_name`,) 
+    return info;
   },
 
   convertSchemaInfo: (req, res, next) => {
