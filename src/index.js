@@ -455,7 +455,7 @@ function tableData(dataArr){
   let fields = {};
 
   let lutFields = {};
-  let toRefFields = {};
+  // let toRefFields = {};
   const lut = {};
   const toRef = {};
 
@@ -615,7 +615,7 @@ function tableData(dataArr){
 }
 
 // console.log(JSON.stringify(tableData(testing)))
-console.log(parseGraphqlServer(tableData(testing).tables, 'PostgreSQL'));
+// console.log(parseGraphqlServer(tableData(testing).tables, 'PostgreSQL'));
 // console.log(JSON.stringify(tableData(testing)));
 
 
