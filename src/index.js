@@ -376,7 +376,7 @@ constraint_type: null,
 foreign_table_name: null,
 foreign_column_name: null } ]
 
-const parseGraphqlServer = require('./parser');
+const parseGraphqlServer = require('./server/parser');
 
 // module.exports = {
 //   tableData: (dataArr) => {

@@ -160,11 +160,6 @@ function createSubQuery(field, data, database) {
     if (database === 'PostgreSQL') query += `connect`
     query += `((err, con) => {\n${tab}${tab}${tab}${tab}${tab}const sql = \`SELECT * FROM ${refTable} WHERE `;
 
-    // if (field.type === 'ID') {
-    //   query += `${field.name} = \${parent.${field.name}}`;
-    // } else {
-    //   query += `${refFieldName} = \${parent.${field.name}}`;
-    // }
 
     // Change condition to check against field.primaryKey bc both relation are ID
     if (field.primaryKey) {

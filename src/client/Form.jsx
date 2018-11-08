@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import styles from"./styles.css";
+import styles from "./styles.css";
 const { ipcRenderer } = require('electron');
 
 export default class Form extends Component {
@@ -19,12 +19,6 @@ export default class Form extends Component {
       ipcRenderer.send('url', this.state.value);
     }
 
-    componentDidMount() {
-      ipcRenderer.on('testback', (event, args) => {
-        // const dataobj = JSON.parse(args);
-        console.log(args);
-      });
-    }
     render() {
       return (
         <div>
