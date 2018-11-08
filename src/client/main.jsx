@@ -4,6 +4,7 @@ import Form from './Form.jsx';
 import Table from './Table.jsx';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import styles from './styles.css';
+const { ipcRenderer } = require('electron');
 
 class App extends Component {
 	constructor(props) {
@@ -43,7 +44,14 @@ class App extends Component {
 
 	updateTabToMutations() {
 		this.setState({ currTab: 'mutations' });
-	}
+  }
+  componentDidMount() {
+    ipcRenderer.on('testback', (event, args) => {
+      // const dataobj = JSON.parse(args);
+      // console.log(args);
+      this.setState({schema: args})
+    });
+  }
 
 	render() {
 		// let currentRender;
@@ -64,29 +72,31 @@ class App extends Component {
 				<Form />
 				<Tabs>
 					<TabList>
-						<Tab>Schema</Tab>
-						<Tab>Queries</Tab>
-						<Tab>Mutations</Tab>
+            <div className={styles.flexTabs}>
+              <Tab>Schema</Tab>
+              <Tab>Queries</Tab>
+              <Tab>Mutations</Tab>
+            </div>
 					</TabList>
 
 					<TabPanel>
 						<div className={styles.tableText}>
 							<div className={styles.areaOneBox}>
-							<textarea className={styles.areaOne} readOnly />
+							<textarea className={styles.areaOne} readOnly value={this.state.schema}/>
 						</div>
             </div>
 					</TabPanel>
 					<TabPanel>
 						<div className={styles.tableText}>
 							<div className={styles.areaOneBox}>
-							<textarea className={styles.areaOne} readOnly />
+							<textarea className={styles.areaOne} readOnly value='2'/>
 						</div>
             </div>
 					</TabPanel>
 					<TabPanel>
 						<div className={styles.tableText}>
 							<div className={styles.areaOneBox}>
-							<textarea className={styles.areaOne} readOnly />
+							<textarea className={styles.areaOne} readOnly value='3'/>
 						</div>
             </div>
 					</TabPanel>
