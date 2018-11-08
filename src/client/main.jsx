@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Form from './Form.jsx';
-import Table from './Table.jsx';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import styles from './styles.css';
-const { ipcRenderer } = require('electron');
+import { ipcRenderer } from 'electron';
 
 class App extends Component {
 	constructor(props) {
@@ -15,90 +14,55 @@ class App extends Component {
 			mutations: '',
 			queries: ''
 		};
-		// this.updateOutput = this.updateOutput.bind(this);
 	}
 
-	// updateOutput(args) {
-	//   this.setState({textLeft: args})
-	// }
-
-	updateSchema(args) {
-		this.setState({ schema: args });
+	componentDidMount() {
+		ipcRenderer.on('data', (event, args) => {
+			const data = JSON.parse(args);
+			this.setState(data);
+		});
 	}
-
-	updateMutations(args) {
-		this.setState({ mutations: args });
-	}
-
-	updateQueries(args) {
-		this.setState({ queries: args });
-	}
-
-	updateTabToSchema() {
-		this.setState({ currTab: 'schema' });
-	}
-
-	updateTabToQueries() {
-		this.setState({ currTab: 'queries' });
-	}
-
-	updateTabToMutations() {
-		this.setState({ currTab: 'mutations' });
-  }
-  componentDidMount() {
-    ipcRenderer.on('testback', (event, args) => {
-      // const dataobj = JSON.parse(args);
-      // console.log(args);
-      this.setState({schema: args})
-    });
-  }
 
 	render() {
-		// let currentRender;
-		// switch (this.state.currTab) {
-		// 	case 'schema':
-		// 		currentRender = <Table schema={this.state.schema} />;
-		// 	case 'queries':
-		// 		currentRender = <Table schema={this.state.queries} />;
-		// 	case 'mutations':
-		// 		currentRender = <Table schema={this.state.mutations} />;
-		// }
-
 		return (
 			<div>
 				<h1>
 					<strong>SwitchQL</strong>
 				</h1>
-				<Form />
+				<Form
+					updateSchema={this.updateSchema}
+					updateMutations={this.updateMutations}
+					updateQueries={this.updateQueries}
+				/>
 				<Tabs>
 					<TabList>
-            <div className={styles.flexTabs}>
-              <Tab>Schema</Tab>
-              <Tab>Queries</Tab>
-              <Tab>Mutations</Tab>
-            </div>
+						<div className={styles.flexTabs}>
+							<Tab>Schema</Tab>
+							<Tab>Client Mutations</Tab>
+							<Tab>Client Queries</Tab>
+						</div>
 					</TabList>
 
 					<TabPanel>
 						<div className={styles.tableText}>
 							<div className={styles.areaOneBox}>
-							<textarea className={styles.areaOne} readOnly value={this.state.schema}/>
+								<textarea className={styles.areaOne} value={this.state.schema} readOnly />
+							</div>
 						</div>
-            </div>
 					</TabPanel>
 					<TabPanel>
 						<div className={styles.tableText}>
 							<div className={styles.areaOneBox}>
-							<textarea className={styles.areaOne} readOnly value='2'/>
+								<textarea className={styles.areaOne} value={this.state.mutations} readOnly />
+							</div>
 						</div>
-            </div>
 					</TabPanel>
 					<TabPanel>
 						<div className={styles.tableText}>
 							<div className={styles.areaOneBox}>
-							<textarea className={styles.areaOne} readOnly value='3'/>
+								<textarea className={styles.areaOne} value={this.state.queries} readOnly />
+							</div>
 						</div>
-            </div>
 					</TabPanel>
 				</Tabs>
 			</div>
