@@ -2,27 +2,98 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Form from './Form.jsx';
 import Table from './Table.jsx';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import styles from './styles.css';
 
 class App extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {textLeft: '', textRight: ''}
-    this.updateOutput = this.updateOutput.bind(this);
-  }
+	constructor(props) {
+		super(props);
+		this.state = {
+			currTab: 'schema',
+			schema: '',
+			mutations: '',
+			queries: ''
+		};
+		// this.updateOutput = this.updateOutput.bind(this);
+	}
 
-  updateOutput(args) {
-    this.setState({textLeft: args})
-  }
+	// updateOutput(args) {
+	//   this.setState({textLeft: args})
+	// }
 
-  render() {
-    return (
-      <div>
-        <h1><strong>SwitchQL</strong></h1>
-        <Form updateOutput={this.updateOutput} />
-        <Table textLeft={this.state.textLeft} textRight={this.state.textRight}/>
-      </div>
-      );
-    };
-  };
+	updateSchema(args) {
+		this.setState({ schema: args });
+	}
+
+	updateMutations(args) {
+		this.setState({ mutations: args });
+	}
+
+	updateQueries(args) {
+		this.setState({ queries: args });
+	}
+
+	updateTabToSchema() {
+		this.setState({ currTab: 'schema' });
+	}
+
+	updateTabToQueries() {
+		this.setState({ currTab: 'queries' });
+	}
+
+	updateTabToMutations() {
+		this.setState({ currTab: 'mutations' });
+	}
+
+	render() {
+		// let currentRender;
+		// switch (this.state.currTab) {
+		// 	case 'schema':
+		// 		currentRender = <Table schema={this.state.schema} />;
+		// 	case 'queries':
+		// 		currentRender = <Table schema={this.state.queries} />;
+		// 	case 'mutations':
+		// 		currentRender = <Table schema={this.state.mutations} />;
+		// }
+
+		return (
+			<div>
+				<h1>
+					<strong>SwitchQL</strong>
+				</h1>
+				<Form />
+				<Tabs>
+					<TabList>
+						<Tab>Schema</Tab>
+						<Tab>Queries</Tab>
+						<Tab>Mutations</Tab>
+					</TabList>
+
+					<TabPanel>
+						<div className={styles.tableText}>
+							<div className={styles.areaOneBox}>
+							<textarea className={styles.areaOne} readOnly />
+						</div>
+            </div>
+					</TabPanel>
+					<TabPanel>
+						<div className={styles.tableText}>
+							<div className={styles.areaOneBox}>
+							<textarea className={styles.areaOne} readOnly />
+						</div>
+            </div>
+					</TabPanel>
+					<TabPanel>
+						<div className={styles.tableText}>
+							<div className={styles.areaOneBox}>
+							<textarea className={styles.areaOne} readOnly />
+						</div>
+            </div>
+					</TabPanel>
+				</Tabs>
+			</div>
+		);
+	}
+}
 
 ReactDOM.render(<App />, document.getElementById('app'));
