@@ -22,7 +22,8 @@ export default class Form extends Component {
     componentDidMount() {
       ipcRenderer.on('testback', (event, args) => {
         // const dataobj = JSON.parse(args);
-        console.log(args);
+        // console.log(args);
+        this.props.updateOutput(args)
       });
     }
     render() {
