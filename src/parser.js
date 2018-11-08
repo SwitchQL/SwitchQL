@@ -383,7 +383,9 @@ function updateMutation(table, database) {
     query += `((err, con) => {\n`;
     query += `${tab}${tab}${tab}${tab}${tab}let updateValues = '';\n`;
     query += `${tab}${tab}${tab}${tab}${tab}for (const prop in args) {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}updateValues += \`\${prop} = '\${args[prop]}' \`\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}if (prop !== ${idFieldName}) {\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}updateValues += \`\${prop} = '\${args[prop]}' \`\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}}\n`;
     query += `${tab}${tab}${tab}${tab}${tab}}\n`;
     query += `${tab}${tab}${tab}${tab}${tab}const sql = \`UPDATE ${table.type} SET \${updateValues} WHERE ${idFieldName} = \${args.`;
     query += `${idFieldName}}\`;\n`;
@@ -457,4 +459,4 @@ function checkForRequired(required, position) {
 // }
 
 
-module.exports = parseGraphqlServer;
+module.exports = { parseGraphqlServer, toTitleCase, createFindAllRootQuery, buildGraphqlRootQuery, createSubQuery, buildGraphqlTypeSchema };

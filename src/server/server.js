@@ -4,23 +4,15 @@ const electron = require('electron');
 const { ipcMain } = electron;
 const dbController = require('./dbController.js');
 const logicController = require('./logicController');
-//const {parseGraphqlServer, toTitleCase, createFindAllRootQuery, buildGraphqlRootQuery, createSubQuery, buildGraphqlTypeSchema} = require('./conversionController');
+const {parseGraphqlServer, toTitleCase, createFindAllRootQuery, buildGraphqlRootQuery, createSubQuery, buildGraphqlTypeSchema} = require('../parser');
 
 ipcMain.on('url', async (event, url) => {
   const dbMetaData = await dbController.getSchemaInfo(url);
   const formattedMetaData = await logicController.formatMetaData(dbMetaData);
-  const combo = { dbMetaData , formattedMetaData };
-  event.sender.send('testback', JSON.stringify(combo));
+  const parsedMetaData = await parseGraphqlServer(formattedMetaData.tables);
+  event.sender.send('testback', parsedMetaData);
+  // event.sender.send('testback', formattedMetaData);
   // const test = await parseGraphqlServer(formattedMetaData.tables);
   // console.log(test);
 });
 
-// app.post('/getInfo', dbController.getSchemaInfo, (req, res) => {
-//   console.log(res.locals.schemaInfo)
-//   res.status(200).json(res.locals.schemaInfo);
-// })
-
-// app.listen(3000, (err) => {
-// if(err) console.log(err);
-// else console.log('working server-side');
-// });
