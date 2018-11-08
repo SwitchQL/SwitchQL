@@ -15,24 +15,20 @@ module.exports = {
       tables: {}
     };
   
-    const field = {
-      name: '',
-      type: '',
-      primaryKey: false,
-      unique: false,
-      required: false,
-      inRelationship: false,
-      relation: {
-        refTable: null,
-        refField: null,
-        refType: null
-      },
-      tableNum: 0,
-      fieldNum: 0,
-    };
-  
+    
     dataArr.forEach((elem, index) => {
-      currField = Object.assign({}, field);
+      currField = {
+        name: '',
+        type: '',
+        primaryKey: false,
+        unique: false,
+        required: false,
+        inRelationship: false,
+        relation: {},
+        tableNum: 0,
+        fieldNum: 0,
+      };
+      // let currField = Object.assign({}, field);
   
       // Relevant database column/field information
       let { table_name, column_name, is_nullable, data_type, constraint_type, foreign_table_name, foreign_column_name } = elem;
@@ -47,7 +43,8 @@ module.exports = {
         lutFields = {};
   
         // toRef[prevTable] = toRefFields;
-        toRefFields = {};
+        // toRefFields = {};
+        
   
         tableIndex++;
         fieldIndex = 0;
@@ -61,6 +58,9 @@ module.exports = {
       let fieldType;
       switch(data_type){
         case 'character varying':
+          fieldType = 'String';
+          break;
+        case 'text':
           fieldType = 'String';
           break;
         case 'integer':
@@ -89,15 +89,30 @@ module.exports = {
         currField.inRelationship = true;
         currField.type = 'ID';
         currField.relation = toRef[table_name][column_name];
-        let relatedTo = data.tables[toRef[table_name][column_name].refTable].fields[toRef[table_name][column_name].refField]
-        relatedTo.relation = {
+        // iterate through each relationship (one or more) and assign a relatedTo
+        for(let refIndex in toRef[table_name][column_name]){
+          let refLookup = refIndex.split('.')
+          let relatedTo = data.tables[refLookup[0]].fields[refLookup[1]];
+          // let relatedTo = data.tables[toRef[table_name][column_name].refTable].fields[toRef[table_name][column_name].refField]
+          let relToRefIndex = tableIndex + '.' + fieldIndex;
+          relatedTo.relation[relToRefIndex] = {
+            refTable: tableIndex,
+            refField: fieldIndex,
+            refType: 'many to one'
+          }
+          relatedTo.inRelationship = true;
+          relatedTo.type = 'ID';
+        }
+      }
+  
+  
+  
+      if(constraint_type === 'FOREIGN KEY'){
+        let ref = {
           refTable: tableIndex,
           refField: fieldIndex,
-          refType: 'many to one'
+          refType: 'one to many'
         }
-        relatedTo.type = 'ID';
-      }
-      if(constraint_type === 'FOREIGN KEY'){
         currField.inRelationship = true;
         currField.type = 'ID';
         // Active relationship assignment (foreign key table defined after primary key table)
@@ -107,22 +122,30 @@ module.exports = {
             refField: lut[foreign_table_name][foreign_column_name],
             refType: 'many to one'
           }
-          currField.relation = relationship;
+          let refIndex = lut[foreign_table_name].INDEX + '.' + lut[foreign_table_name][foreign_column_name];
+          currField.relation[refIndex] = relationship;
           let relatedTo = data.tables[lut[foreign_table_name].INDEX].fields[lut[foreign_table_name][foreign_column_name]]
-          relatedTo.relation = {
-            refTable: tableIndex,
-            refField: fieldIndex,
-            refType: 'one to many'
-          }
+          let relToRefIndex = tableIndex + '.' + fieldIndex;
+          relatedTo.relation[relToRefIndex] = ref;
           relatedTo.inRelationship = true;
           relatedTo.type = 'ID';
         } else {
-          toRefFields[foreign_column_name] = {
-            refTable: tableIndex,
-            refField: fieldIndex,
-            refType: 'one to many'
+          // currField.relation = {};
+          let refIndex = tableIndex + '.' + fieldIndex;
+          let toRefFields = {};
+          let currRef = {};
+          if(!toRef.hasOwnProperty(foreign_table_name)){
+            currRef[refIndex] = ref;
+            toRefFields[foreign_column_name] = currRef;
+            toRef[foreign_table_name] = toRefFields;
+          } else {
+            if(!toRef[foreign_table_name].hasOwnProperty(foreign_column_name)){
+              currRef[refIndex] = ref;
+              toRef[foreign_table_name][foreign_column_name] = currRef;
+            } else {
+              toRef[foreign_table_name][foreign_column_name][refIndex] = ref;
+            }
           }
-          toRef[foreign_table_name] = toRefFields;
         }
       }
       currField.tableNum = tableIndex;
@@ -136,7 +159,13 @@ module.exports = {
       prevTable = table_name;
       fieldIndex++;
     })
-  
+    // console.log(lut)
+    // console.log('/////////////////////////')
+    // console.log(JSON.stringify(toRef))
+    // console.log(field)
     return data;
-  }
-}
+  },
+  
+  // console.log(JSON.stringify(tableData(testing)))
+  // console.log(JSON.stringify(tableData(testing)));
+} 
