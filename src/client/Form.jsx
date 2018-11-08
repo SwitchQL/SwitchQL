@@ -19,13 +19,13 @@ export default class Form extends Component {
       ipcRenderer.send('url', this.state.value);
     }
 
-    componentDidMount() {
-      ipcRenderer.on('testback', (event, args) => {
-        // const dataobj = JSON.parse(args);
-        // console.log(args);
-        this.props.updateOutput(args)
-      });
-    }
+    // componentDidMount() {
+    //   ipcRenderer.on('testback', (event, args) => {
+    //     // const dataobj = JSON.parse(args);
+    //     // console.log(args);
+    //     this.props.updateSchema(args)
+    //   });
+    // }
     render() {
       return (
         <div>
