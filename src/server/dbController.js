@@ -1,3 +1,5 @@
+const converter = require('../index');
+
 const initOptions = {
   connect(client, dc, useCount) {
     const cp = client.connectionParameters;
@@ -68,5 +70,4 @@ module.exports = {
     ORDER BY table_name`,) 
     return info;
   },
-  
 }

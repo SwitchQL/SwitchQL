@@ -6,10 +6,10 @@ const Table = () => {
   return (
     <div className={styles.tableText}>
       <div className={styles.areaOneBox}>
-        <textarea className={styles.areaOne}></textarea>
+        <textarea className={styles.areaOne} readOnly></textarea>
       </div>
       <div className={styles.areaTwoBox}>
-        <textarea className={styles.areaTwo}></textarea>
+        <textarea className={styles.areaTwo} readOnly></textarea>
       </div>
     </div>
     )
