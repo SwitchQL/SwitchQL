@@ -457,4 +457,4 @@ function checkForRequired(required, position) {
 // }
 
 
-module.exports = parseGraphqlServer;
+module.exports = { parseGraphqlServer, toTitleCase, createFindAllRootQuery, buildGraphqlRootQuery, createSubQuery, buildGraphqlTypeSchema };
