@@ -21,8 +21,7 @@ const pgp = require('pg-promise')(initOptions);
 const mysql = require('mysql');
 
 module.exports = {
-  getSchemaInfo: async (data) => {
-    const url = data;
+  getSchemaInfo: async (url) => {
     let db = pgp(url);
     const info = await db.any(`SELECT
       t.table_name,

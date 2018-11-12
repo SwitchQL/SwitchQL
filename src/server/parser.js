@@ -1,22 +1,23 @@
 const tab = `  `;
 
-function parseGraphqlServer(data, database) {
+function parseGraphqlServer(data, database = 'PostgreSQL') {
+  // require graphQL
   let query = "const graphql = require('graphql');\n";
 
-  if (database === 'MongoDB') {
-    for (const prop in data) {
-      query += buildDbModelRequirePaths(data[prop]);
-    }
-  }
+  // if (database === 'MongoDB') {
+  //   for (const prop in data) {
+  //     query += buildDbModelRequirePaths(data[prop]);
+  //   }
+  // }
 
   if (database === 'MySQL') {
     query += `const getConnection = require('../db/mysql_pool.js');\n`;
   }
-
+  // ability to connect to postgres
   if (database === 'PostgreSQL') {
     query += `const connect = require('../db/postgresql_pool.js');\n`;
   }
-
+  // defining graphQL types
   query += `const { 
   GraphQLObjectType,
   GraphQLSchema,
@@ -30,6 +31,7 @@ function parseGraphqlServer(data, database) {
   \n`;
 
   // BUILD TYPE SCHEMA
+  // loop through all tables and build schema for each one
   for (const prop in data) {
     query += buildGraphqlTypeSchema(data[prop], data, database);
   }
@@ -70,37 +72,21 @@ function buildDbModelRequirePaths(data) {
 // complete = TRUE
 function buildGraphqlTypeSchema(table, data, database) {
   let subQuery ='';
+  // creating new graphQL object type 
   let query = `const ${table.type}Type = new GraphQLObjectType({\n${tab}name: '${table.type}',\n${tab}fields: () => ({`;
 
   let firstLoop = true;
+  // loop through all the fields in the current table
   for (let currField in table.fields) {
     if (!firstLoop) query+= ',';
     firstLoop = false;
-
+    // check the field current name and give it a graphQL type
     query += `\n${tab}${tab}${table.fields[currField].name}: { type: ${tableTypeToGraphqlType(table.fields[currField].type)} }`;
 
     // later try to maintain the foreign key field to be the primary value?? NO
     if (table.fields[currField].inRelationship) {
       subQuery += createSubQuery(table.fields[currField], data, database) + ', ';
     }
-
-    // dont need anymore because defined relationships for both related tables in field.relation
-    // const refBy = table.fields[currField].refBy;
-    // if (Array.isArray(refBy)) {
-    //   refBy.forEach(value => {
-    //     const parsedValue = value.split('.');
-    //     const field = {
-    //       name: table.fields[currField].name,
-    //       relation: {
-    //         tableIndex: parsedValue[0],
-    //         fieldIndex: parsedValue[1],
-    //         refType: parsedValue[2],
-    //         type: table.fields[currField].type
-    //       }
-    //     };
-    //     query += createSubQuery(field, data, database);
-    //   });
-    // }
   }
   query += subQuery.slice(0, -2);
   return query += `\n${tab}})\n});\n\n`;
@@ -383,7 +369,9 @@ function updateMutation(table, database) {
     query += `((err, con) => {\n`;
     query += `${tab}${tab}${tab}${tab}${tab}let updateValues = '';\n`;
     query += `${tab}${tab}${tab}${tab}${tab}for (const prop in args) {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}updateValues += \`\${prop} = '\${args[prop]}' \`\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}if (prop !== ${idFieldName}) {\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}updateValues += \`\${prop} = '\${args[prop]}' \`\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}}\n`;
     query += `${tab}${tab}${tab}${tab}${tab}}\n`;
     query += `${tab}${tab}${tab}${tab}${tab}const sql = \`UPDATE ${table.type} SET \${updateValues} WHERE ${idFieldName} = \${args.`;
     query += `${idFieldName}}\`;\n`;

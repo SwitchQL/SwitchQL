@@ -455,7 +455,7 @@ function tableData(dataArr){
   let fields = {};
 
   let lutFields = {};
-  let toRefFields = {};
+  // let toRefFields = {};
   const lut = {};
   const toRef = {};
 

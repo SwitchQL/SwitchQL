@@ -7,7 +7,7 @@ module.exports = {
     let fields = {};
   
     let lutFields = {};
-    let toRefFields = {};
+
     const lut = {};
     const toRef = {};
   
@@ -28,7 +28,6 @@ module.exports = {
         tableNum: 0,
         fieldNum: 0,
       };
-      // let currField = Object.assign({}, field);
   
       // Relevant database column/field information
       let { table_name, column_name, is_nullable, data_type, constraint_type, foreign_table_name, foreign_column_name } = elem;
@@ -41,10 +40,6 @@ module.exports = {
         lutFields['INDEX'] = tableIndex;
         lut[prevTable] = lutFields;
         lutFields = {};
-  
-        // toRef[prevTable] = toRefFields;
-        // toRefFields = {};
-        
   
         tableIndex++;
         fieldIndex = 0;
@@ -93,7 +88,6 @@ module.exports = {
         for(let refIndex in toRef[table_name][column_name]){
           let refLookup = refIndex.split('.')
           let relatedTo = data.tables[refLookup[0]].fields[refLookup[1]];
-          // let relatedTo = data.tables[toRef[table_name][column_name].refTable].fields[toRef[table_name][column_name].refField]
           let relToRefIndex = tableIndex + '.' + fieldIndex;
           relatedTo.relation[relToRefIndex] = {
             refTable: tableIndex,
@@ -130,7 +124,6 @@ module.exports = {
           relatedTo.inRelationship = true;
           relatedTo.type = 'ID';
         } else {
-          // currField.relation = {};
           let refIndex = tableIndex + '.' + fieldIndex;
           let toRefFields = {};
           let currRef = {};
@@ -150,22 +143,14 @@ module.exports = {
       }
       currField.tableNum = tableIndex;
       currField.fieldNum = fieldIndex;
-      
-      // consider ref overwrites?
+    
       fields[fieldIndex] = currField;
       lutFields[column_name] = fieldIndex;
-      // lut[prevTable] = lutFields;
       
       prevTable = table_name;
       fieldIndex++;
     })
-    // console.log(lut)
-    // console.log('/////////////////////////')
-    // console.log(JSON.stringify(toRef))
-    // console.log(field)
+
     return data;
   },
-  
-  // console.log(JSON.stringify(tableData(testing)))
-  // console.log(JSON.stringify(tableData(testing)));
 } 
