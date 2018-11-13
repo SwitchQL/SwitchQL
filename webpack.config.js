@@ -1,12 +1,26 @@
-const htmlWebPackPlugin = require('html-webpack-plugin');
-
-const htmlPlugin = new htmlWebPackPlugin ({
-  template: './src/index.html',
-  filename: './index.html',
-});
+const webpack = require('webpack');
+const path = require('path');
 
 module.exports = {
-  entry: './src/client/main.jsx',
+  watch: true,
+  
+  target: 'electron-renderer',
+
+  entry: {
+    app: ['webpack/hot/dev-server', './src/client/main.jsx']
+  },
+
+  output: {
+    path: path.join(__dirname, './public/built'),
+    filename: 'bundle.js',
+    publicPath: 'http://localhost:8080/built/'
+  },
+
+  devServer: {
+    contentBase: './public',
+    publicPath: 'http://localhost:8080/built'
+  },
+
   module: {
     rules: [
       {
@@ -18,6 +32,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
+        
         use: [
           {
             loader: 'style-loader',
@@ -36,5 +51,4 @@ module.exports = {
       },
     ],
   },
-  plugins: [htmlPlugin],
 }

@@ -1,26 +1,29 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const path = require('path');
-const fs = require('fs');
+// const path = require('path');
+// const dbController = require('./dbController.js');
+const electron = require('electron');
+const { ipcMain } = electron;
 const dbController = require('./dbController.js');
+const logicController = require('./logicController');
+const {parseGraphqlServer, toTitleCase, createFindAllRootQuery, buildGraphqlRootQuery, createSubQuery, buildGraphqlTypeSchema} = require('./parser.js');
+const parseClientMutations = require('./clientMutations.js');
+const parseClientQueries = require('./clientQueries.js')
 
-const app = express();
-
-app.use(bodyParser.json());
-
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+ipcMain.on('url', async (event, info) => {
+  info = JSON.parse(info);
+  // if(info.value.length > 0) const url = info.value;
+  // else 
+  const url = dbController.fuseConnectionString(info);
+   
+  const dbMetaData =  await dbController.getSchemaInfo(url);
+  const formattedMetaData = await logicController.formatMetaData(dbMetaData);
+  const schemaMetaData = await parseGraphqlServer(formattedMetaData.tables, 'PostgreSQL');
+  const mutationsMetaData = await parseClientMutations(formattedMetaData.tables);
+  const queriesMetaData = await parseClientQueries(formattedMetaData.tables);
+  const gqlData = {
+    schema: schemaMetaData,
+    mutations: mutationsMetaData,
+    queries: queriesMetaData,
+  }
+  event.sender.send('data', JSON.stringify(gqlData));
 });
 
-
-app.post('/getInfo', dbController.getSchemaInfo, (req, res) => {
-  console.log(res.locals.schemaInfo)
-  res.status(200).json(res.locals.schemaInfo);
-})
-
-app.listen(3000, (err) => {
-if(err) console.log(err);
-else console.log('working server-side');
-});
