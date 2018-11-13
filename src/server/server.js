@@ -8,10 +8,15 @@ const {parseGraphqlServer, toTitleCase, createFindAllRootQuery, buildGraphqlRoot
 const parseClientMutations = require('./clientMutations.js');
 const parseClientQueries = require('./clientQueries.js')
 
-ipcMain.on('url', async (event, url) => {
-  const dbMetaData = await dbController.getSchemaInfo(url);
+ipcMain.on('url', async (event, info) => {
+  info = JSON.parse(info);
+  // if(info.value.length > 0) const url = info.value;
+  // else 
+  const url = dbController.fuseConnectionString(info);
+   
+  const dbMetaData =  await dbController.getSchemaInfo(url);
   const formattedMetaData = await logicController.formatMetaData(dbMetaData);
-  const schemaMetaData = await parseGraphqlServer(formattedMetaData.tables);
+  const schemaMetaData = await parseGraphqlServer(formattedMetaData.tables, 'PostgreSQL');
   const mutationsMetaData = await parseClientMutations(formattedMetaData.tables);
   const queriesMetaData = await parseClientQueries(formattedMetaData.tables);
   const gqlData = {

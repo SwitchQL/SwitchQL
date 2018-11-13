@@ -70,4 +70,12 @@ module.exports = {
     ORDER BY table_name`,) 
     return info;
   },
+  fuseConnectionString: (info) => {
+    let connectionString = '';
+    if(info.type === 'PostgreSQL') {
+      connectionString += 'postgres://'
+    }
+      connectionString += `${info.user}:${info.password}@${info.host}:${info.port}/${info.database}`
+      return connectionString;
+  },
 }

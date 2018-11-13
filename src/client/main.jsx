@@ -19,7 +19,7 @@ class App extends Component {
 	componentDidMount() {
 		ipcRenderer.on('data', (event, args) => {
 			const data = JSON.parse(args);
-			this.setState(data);
+      this.setState(data);
 		});
 	}
 

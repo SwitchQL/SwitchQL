@@ -132,9 +132,9 @@ html {
     animation: appear 1s forwards;
   }
   
-  input.question:invalid ~ input[type="submit"], textarea.question:invalid ~ input[type="submit"] {
+  /* input.question:invalid ~ input[type="submit"], textarea.question:invalid ~ input[type="submit"] {
     display: none;
-  }
+  } */
 
     button, input[type="submit"], input[type="reset"] {
         background: none;
