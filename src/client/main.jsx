@@ -13,8 +13,7 @@ class App extends Component {
 			currTab: 'schema',
 			schema: '',
 			mutations: '',
-			queries: '',
-			dbConnected: false,
+			queries: ''
 		};
 	}
 

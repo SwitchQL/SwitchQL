@@ -18,10 +18,11 @@ const initOptions = {
 };
 
 const pgp = require('pg-promise')(initOptions);
-const mysql = require('mysql');
+const mysql = require('promise-mysql');
 
 module.exports = {
-  getSchemaInfo: async (url) => {
+  getSchemaInfoPG: async (data) => {
+    const url = data;
     let db = pgp(url);
     const info = await db.any(`SELECT
       t.table_name,
@@ -76,5 +77,19 @@ module.exports = {
     }
       connectionString += `${info.user}:${info.password}@${info.host}:${info.port}/${info.database}`
       return connectionString;
+  },
+  getSchemaInfoMySQL:async (info) => {
+    let con = await mysql.createConnection({
+      host : info.host,
+      user : info.user,
+      password : info.password,
+      database : info.database,
+      port : info.port 
+    });    
+    let result = await con.query(`Select t.table_name, c.column_name,kcu.constraint_name, kcu.referenced_table_name AS foreign_table_name, kcu.referenced_column_name AS foreign_column_name, c.is_nullable, c.data_type
+    from information_schema.tables t join information_schema.columns c ON t.table_name = c.table_name
+    left join information_schema.key_column_usage AS kcu ON t.table_name = kcu.table_name AND c.column_name = kcu.column_name
+    where t.table_schema = 'switchql' and t.table_type = 'BASE TABLE'  ORDER BY table_name;`);
+    return result;
   },
 }

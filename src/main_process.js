@@ -15,7 +15,7 @@ app.on('ready', function () {
   //create new window
   mainWindow = new BrowserWindow({
     width: width/2,
-    height: height,
+    height: height
     // titleBarStyle: 'customButtonsOnHover', frame: false
   });
   //Load HTML into window

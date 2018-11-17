@@ -53,10 +53,11 @@ export default class Form extends Component {
     handleSubmit() {
       event.preventDefault();
       ipcRenderer.send('url', JSON.stringify(this.state));
+      console.log('sending data');
     }
 
     toggleBright() {
-      console.log(this.state.host)
+      console.log(this.state)
       document.getElementById('body').style.filter = 'brightness(100%)'
 
       let form = document.getElementById('form');
@@ -79,7 +80,11 @@ export default class Form extends Component {
             <textarea placeholder="User Name" className={styles.question} required autoComplete="off" type="text" value={this.state.user} onChange={this.handleChangeUser} />
             <textarea placeholder="Password" className={styles.question} required autoComplete="off" type="text" value={this.state.password} onChange={this.handleChangePassword} />
             <textarea placeholder="Database Name" className={styles.question} required autoComplete="off" type="text" value={this.state.database} onChange={this.handleChangeDatabase} />
-            <button type="button" className={styles.button} onClick={() => this.toggleBright()}>Generate GraphQL</button>
+            <button type="button" className={styles.button} onClick={() => {
+              this.toggleBright()
+              this.handleSubmit()
+              }}>Generate GraphQL</button>
+            <div className={styles.warning} id='warning'><b>*</b>Please input <b>one</b> connection method</div>
             </div>
           </form>
         </div>
