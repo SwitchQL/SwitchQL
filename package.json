@@ -36,6 +36,7 @@
     "path": "^0.12.7",
     "pg": "^7.6.0",
     "pg-promise": "^8.5.1",
+    "promise-mysql": "^3.3.1",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-tabs": "^2.3.0",
