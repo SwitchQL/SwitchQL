@@ -1,6 +1,6 @@
 const tab = `  `;
 
-function parseGraphqlServer(data, database = 'PostgreSQL') {
+function parseGraphqlServer(data, database, url) {
   // require graphQL
   let query = "const graphql = require('graphql');\n";
 
@@ -15,9 +15,9 @@ function parseGraphqlServer(data, database = 'PostgreSQL') {
   }
   // ability to connect to postgres
   if (database === 'PostgreSQL') {
-    query += `const pgp = require('pg-promise');\n`
+    query += `const pgp = require('pg-promise')();\n`
     query += `const connect = {};\n`
-    query += `connect.conn = pgp('INSERT CONNECTION STRING HERE');\n`;
+    query += `connect.conn = pgp('${url}');\n`;
   }
 
   query += `\nconst { 
@@ -151,7 +151,7 @@ function createSubQuery(field, data, database) {
   
     if (database === 'MySQL' || database === 'PostgreSQL') {
       if (database === 'MySQL') query += `getConnection`
-      query += `${tab}const sql = \`SELECT * FROM ${refTable} WHERE `;
+      query += `${tab}const sql = \`SELECT * FROM "${refTable}" WHERE `;
   
       // if (field.type === 'ID') {
       //   query += `${field.name} = \${parent.${field.name}}`;
@@ -165,8 +165,12 @@ function createSubQuery(field, data, database) {
       // } else {
       //   query += `${refFieldName} = \${parent.${field.name}}`;
       // }
-      query += `${refFieldName} = \${parent.${field.name}}`;
-      query += `\`;\n${tab}${tab}${tab}${tab}${tab}return connect.conn.many(sql)\n`;
+      query += `"${refFieldName}" = \${parent.${field.name}}\``;
+      if(field.relation[refIndex].refType === 'one to many' || field.relation[refIndex].refType === 'many to many') {
+      query += `;\n${tab}${tab}${tab}${tab}${tab}return connect.conn.many(sql)\n`;
+      } else {
+        query += `;\n${tab}${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
+      }
       query += `${tab}${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
       query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}return data;`;
       query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}})\n`;
@@ -257,7 +261,7 @@ function createFindAllRootQuery(table, database) {
 
   if (database === 'MySQL' || database === 'PostgreSQL') {
     if (database === 'MySQL') query += `getConnection`
-    query += `${tab}const sql = \'SELECT * FROM ${table.type}\'`
+    query += `${tab}const sql = \`SELECT * FROM "${table.type}"\``
     query += `;\n${tab}${tab}${tab}${tab}${tab}return connect.conn.many(sql)\n`;
       query += `${tab}${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
       query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}return data;`;
@@ -282,8 +286,8 @@ function createFindByIdQuery(table, idField, database) {
 
   if (database === 'MySQL' || database === 'PostgreSQL') {
     if (database === 'MySQL') query += `getConnection`
-    query += `${tab}${tab}const sql = \'SELECT * FROM ${table.type} WHERE ${idField.name} = \${args.${idField.name}}\';\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}return connect.conn.many(sql)\n`;
+    query += `${tab}${tab}const sql = \`SELECT * FROM "${table.type}" WHERE "${idField.name}" = \${args.${idField.name}}\`;\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
     query += `${tab}${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
     query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}return data;`;
     query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}
@@ -324,7 +328,7 @@ function addMutation(table, database) {
     if(!table.fields[prop].primaryKey){
       query += `${tab}${tab}${tab}${tab}${table.fields[prop].name}: ${buildMutationArgType(table.fields[prop])}`;
       fieldNames += table.fields[prop].name + ', ';
-      argNames += 'args.' + table.fields[prop].name + ', ';
+      argNames += '\'\${args.' + table.fields[prop].name + '}\', ';
     } else {
       firstLoop = true;
     }
@@ -338,7 +342,7 @@ function addMutation(table, database) {
 
   if (database === 'MySQL' || database === 'PostgreSQL') {
     if (database === 'MySQL') query += `getConnection`
-    query += `const sql = 'INSERT INTO ${table.type} (${fieldNames}) VALUES (${argNames})';\n${tab}${tab}${tab}${tab}${tab}`;
+    query += `const sql = \`INSERT INTO "${table.type}" (${fieldNames}) VALUES (${argNames})\`;\n${tab}${tab}${tab}${tab}${tab}`;
     query += `${tab}${tab}return connect.conn.one(sql)\n`;
     query += `${tab}${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
     query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}return data;`;
@@ -385,11 +389,11 @@ function updateMutation(table, database) {
 
     query += `${tab}${tab}let updateValues = '';\n`;
     query += `${tab}${tab}${tab}${tab}${tab}for (const prop in args) {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}if (prop !== ${idFieldName}) {\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}if (prop !== "${idFieldName}") {\n`;
     query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}updateValues += \`\${prop} = '\${args[prop]}' \`\n`;
     query += `${tab}${tab}${tab}${tab}${tab}${tab}}\n`;
     query += `${tab}${tab}${tab}${tab}${tab}}\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}const sql = \`UPDATE ${table.type} SET \${updateValues} WHERE ${idFieldName} = \${args.`;
+    query += `${tab}${tab}${tab}${tab}${tab}const sql = \`UPDATE "${table.type}" SET \${updateValues} WHERE "${idFieldName}" = \${args.`;
     query += `${idFieldName}}\`;\n`;
     query += `${tab}${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
     query += `${tab}${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
@@ -425,7 +429,7 @@ function deleteMutation(table, database) {
   if (database === 'MySQL' || database === 'PostgreSQL') {
     if (database === 'MySQL') query += `getConnection`
     // const idFieldName = table.fields[0].name;
-    query += `${tab}${tab}${tab}const sql = \`DELETE FROM ${table.type} WHERE ${idField.name} = \${args.`;
+    query += `${tab}${tab}${tab}const sql = \`DELETE FROM "${table.type}" WHERE "${idField.name}" = \${args.`;
     query += `${idField.name}}\`;\n`;
     query += `${tab}${tab}${tab}return connect.conn.one(sql)\n`;
     query += `${tab}${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
