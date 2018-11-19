@@ -4,6 +4,7 @@ import Form from './Form.jsx';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import styles from './styles.css';
 import { ipcRenderer } from 'electron';
+import logo from './img/logo.png';
 
 class App extends Component {
 	constructor(props) {
@@ -23,48 +24,49 @@ class App extends Component {
 		});
 	}
 
+	toggleBright() {
+		document.getElementById('body').style.filter = 'brightness(40%)'
+
+		let form = document.getElementById('form');
+		form.style.visibility = 'visible';
+	}
+
 	render() {
 		return (
 			<div>
-				<h1>
-					<strong>SwitchQL</strong>
-				</h1>
+				<div id='body' className={styles.vis}>
+					<div className={styles.headerFont}>
+					<img src={logo} className={styles.logoMain}></img>
+					{/* <img src={logo} className={styles.logo}></img> */}
+						switch<b>QL</b>
+					</div>
+					<Tabs>
+						<TabList>
+							<div className={styles.flexTabs}>
+								<Tab>Schema</Tab>
+								<Tab>Client Mutations</Tab>
+								<Tab>Client Queries</Tab>
+							</div>
+						</TabList>
+
+						<TabPanel>
+							<textarea className={styles.areaOne} value={this.state.schema} readOnly />
+						</TabPanel>
+						<TabPanel>
+							<textarea className={styles.areaOne} value={this.state.mutations} readOnly />
+						</TabPanel>
+						<TabPanel>
+							<textarea className={styles.areaOne} value={this.state.queries} readOnly />
+						</TabPanel>
+					</Tabs>
+				<button type='button' className={styles.bottomButtons}>Export Code</button>
+				<button type='button' className={styles.bottomButtons} onClick={() => this.toggleBright()} >New Database</button>
+				</div>
 				<Form
 					updateSchema={this.updateSchema}
 					updateMutations={this.updateMutations}
 					updateQueries={this.updateQueries}
 				/>
-				<Tabs>
-					<TabList>
-						<div className={styles.flexTabs}>
-							<Tab>Schema</Tab>
-							<Tab>Client Mutations</Tab>
-							<Tab>Client Queries</Tab>
-						</div>
-					</TabList>
-
-					<TabPanel>
-						<div className={styles.tableText}>
-							<div className={styles.areaOneBox}>
-								<textarea className={styles.areaOne} value={this.state.schema} readOnly />
-							</div>
-						</div>
-					</TabPanel>
-					<TabPanel>
-						<div className={styles.tableText}>
-							<div className={styles.areaOneBox}>
-								<textarea className={styles.areaOne} value={this.state.mutations} readOnly />
-							</div>
-						</div>
-					</TabPanel>
-					<TabPanel>
-						<div className={styles.tableText}>
-							<div className={styles.areaOneBox}>
-								<textarea className={styles.areaOne} value={this.state.queries} readOnly />
-							</div>
-						</div>
-					</TabPanel>
-				</Tabs>
 			</div>
 		);
 	}

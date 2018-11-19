@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styles from "./styles.css";
+import logo from './img/logo.png';
 const { ipcRenderer } = require('electron');
 
 export default class Form extends Component {
@@ -28,6 +29,7 @@ export default class Form extends Component {
     }
 
     handleChangeHost(event) {
+      console.log(this.state.host)
       this.setState({host: event.target.value});
     }
 
@@ -51,21 +53,39 @@ export default class Form extends Component {
     handleSubmit() {
       event.preventDefault();
       ipcRenderer.send('url', JSON.stringify(this.state));
+      console.log('sending data');
+    }
+
+    toggleBright() {
+      console.log(this.state)
+      document.getElementById('body').style.filter = 'brightness(100%)'
+
+      let form = document.getElementById('form');
+      form.style.visibility = 'hidden';
     }
 
     render() {
       return (
-        <div>
+        <div className={styles.formvis} id='form'>
           <form onSubmit={this.handleSubmit}>
-            <textarea placeholder="Input Connection String Here..." className={styles.question} required autoComplete="off" type="text" value={this.state.value} onChange={this.handleChangeUrl} />
-            <h3>OR...</h3>
-            <textarea placeholder="Input Host Name" className={styles.question} required autoComplete="off" type="text" value={this.state.host} onChange={this.handleChangeHost} />
-            <textarea placeholder="Input Port Number" className={styles.question} required autoComplete="off" type="text" value={this.state.port} onChange={this.handleChangePort} />
-            <textarea placeholder="Input User Name" className={styles.question} required autoComplete="off" type="text" value={this.state.user} onChange={this.handleChangeUser} />
-            <textarea placeholder="Input Password" className={styles.question} required autoComplete="off" type="text" value={this.state.password} onChange={this.handleChangePassword} />
-            <textarea placeholder="Input Database Name" className={styles.question} required autoComplete="off" type="text" value={this.state.database} onChange={this.handleChangeDatabase} />
-            <label></label>
-            <input type="submit" value="Submit" />
+            <div className={styles.formIn}>
+            <img src={logo} className={styles.logo}></img>
+            <div className={styles.welcome}>switch<b>QL</b></div>
+            <div className={styles.connect}>Connect To Your Database</div>
+            <textarea placeholder="Connection String" className={styles.question} required autoComplete="off" type="text" value={this.state.value} onChange={this.handleChangeUrl} />
+            
+            <div className={styles.connect}>Connection String Unavailable?</div>
+            <textarea placeholder="Host Name" className={styles.question} required autoComplete="off" type="text" value={this.state.host} onChange={this.handleChangeHost} />
+            <textarea placeholder="Port Number" className={styles.question} required autoComplete="off" type="text" value={this.state.port} onChange={this.handleChangePort} />
+            <textarea placeholder="User Name" className={styles.question} required autoComplete="off" type="text" value={this.state.user} onChange={this.handleChangeUser} />
+            <textarea placeholder="Password" className={styles.question} required autoComplete="off" type="text" value={this.state.password} onChange={this.handleChangePassword} />
+            <textarea placeholder="Database Name" className={styles.question} required autoComplete="off" type="text" value={this.state.database} onChange={this.handleChangeDatabase} />
+            <button type="button" className={styles.button} onClick={() => {
+              this.toggleBright()
+              this.handleSubmit()
+              }}>Generate GraphQL</button>
+            <div className={styles.warning} id='warning'><b>*</b>Please input <b>one</b> connection method</div>
+            </div>
           </form>
         </div>
         );

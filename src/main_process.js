@@ -11,10 +11,12 @@ const {
 let mainWindow;
 
 app.on('ready', function () {
+  const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
   //create new window
   mainWindow = new BrowserWindow({
-    width: 1100,
-    height: 800
+    width: width/2,
+    height: height
+    // titleBarStyle: 'customButtonsOnHover', frame: false
   });
   //Load HTML into window
   mainWindow.loadURL(url.format({
