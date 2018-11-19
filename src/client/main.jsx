@@ -6,6 +6,10 @@ import styles from './styles.css';
 import { ipcRenderer } from 'electron';
 import logo from './img/logo.png';
 
+const fs = require('fs');
+const JSZip = require('jszip');
+const path = require('path');
+
 class App extends Component {
 	constructor(props) {
 		super(props);
@@ -15,6 +19,7 @@ class App extends Component {
 			mutations: '',
 			queries: ''
 		};
+		this.createZip = this.createZip.bind(this);
 	}
 
 	componentDidMount() {
@@ -24,11 +29,27 @@ class App extends Component {
 		});
 	}
 
-	toggleBright() {
+	newDatabase() {
 		document.getElementById('body').style.filter = 'brightness(40%)'
+		document.getElementById('form').style.visibility = 'visible';
+	}
 
-		let form = document.getElementById('form');
-		form.style.visibility = 'visible';
+
+	createZip(e) {
+		let directory = e.target.files;
+		console.log(directory)
+		const zip = new JSZip();
+		zip.file("Schema.js", this.state.schema);
+		zip.file("clientMutations.js", this.state.mutations);
+		zip.file("clientQueries.js", this.state.queries);
+		// zip
+		// 	.generateNodeStream({type:'nodebuffer',streamFiles:true})
+		// 	.pipe(fs.createWriteStream(path.join(directory,'SwitchQL.zip')))
+		// 	.on('finish', function () {
+		// 	// JSZip generates a readable stream with a "end" event,
+		// 	// but is piped here in a writable stream which emits a "finish" event.
+		// 		event.sender.send('Confirmed ZIP', 'Finished!')
+		// });
 	}
 
 	render() {
@@ -37,7 +58,6 @@ class App extends Component {
 				<div id='body' className={styles.vis}>
 					<div className={styles.headerFont}>
 					<img src={logo} className={styles.logoMain}></img>
-					{/* <img src={logo} className={styles.logo}></img> */}
 						switch<b>QL</b>
 					</div>
 					<Tabs>
@@ -59,8 +79,9 @@ class App extends Component {
 							<textarea className={styles.areaOne} value={this.state.queries} readOnly />
 						</TabPanel>
 					</Tabs>
-				<button type='button' className={styles.bottomButtons}>Export Code</button>
-				<button type='button' className={styles.bottomButtons} onClick={() => this.toggleBright()} >New Database</button>
+				<button type='button' className={styles.bottomButtons} onClick={(event) => this.createZip(event)}>Export Code</button>
+				{/* <input type='file' webkitdirectory={1} className={styles.bottomButtons} onClick={(event) => this.createZip(event)}></input> */}
+				<button type='button' className={styles.bottomButtons} onClick={() => this.newDatabase()} >New Database</button>
 				</div>
 				<Form
 					updateSchema={this.updateSchema}

@@ -14,6 +14,7 @@ export default class Form extends Component {
         password: '',
         database: '',
         type: 'PostgreSQL',
+        formError: { twoConnect: false, incomplete: false, emptySubmit: false }
     }
       this.handleChangeUrl = this.handleChangeUrl.bind(this);
       this.handleChangeHost = this.handleChangeHost.bind(this);
@@ -52,19 +53,51 @@ export default class Form extends Component {
 
     handleSubmit() {
       event.preventDefault();
-      ipcRenderer.send('url', JSON.stringify(this.state));
-      console.log('sending data');
-    }
-
-    toggleBright() {
       console.log(this.state)
-      document.getElementById('body').style.filter = 'brightness(100%)'
+      let urlFilled = false;
+      let nonUrlFilled = false;
+      let nonUrlIncomplete = false;
 
-      let form = document.getElementById('form');
-      form.style.visibility = 'hidden';
+      for(let field in this.state){
+        if(field !== 'type' && field !== 'formError'){
+          if(field === 'value' && this.state[field] !== '') urlFilled = true;
+          if(field !== 'value' && this.state[field] !== '') nonUrlFilled = true;
+          if(field !== 'value' && this.state[field] === '') nonUrlIncomplete = true;
+        }
+      }
+      
+      if(urlFilled === true && nonUrlFilled === true) {
+        this.setState({ formError: { twoConnect: true } });
+      } else if(nonUrlIncomplete === true && nonUrlFilled === true) {
+        this.setState({ formError: { twoConnect: false, incomplete: true } });
+      } else if(urlFilled === false && nonUrlFilled === false && nonUrlIncomplete === true) {
+        this.setState({ formError: { emptySubmit: true } });
+      } else {
+        document.getElementById('body').style.filter = 'brightness(100%)';
+        document.getElementById('form').style.visibility = 'hidden';
+        ipcRenderer.send('url', JSON.stringify(this.state));
+        this.setState({
+          value: '',
+          host: '',
+          port: '',
+          user: '',
+          password: '',
+          database: '',
+          type: 'PostgreSQL',
+          formError: { twoConnect: false, incomplete: false, emptySubmit: false }
+        });
+      }
     }
 
     render() {
+      let formError;
+      if(this.state.formError.twoConnect){
+        formError = <div className={styles.warning}>Please use <b>one</b> connection method.</div>
+      }else if(this.state.formError.incomplete){
+        formError = <div className={styles.warning}><b>*</b>These fields are required.</div>
+      } else if(this.state.formError.emptySubmit){
+        formError = <div className={styles.warning}>Please choose a connection method.</div>
+      }
       return (
         <div className={styles.formvis} id='form'>
           <form onSubmit={this.handleSubmit}>
@@ -75,16 +108,13 @@ export default class Form extends Component {
             <textarea placeholder="Connection String" className={styles.question} required autoComplete="off" type="text" value={this.state.value} onChange={this.handleChangeUrl} />
             
             <div className={styles.connect}>Connection String Unavailable?</div>
-            <textarea placeholder="Host Name" className={styles.question} required autoComplete="off" type="text" value={this.state.host} onChange={this.handleChangeHost} />
-            <textarea placeholder="Port Number" className={styles.question} required autoComplete="off" type="text" value={this.state.port} onChange={this.handleChangePort} />
-            <textarea placeholder="User Name" className={styles.question} required autoComplete="off" type="text" value={this.state.user} onChange={this.handleChangeUser} />
-            <textarea placeholder="Password" className={styles.question} required autoComplete="off" type="text" value={this.state.password} onChange={this.handleChangePassword} />
-            <textarea placeholder="Database Name" className={styles.question} required autoComplete="off" type="text" value={this.state.database} onChange={this.handleChangeDatabase} />
-            <button type="button" className={styles.button} onClick={() => {
-              this.toggleBright()
-              this.handleSubmit()
-              }}>Generate GraphQL</button>
-            <div className={styles.warning} id='warning'><b>*</b>Please input <b>one</b> connection method</div>
+            <textarea placeholder="Host Name*" className={styles.question} required autoComplete="off" type="text" value={this.state.host} onChange={this.handleChangeHost} />
+            <textarea placeholder="Port Number*" className={styles.question} required autoComplete="off" type="text" value={this.state.port} onChange={this.handleChangePort} />
+            <textarea placeholder="User Name*" className={styles.question} required autoComplete="off" type="text" value={this.state.user} onChange={this.handleChangeUser} />
+            <textarea placeholder="Password*" className={styles.question} required autoComplete="off" type="text" value={this.state.password} onChange={this.handleChangePassword} />
+            <textarea placeholder="Database Name*" className={styles.question} required autoComplete="off" type="text" value={this.state.database} onChange={this.handleChangeDatabase} />
+            <button type="button" className={styles.button} onClick={() => {this.handleSubmit()}}>Generate GraphQL</button>
+            {formError}
             </div>
           </form>
         </div>
