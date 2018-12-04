@@ -52,25 +52,35 @@ module.exports = {
       currField.name = column_name;
       let fieldType;
       switch(data_type){
-        case 'character varying':
-          fieldType = 'String';
-          break;
-        case 'text':
-          fieldType = 'String';
-          break;
+        // case 'character varying':
+        //   fieldType = 'String';
+        //   break;
+        // case 'text':
+        //   fieldType = 'String';
+        //   break;
         case 'integer':
-          fieldType = 'Number';
+          fieldType = 'Integer';
           break;
-        // Need to confirm if string 'boolean' is data_type for Booleans
+        case 'double precision':
+          fieldType = 'Float';
+          break;
+        case 'real':
+          fieldType = 'Float';
+          break;
         case 'boolean':
           fieldType = 'Boolean';
           break;
         case 'date':
           fieldType = 'Date';
           break;
-        // Figure out appropriate default/error handling
+        case 'time':
+          fieldType = 'Time';
+          break;
+        case 'timestamp':
+          fieldType = 'DateTime';
+          break;
         default:
-          fieldType = null;
+          fieldType = 'String';
       }
       currField.type = fieldType;
       if(constraint_type === 'PRIMARY KEY'){

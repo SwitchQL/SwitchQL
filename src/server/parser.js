@@ -2,13 +2,7 @@ const tab = `  `;
 
 function parseGraphqlServer(data, database, url) {
   // require graphQL
-  let query = "const graphql = require('graphql');\n";
-
-  // if (database === 'MongoDB') {
-  //   for (const prop in data) {
-  //     query += buildDbModelRequirePaths(data[prop]);
-  //   }
-  // }
+  let query = `const graphql = require('graphql');\nconst graphql-iso-date = require('graphql-iso-date');\n`;
 
   if (database === 'MySQL') {
     query += `const getConnection = require('../db/mysql_pool.js');\n`;
@@ -30,6 +24,13 @@ function parseGraphqlServer(data, database, url) {
   GraphQLList,
   GraphQLNonNull
 } = graphql;
+  \n`;
+  
+  query += `const { 
+  GraphQLDate,
+  GraphQLTime,
+  GraphQLDateTime
+} = graphql-iso-date;
   \n`;
 
   // BUILD TYPE SCHEMA
@@ -66,11 +67,6 @@ function parseGraphqlServer(data, database, url) {
   return query;
 }
 
-// complete = false
-function buildDbModelRequirePaths(data) {
-  return `const ${data.type} = require('../db/${data.type.toLowerCase()}.js');\n`;
-}
-
 // complete = TRUE
 function buildGraphqlTypeSchema(table, data, database) {
   let subQuery ='';
@@ -90,6 +86,7 @@ function buildGraphqlTypeSchema(table, data, database) {
       subQuery += createSubQuery(table.fields[currField], data, database) + ', ';
     }
   }
+  if(subQuery !== '') query += ',';
   query += subQuery.slice(0, -2);
   return query += `\n${tab}})\n});\n\n`;
 }
@@ -101,15 +98,18 @@ function tableTypeToGraphqlType(type) {
       return 'GraphQLID';
     case 'String':
       return 'GraphQLString';
-    case 'Number':
+    case 'Integer':
       return 'GraphQLInt';
-    case 'Boolean':
-      return 'GraphQLBoolean';
     case 'Float':
       return 'GraphQLFloat';
-    // tentative 'Date' type, will need to make custom scalar later
+    case 'Boolean':
+      return 'GraphQLBoolean';
     case 'Date':
-      return 'Date'
+      return 'GraphQLDate'
+    case 'Time':
+      return 'GraphQLTime'
+    case 'DateTime':
+      return 'GraphQLDateTime'
     default:
       return 'GraphQLString';
   }
@@ -130,10 +130,8 @@ function createSubQuery(field, data, database) {
     const refTable = data[refLookup[0]].type;
     const refFieldName = data[refLookup[0]].fields[refLookup[1]].name;
     const refFieldType = data[refLookup[0]].fields[refLookup[1]].type;
-    // const refTable = data[field.relation.refTable].type;
-    // const refFieldName = data[field.relation.refTable].fields[field.relation.refField].name;
-    // const refFieldType = data[field.relation.refTable].fields[field.relation.refField].type;
-    query += `,\n${tab}${tab}${createSubQueryName(refTable)}: {\n${tab}${tab}${tab}type: `;
+
+    query += `\n${tab}${tab}${createSubQueryName(refTable)}: {\n${tab}${tab}${tab}type: `;
   
     if (field.relation[refIndex].refType === 'one to many' || field.relation[refIndex].refType === 'many to many') {
       query += `new GraphQLList(${refTable}Type),`;
@@ -151,33 +149,21 @@ function createSubQuery(field, data, database) {
   
     if (database === 'MySQL' || database === 'PostgreSQL') {
       if (database === 'MySQL') query += `getConnection`
-      query += `${tab}const sql = \`SELECT * FROM "${refTable}" WHERE `;
-  
-      // if (field.type === 'ID') {
-      //   query += `${field.name} = \${parent.${field.name}}`;
-      // } else {
-      //   query += `${refFieldName} = \${parent.${field.name}}`;
-      // }
-  
-      // Change condition to check against field.primaryKey bc both relation are ID
-      // if (field.primaryKey) {
-      //   query += `${refFieldName} = \${parent.${field.name}}`;
-      // } else {
-      //   query += `${refFieldName} = \${parent.${field.name}}`;
-      // }
+      query += `const sql = \`SELECT * FROM "${refTable}" WHERE `;
+
       query += `"${refFieldName}" = \${parent.${field.name}}\``;
       if(field.relation[refIndex].refType === 'one to many' || field.relation[refIndex].refType === 'many to many') {
-      query += `;\n${tab}${tab}${tab}${tab}${tab}return connect.conn.many(sql)\n`;
+      query += `;\n${tab}${tab}${tab}${tab}return connect.conn.many(sql)\n`;
       } else {
-        query += `;\n${tab}${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
+        query += `;\n${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
       }
-      query += `${tab}${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
-      query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}return data;`;
-      query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}})\n`;
-      query += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
-      query += `${tab}${tab}${tab}${tab}${tab}${tab}return 'the error is', err\n`;
+      query += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
+      query += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
       query += `${tab}${tab}${tab}${tab}${tab}})\n`;
-      query += `${tab}${tab}${tab}${tab}}\n`;
+      query += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
+      query += `${tab}${tab}${tab}${tab}${tab}${tab}return ('The error is', err);\n`;
+      query += `${tab}${tab}${tab}${tab}${tab}})\n`;
+      query += `${tab}${tab}${tab}}\n`;
       query += `${tab}${tab}}`;
       //TODO: add proper amount of tabs
     }
@@ -203,43 +189,11 @@ function createSubQuery(field, data, database) {
 
 }
 
-// complete = false bc FOR NoSQL DB's!!
-function findDbSearchMethod(refFieldName, refFieldType, refType) {
-  if (refFieldName === 'id' || refFieldType === 'ID') return 'findById';
-  switch (refType) {
-    case 'one to one':
-      return 'findOne';
-    case 'one to many':
-      return 'find';
-    case 'many to one':
-      return 'find';
-    case 'many to many':
-      return 'find';
-    default:
-      return 'find';
-  }
-}
-
-// complete = false bc FOR NoSQL DB's!!
-function createSearchObject(refFieldName, refFieldType, field) {
-  if (refFieldName === 'id' || refFieldType === 'ID') {
-    return `parent.${field.name}`;
-  } else {
-    return `{ ${refFieldName}: parent.${field.name} }`;
-  }
-}
-
 // complete = TRUE
 function buildGraphqlRootQuery(table, database) {
   let query = '';
 
   query += createFindAllRootQuery(table, database);
-  
-  // if a field exists
-  // coerces object to boolean (ie t.f[0] eval to null/undefined/0 -> true -> false)
-  // if (!!table.fields[0]) {
-  //   query += createFindByIdQuery(table, database);
-  // }
   
   // primarykey id is not always the first field in our data
   for(let field in table.fields){
@@ -261,14 +215,13 @@ function createFindAllRootQuery(table, database) {
 
   if (database === 'MySQL' || database === 'PostgreSQL') {
     if (database === 'MySQL') query += `getConnection`
-    query += `${tab}const sql = \`SELECT * FROM "${table.type}"\``
-    query += `;\n${tab}${tab}${tab}${tab}${tab}return connect.conn.many(sql)\n`;
-      query += `${tab}${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
-      query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}return data;`;
-      query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}
-      })\n`;
+    query += `const sql = \`SELECT * FROM "${table.type}"\``
+    query += `;\n${tab}${tab}${tab}${tab}return connect.conn.many(sql)\n`;
+      query += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
+      query += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
+      query += `${tab}${tab}${tab}${tab}${tab}})\n`;
       query += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
-      query += `${tab}${tab}${tab}${tab}${tab}${tab}return 'the error is', err\n`;
+      query += `${tab}${tab}${tab}${tab}${tab}${tab}return ('The error is', err)\n`;
       query += `${tab}${tab}${tab}${tab}${tab}})`;
   }
 
@@ -286,14 +239,13 @@ function createFindByIdQuery(table, idField, database) {
 
   if (database === 'MySQL' || database === 'PostgreSQL') {
     if (database === 'MySQL') query += `getConnection`
-    query += `${tab}${tab}const sql = \`SELECT * FROM "${table.type}" WHERE "${idField.name}" = \${args.${idField.name}}\`;\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}return data;`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}
-    })\n`;
+    query += `const sql = \`SELECT * FROM "${table.type}" WHERE "${idField.name}" = \${args.${idField.name}}\`;\n`;
+    query += `${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}})\n`;
     query += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}return 'the error is', err\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}return ('The error is', err)\n`;
     query += `${tab}${tab}${tab}${tab}${tab}})`;
     
   }
@@ -314,7 +266,7 @@ function buildGraphqlMutationQuery(table, database) {
 
 // complete = TRUE
 function addMutation(table, database) {
-  let query = `${tab}${tab}add${table.type}: {\n${tab}${tab}${tab}type: ${table.type}Type,\n${tab}${tab}${tab}args: {\n`;
+  let query = `${tab}${tab}add${toTitleCase(table.type)}: {\n${tab}${tab}${tab}type: ${table.type}Type,\n${tab}${tab}${tab}args: {\n`;
 
   let fieldNames = '';
   let argNames = '';
@@ -342,14 +294,13 @@ function addMutation(table, database) {
 
   if (database === 'MySQL' || database === 'PostgreSQL') {
     if (database === 'MySQL') query += `getConnection`
-    query += `const sql = \`INSERT INTO "${table.type}" (${fieldNames}) VALUES (${argNames})\`;\n${tab}${tab}${tab}${tab}${tab}`;
-    query += `${tab}${tab}return connect.conn.one(sql)\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}return data;`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}
-    })\n`;
+    query += `const sql = \`INSERT INTO "${table.type}" (${fieldNames}) VALUES (${argNames})\`;\n`;
+    query += `${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}})\n`;
     query += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}return 'the error is', err\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}return ('The error is', err);\n`;
     query += `${tab}${tab}${tab}${tab}${tab}})`;
   }
 
@@ -370,7 +321,7 @@ function updateMutation(table, database) {
     }
   }
 
-  let query = `${tab}${tab}update${table.type}: {\n${tab}${tab}${tab}type: ${table.type}Type,\n${tab}${tab}${tab}args: {\n`;
+  let query = `${tab}${tab}update${toTitleCase(table.type)}: {\n${tab}${tab}${tab}type: ${table.type}Type,\n${tab}${tab}${tab}args: {\n`;
 
   let firstLoop = true;
   for (const prop in table.fields) {
@@ -380,30 +331,28 @@ function updateMutation(table, database) {
     query += `${tab}${tab}${tab}${tab}${table.fields[prop].name}: ${buildMutationArgType(table.fields[prop])}`;
   }
 
-  query += `\n${tab}${tab}${tab}},\n${tab}${tab}${tab}resolve(parent, args) {\n${tab}${tab}${tab}${tab}`;
+  query += `\n${tab}${tab}${tab}},\n${tab}${tab}${tab}resolve(parent, args) {\n`;
 
   if (database === 'MongoDB') query += `return ${table.type}.findByIdAndUpdate(args.id, args);`;
 
   if (database === 'MySQL' || database === 'PostgreSQL') {
     if (database === 'MySQL') query += `getConnection`
 
-    query += `${tab}${tab}let updateValues = '';\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}for (const prop in args) {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}if (prop !== "${idFieldName}") {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}updateValues += \`\${prop} = '\${args[prop]}' \`\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}}\n`;
+    query += `${tab}${tab}${tab}${tab}let updateValues = '';\n`;
+    query += `${tab}${tab}${tab}${tab}for (const prop in args) {\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}if (prop !== "${idFieldName}") {\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}updateValues += \`\${prop} = '\${args[prop]}' \`\n`;
     query += `${tab}${tab}${tab}${tab}${tab}}\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}const sql = \`UPDATE "${table.type}" SET \${updateValues} WHERE "${idFieldName}" = \${args.`;
+    query += `${tab}${tab}${tab}${tab}}\n`;
+    query += `${tab}${tab}${tab}${tab}const sql = \`UPDATE "${table.type}" SET \${updateValues} WHERE "${idFieldName}" = \${args.`;
     query += `${idFieldName}}\`;\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}return data;`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}
-    })\n`;
+    query += `${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}})\n`;
     query += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}return 'the error is', err\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}return ('The error is', err);\n`;
     query += `${tab}${tab}${tab}${tab}${tab}})`;
- 
   }
 
   return query += `\n${tab}${tab}${tab}}\n${tab}${tab}}`;
@@ -422,22 +371,21 @@ function deleteMutation(table, database) {
       idField = table.fields[field];
     }
   }
-  let query = `${tab}${tab}delete${table.type}: {\n${tab}${tab}${tab}type: ${table.type}Type,\n${tab}${tab}${tab}args: {\n${tab}${tab}${tab}${tab}${idField.name}: { type: ${tableTypeToGraphqlType(idField.type)} }\n${tab}${tab}${tab}},\n${tab}${tab}${tab}resolve(parent, args) {\n${tab}${tab}${tab}${tab}`;
+  let query = `${tab}${tab}delete${toTitleCase(table.type)}: {\n${tab}${tab}${tab}type: ${table.type}Type,\n${tab}${tab}${tab}args: {\n${tab}${tab}${tab}${tab}${idField.name}: { type: ${tableTypeToGraphqlType(idField.type)} }\n${tab}${tab}${tab}},\n${tab}${tab}${tab}resolve(parent, args) {\n`;
 
   if (database === 'MongoDB') query += `return ${table.type}.findByIdAndRemove(args.id);`;
 
   if (database === 'MySQL' || database === 'PostgreSQL') {
     if (database === 'MySQL') query += `getConnection`
     // const idFieldName = table.fields[0].name;
-    query += `${tab}${tab}${tab}const sql = \`DELETE FROM "${table.type}" WHERE "${idField.name}" = \${args.`;
+    query += `${tab}${tab}${tab}${tab}const sql = \`DELETE FROM "${table.type}" WHERE "${idField.name}" = \${args.`;
     query += `${idField.name}}\`;\n`;
-    query += `${tab}${tab}${tab}return connect.conn.one(sql)\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}return data;`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}${tab}
-    })\n`;
+    query += `${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}})\n`;
     query += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
-    query += `${tab}${tab}${tab}${tab}${tab}${tab}return 'the error is', err\n`;
+    query += `${tab}${tab}${tab}${tab}${tab}${tab}return ('The error is', err);\n`;
     query += `${tab}${tab}${tab}${tab}${tab}})`;
   }
 
@@ -454,17 +402,5 @@ function checkForRequired(required, position) {
   }
   return '';
 }
-
-// complete = false
-// function checkForMultipleValues(multipleValues, position) {
-//   if (multipleValues) {
-//     if (position === 'front') {
-//       return 'new GraphQLList(';
-//     }
-//     return ')';
-//   }
-//   return '';
-// }
-
 
 module.exports = { parseGraphqlServer, toTitleCase, createFindAllRootQuery, buildGraphqlRootQuery, createSubQuery, buildGraphqlTypeSchema };

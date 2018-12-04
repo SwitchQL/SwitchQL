@@ -7,22 +7,21 @@ function parseClientQueries(tables) {
   // tables is state.tables from schemaReducer
   for (const tableId in tables) {
     query += buildClientQueryAll(tables[tableId]);
-    exportNames.push(`queryEvery${tables[tableId].type}`);
-
+    exportNames.push(`queryEvery${toTitleCase(tables[tableId].type)}`);
     for(let fieldId in tables[tableId].fields){      
       if (tables[tableId].fields[fieldId].primaryKey) {
         query += buildClientQueryById(tables[tableId], tables[tableId].fields[fieldId]);
-        exportNames.push(`query${tables[tableId].type}ById `);
+        exportNames.push(`query${toTitleCase(tables[tableId].type)}ById `);
       }
     }
   }
 
-  let endString = 'export {';
+  let endString = `export {\n`;
   exportNames.forEach((name, i) => {
-    if (i) {
-      endString += `, ${name}`;
+    if (i !== exportNames.length - 1) {
+      endString += `${tab}${name},\n`;
     } else {
-      endString += ` ${name}`;
+      endString += `${tab}${name}\n`;
     }
   });
 
@@ -30,7 +29,7 @@ function parseClientQueries(tables) {
 }
 
 function buildClientQueryAll(table) {
-  let string = `const queryEvery${table.type} = gql\`\n`;
+  let string = `const queryEvery${toTitleCase(table.type)} = gql\`\n`;
   string += `${tab}{\n`;
   string += `${tab}${tab}every${toTitleCase(table.type)} {\n`;
 
@@ -48,7 +47,7 @@ function toTitleCase(refTypeName) {
 }
 
 function buildClientQueryById(table, idField) {
-  let string = `const query${table.type}ById = gql\`\n`;
+  let string = `const query${toTitleCase(table.type)}ById = gql\`\n`;
   string += `${tab}query($${table.type}: ${idField.type}!) {\n`;
   string += `${tab}${tab}${table.type}(${idField.name}: $${table.type}) {\n`;
   

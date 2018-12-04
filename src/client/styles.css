@@ -3,8 +3,18 @@ html {
   width: 100%;
 }
 
-h1 {
+.load {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  background-image: linear-gradient(to bottom right, rgb(19, 24, 31), #050b13);
+  filter: opacity(0.7);
+  z-index: 1;
+}
 
+h1 {
   color: white;
   font-size: 28px;
   margin-bottom: 2.5%;
@@ -27,6 +37,7 @@ input:focus {
   outline: 0;
 }
 
+input.question,
 textarea.question {
   font-family: 'Raleway', sans-serif;
   resize: none;
@@ -37,11 +48,21 @@ textarea.question {
   margin: auto auto 1.5% auto;
   border: none;
   width: 67%;
-  background-color: #3d4958;
+  background-color: #313a46;
+
   transition: padding-top 0.2s ease, margin-top 0.2s ease;
   overflow-x: hidden;
   color: rgb(255, 255, 255);
   box-shadow: 2px 2px 2px rgba(12, 12, 12, 0.644) inset;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.question:hover {
+  background-color: #3d4958;
+}
+.question:focus {
+  background-color: #3d4958;
 }
 
 .question::-webkit-scrollbar {
@@ -54,32 +75,33 @@ textarea.question {
 
 .question::-webkit-scrollbar-thumb {
   background-image: linear-gradient( darkgrey, rgb(115, 115, 115));
-
-outline: 1px solid slategrey;
-border-radius: 8px;
+  outline: 1px solid slategrey;
+  border-radius: 8px;
 }
 
 .areaOne {
   resize: none;
   width: 85%;
   margin: auto;
-  height: 72vh;
+  height: 75vh;
   background: none repeat scroll 0 0 rgba(0, 0, 0, 0.07);
   border-color: -moz-use-text-color #FFFFFF #FFFFFF -moz-use-text-color;
   border-image: none;
   border-radius: 8px;
-  background-color: #363a42;
+  /* background-color: #363a42; */
+  background-color: #2b2f35;
   font-family: 'Inconsolata', monospace;
-  color: rgb(255, 255, 255);
+  color: rgb(225, 239, 255);
   font-size: 1em;
   line-height: 1.4em;
-  box-shadow:5px 5px 5px rgb(22, 22, 22); 
+  box-shadow: -5px 5px 51px rgba(22, 22, 22, 0.541) inset; 
   background-image: url('./img/gql.png');
   background-repeat: no-repeat;
   background-position: -10% 130%;
   background-attachment: fixed;
   background-size: 85%;
-  padding: 20px 20px;
+  padding: 15px 20px;
+  z-index: 1;
 }
 
 .areaOne::-webkit-scrollbar {
@@ -91,37 +113,32 @@ border-radius: 8px;
 }
 
 .areaOne::-webkit-scrollbar-thumb {
-  background-image: linear-gradient( darkgrey, rgb(115, 115, 115));
-
-outline: 1px solid slategrey;
-border-radius: 8px;
+  background-image: linear-gradient( rgb(110, 110, 110), rgb(71, 71, 71));
+  outline: 1px solid slategrey;
+  border-radius: 8px;
 }
 
+
+
 .flexTabs {
-  /* display: flex;
-  flex-direction: row;
-  padding: 10px 10px;
-  width: 90vw;
-  justify-content: space-evenly;
-  list-style-type: none; */
   position: relative;
-  left: -20px;
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-evenly;
-  flex-direction: row;
+  float: left;
+  left: 1vw;
+  display: block;
   list-style: none;
-  margin: -5px 3vw 5px;
+  margin: -5px 5px 15px 5px;
   border-radius: 6px;
   padding: 5px 0px;
-  /* text-align: center; */
-  /* width: 300px; */
+  width: 28.5vw;
+  text-align: center;
   color: white;
-  background-image: linear-gradient( #42474e, #363a42);
-  /* background-color: #363a42; */
+  background-color: #2b2f35;
   font-family: 'Raleway', sans-serif;
   font-size: 15px;
-  box-shadow:5px 5px 5px rgb(22, 22, 22); 
+  box-shadow:5px 5px 5px rgba(22, 22, 22, 0.425); 
+  opacity: 0.3;
+  outline: none;
+  transition: 0.3s;
 }
 
 .formvis {
@@ -135,18 +152,179 @@ border-radius: 8px;
   margin-left: -150px;
   top: 50%;
   margin-top: -260px;
-
   text-align: center;
   align-content: center;
   box-shadow: 8px 8px 8px rgb(13, 13, 13);
+  z-index: 2;
 }
+
+.exit {
+  position: absolute;
+  top: -45px;
+  right: 15px;
+  font-size: 30px;
+  padding: 0px 0px;
+  outline: none;
+
+  border: none;
+  color: #525e6885;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0);
+  transition: 0.25s;
+}
+
+.exit:hover {
+  color: #cf4299;
+}
+
+.icon {
+  position: absolute;
+  top: -32px;
+  right: 37px;
+  height: 15px;
+  width: 15px;
+  filter: saturate(0);
+  opacity: 0.5;
+  transition: 0.25s;
+}
+
+.icon:hover {
+  filter: saturate(1);
+  opacity: 1;
+}
+
+.fadeIn {
+  -webkit-animation-duration: 0.25s; animation-duration: 0.25s;
+  -webkit-animation-fill-mode: both; animation-fill-mode: both;
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+.fadeOut {
+  -webkit-animation-duration: 0.35s; animation-duration: 0.35s;
+  -webkit-animation-fill-mode: both; animation-fill-mode: both;
+  -webkit-animation-name: fadeOut;
+  animation-name: fadeOut;
+}
+.fadeInScale {
+  -webkit-animation-duration: 0.25s; animation-duration: 0.25s;
+  -webkit-animation-fill-mode: both; animation-fill-mode: both;
+  -webkit-animation-name: fadeInScale;
+  animation-name: fadeInScale;
+}
+.fadeOutScale {
+  -webkit-animation-duration: 0.35s; animation-duration: 0.35s;
+  -webkit-animation-fill-mode: both; animation-fill-mode: both;
+  -webkit-animation-name: fadeOutScale;
+  animation-name: fadeOutScale;
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+    visibility: hidden;
+  }
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    visibility: hidden;
+  }
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+@-webkit-keyframes fadeOut {
+  from {
+    opacity: 1;
+    visibility: visible;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    visibility: visible;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes fadeInScale {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+    visibility: hidden;
+  }
+  99% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+  }
+}
+@keyframes fadeInScale {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+    visibility: hidden;
+  }
+  99% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+  }
+}
+@-webkit-keyframes fadeOutScale {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+  }
+  5% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(0.90);
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes fadeOutScale {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+  }
+  5% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(0.90);
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 
 .formIn {
   position: relative;
   top: 50px;
   height: 30px;
   width: 300px;
-  
 }
 
 .vis {
@@ -155,13 +333,12 @@ border-radius: 8px;
   top: 0px;
   width: 100%;
   height: 100%;
-  filter: brightness(40%);
-  background-image: linear-gradient(to bottom right, #2d3744, #070f1a);
+  /* background-image: linear-gradient(to bottom right, #2d3744, #070f1a); */
+  background-image: linear-gradient(to bottom right, #1d242e, #050b13);
 }
 
 .button {
   background-image: linear-gradient(to top left, #2d3b75, #cf4299, #f19858);
-
   padding: 10px 42px;
   border-radius: 6px;
   margin-top: 20px;
@@ -181,7 +358,7 @@ border-radius: 8px;
 
 .headerFont {
   margin: 1% 5% -1% 8%;
-  font-size: 70px;
+  font-size: 60px;
   font-family: 'Poppins', sans-serif;
   color: white;
   letter-spacing: 1px;
@@ -196,8 +373,8 @@ border-radius: 8px;
 
 .logoMain {
   position: relative;
-  margin: 0 10px -15px -30px;
-  width: 75px;
+  margin: 0 8px -13px -25px;
+  width: 65px;
 }
 
 .connect {
@@ -232,10 +409,11 @@ border-radius: 8px;
 .bottomButtons {
   position: relative;
   border-radius: 6px;
-  margin: 2% 2% auto 2%;
+  float: left;
+  margin: 2% 1% auto 1%;
   padding: 5px 10px;
-  left: 3%;
-  width: 43%;
+  left: 5vw;
+  width: 42vw;
   font-family: 'Raleway', sans-serif;
   font-size: 15px;
   background-image: linear-gradient(to top left, #2d3b75, #cf4299, #f19858);
@@ -244,11 +422,21 @@ border-radius: 8px;
   border: none;
   box-shadow:5px 5px 5px rgb(22, 22, 22); 
   filter: saturate(0%);
-  opacity: 0.7;
+  opacity: 0.4;
   transition: 0.3s;
   cursor: pointer;
   outline: none;
+  text-align: center;
 }
 
-.bottomButtons:hover {filter: saturate(110%)}
+.bottomButtons:hover {filter: saturate(100%)}
 .bottomButtons:hover {opacity: 1}
+
+.inputVis {
+  width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}

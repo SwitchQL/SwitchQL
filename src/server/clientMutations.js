@@ -10,7 +10,7 @@ function parseClientMutations(tables) {
     query += buildMutationParams(tables[tableId], null, 'add');
     query += buildTypeParams(tables[tableId], null, 'add');
     query += buildReturnValues(tables[tableId]);
-    exportNames.push(`add${tables[tableId].type}Mutation`);
+    exportNames.push(`add${toTitleCase(tables[tableId].type)}Mutation`);
 
     // check if table has an ID field
     for(let fieldId in tables[tableId].fields){      
@@ -19,22 +19,22 @@ function parseClientMutations(tables) {
         query += buildMutationParams(tables[tableId], tables[tableId].fields[fieldId], 'update');
         query += buildTypeParams(tables[tableId], tables[tableId].fields[fieldId], 'update');
         query += buildReturnValues(tables[tableId]);
-        exportNames.push(`update${tables[tableId].type}Mutation`);
+        exportNames.push(`update${toTitleCase(tables[tableId].type)}Mutation`);
         // delete mutations
         query += buildMutationParams(tables[tableId], tables[tableId].fields[fieldId], 'delete');
         query += buildTypeParams(tables[tableId], tables[tableId].fields[fieldId], 'delete');
         query += buildReturnValues(tables[tableId]);
-        exportNames.push(`delete${tables[tableId].type}Mutation`);
+        exportNames.push(`delete${toTitleCase(tables[tableId].type)}Mutation`);
       }
     }
   }
 
   let endString = `export {\n`;
   exportNames.forEach((name, i) => {
-    if (i === 0) {
+    if (i !== exportNames.length - 1) {
       endString += `${tab}${name},\n`;
     } else {
-      endString += `${tab}${name},\n`;
+      endString += `${tab}${name}\n`;
     }
   });
 
@@ -43,7 +43,7 @@ function parseClientMutations(tables) {
 
 // builds params for either add or update mutations
 function buildMutationParams(table, idField, mutationType) {
-  let query = `const ${mutationType}${table.type}Mutation = gql\`\n${tab}mutation(`;
+  let query = `const ${mutationType}${toTitleCase(table.type)}Mutation = gql\`\n${tab}mutation(`;
 
   if (mutationType === 'delete'){
     query += `$${idField.name}: ${idField.type}!`;
@@ -86,7 +86,7 @@ function checkForRequired(required) {
 }
 
 function buildTypeParams(table, idField, mutationType) {
-  let query = `${tab}${mutationType}${table.type}(`;
+  let query = `${tab}${mutationType}${toTitleCase(table.type)}(`;
   if (mutationType === 'delete'){
     query += `$${idField.name}: ${idField.type}`;
   } else {
@@ -118,6 +118,12 @@ function buildReturnValues(table) {
   }
 
   return query += `${tab}${tab}}\n${tab}}\n\`\n\n`;
+}
+
+function toTitleCase(refTypeName) {
+  let name = refTypeName[0].toUpperCase();
+  name += refTypeName.slice(1).toLowerCase();
+  return name;
 }
 
 module.exports = parseClientMutations;

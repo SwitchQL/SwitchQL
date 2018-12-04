@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Form from './Form.jsx';
+import ZipFolder from './ZipFolder.jsx';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import styles from './styles.css';
 import { ipcRenderer } from 'electron';
 import logo from './img/logo.png';
-
-const fs = require('fs');
-const JSZip = require('jszip');
-const path = require('path');
 
 class App extends Component {
 	constructor(props) {
@@ -17,44 +14,52 @@ class App extends Component {
 			currTab: 'schema',
 			schema: '',
 			mutations: '',
-			queries: ''
+			queries: '',
+			generated: false
 		};
-		this.createZip = this.createZip.bind(this);
 	}
 
 	componentDidMount() {
+		console.log('mount')
 		ipcRenderer.on('data', (event, args) => {
 			const data = JSON.parse(args);
       this.setState(data);
 		});
 	}
-
-	newDatabase() {
-		document.getElementById('body').style.filter = 'brightness(40%)'
-		document.getElementById('form').style.visibility = 'visible';
+	componentDidUpdate(){
+		console.log('update')
+		console.log(this.state.directory);
+		document.getElementsByClassName(styles.areaOne)[0].placeholder = '';
 	}
 
+	newDatabase() {
+		// document.getElementById('body').style.filter = 'brightness(40%)'
+		// document.getElementById('form').style.visibility = 'visible';
+		document.getElementsByClassName(styles.load)[0].classList.remove(styles.fadeOut);
+		document.getElementsByClassName(styles.formvis)[0].classList.remove(styles.fadeOutScale);
+		document.getElementsByClassName(styles.load)[0].classList.add(styles.fadeIn);
+		document.getElementsByClassName(styles.formvis)[0].classList.add(styles.fadeInScale);
+		document.getElementById('export').innerHTML = 'Export Code';
+	}
 
-	createZip(e) {
-		let directory = e.target.files;
-		console.log(directory)
-		const zip = new JSZip();
-		zip.file("Schema.js", this.state.schema);
-		zip.file("clientMutations.js", this.state.mutations);
-		zip.file("clientQueries.js", this.state.queries);
-		// zip
-		// 	.generateNodeStream({type:'nodebuffer',streamFiles:true})
-		// 	.pipe(fs.createWriteStream(path.join(directory,'SwitchQL.zip')))
-		// 	.on('finish', function () {
-		// 	// JSZip generates a readable stream with a "end" event,
-		// 	// but is piped here in a writable stream which emits a "finish" event.
-		// 		event.sender.send('Confirmed ZIP', 'Finished!')
-		// });
+	highlightClick(event) {
+		const id = event.target.id;
+		const tabs = document.getElementsByClassName(styles.flexTabs);
+		for(let i = 0; i < tabs.length; i++){
+			if(tabs[i].id !== id){
+				tabs[i].style.opacity = 0.5;
+				tabs[i].style.transform = 'scale(1)'
+			} else {
+				tabs[i].style.opacity = 1;
+				tabs[i].style.transform = 'scale(1.05)'
+			}
+		}
 	}
 
 	render() {
 		return (
 			<div>
+				<div className={styles.load}></div>
 				<div id='body' className={styles.vis}>
 					<div className={styles.headerFont}>
 					<img src={logo} className={styles.logoMain}></img>
@@ -62,10 +67,10 @@ class App extends Component {
 					</div>
 					<Tabs>
 						<TabList>
-							<div className={styles.flexTabs}>
-								<Tab>Schema</Tab>
-								<Tab>Client Mutations</Tab>
-								<Tab>Client Queries</Tab>
+							<div>
+								<Tab className={styles.flexTabs} onClick={(event) => this.highlightClick(event)}>Type Definitions</Tab>
+								<Tab className={styles.flexTabs} onClick={(event) => this.highlightClick(event)}>Client Mutations</Tab>
+								<Tab className={styles.flexTabs} onClick={(event) => this.highlightClick(event)}>Client Queries</Tab>
 							</div>
 						</TabList>
 
@@ -79,8 +84,8 @@ class App extends Component {
 							<textarea className={styles.areaOne} value={this.state.queries} readOnly />
 						</TabPanel>
 					</Tabs>
-				<button type='button' className={styles.bottomButtons} onClick={(event) => this.createZip(event)}>Export Code</button>
-				{/* <input type='file' webkitdirectory={1} className={styles.bottomButtons} onClick={(event) => this.createZip(event)}></input> */}
+
+				<ZipFolder/>
 				<button type='button' className={styles.bottomButtons} onClick={() => this.newDatabase()} >New Database</button>
 				</div>
 				<Form
