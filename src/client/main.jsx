@@ -47,7 +47,7 @@ class App extends Component {
 		const tabs = document.getElementsByClassName(styles.flexTabs);
 		for(let i = 0; i < tabs.length; i++){
 			if(tabs[i].id !== id){
-				tabs[i].style.opacity = 0.5;
+				tabs[i].style.opacity = 0.5; 
 				tabs[i].style.transform = 'scale(1)'
 			} else {
 				tabs[i].style.opacity = 1;
