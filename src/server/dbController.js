@@ -1,27 +1,10 @@
 const converter = require('../index');
 
-const initOptions = {
-  connect(client, dc, useCount) {
-    const cp = client.connectionParameters;
-    // console.log('Connected to database:', cp.database);
-  },
-  disconnect(client, dc) {
-    const cp = client.connectionParameters;
-    // console.log('Disconnecting from database:', cp.database);
-  },
-  query(e) {
-    // console.log('QUERY:', e.query);
-  },
-  receive(data, result, e) {
-    // console.log('DATA: ', data);
-  },
-};
-
-const pgp = require('pg-promise')(initOptions);
+const pgp = require('pg-promise')();
 const mysql = require('promise-mysql');
 
 module.exports = {
-  getSchemaInfoPG: async (data) => {
+  getSchemaInfoPG: async data => {
     const url = data;
     let db = pgp(url);
     const info = await db.any(`SELECT
@@ -67,29 +50,31 @@ module.exports = {
     WHERE table_type = 'BASE TABLE'
       AND t.table_schema = 'public'
       AND constraint_type = 'FOREIGN KEY'
-    ORDER BY table_name`,) 
+    ORDER BY table_name`);
     return info;
   },
-  fuseConnectionString: (info) => {
+  fuseConnectionString: info => {
     let connectionString = '';
-    if(info.type === 'PostgreSQL') {
-      connectionString += 'postgres://'
+    if (info.type === 'PostgreSQL') {
+      connectionString += 'postgres://';
     }
-      connectionString += `${info.user}:${info.password}@${info.host}:${info.port}/${info.database}`
-      return connectionString;
+    connectionString += `${info.user}:${info.password}@${info.host}:${
+      info.port
+    }/${info.database}`;
+    return connectionString;
   },
-  getSchemaInfoMySQL:async (info) => {
+  getSchemaInfoMySQL: async info => {
     let con = await mysql.createConnection({
-      host : info.host,
-      user : info.user,
-      password : info.password,
-      database : info.database,
-      port : info.port 
-    });    
+      host: info.host,
+      user: info.user,
+      password: info.password,
+      database: info.database,
+      port: info.port
+    });
     let result = await con.query(`Select t.table_name, c.column_name,kcu.constraint_name, kcu.referenced_table_name AS foreign_table_name, kcu.referenced_column_name AS foreign_column_name, c.is_nullable, c.data_type
     from information_schema.tables t join information_schema.columns c ON t.table_name = c.table_name
     left join information_schema.key_column_usage AS kcu ON t.table_name = kcu.table_name AND c.column_name = kcu.column_name
     where t.table_schema = 'switchql' and t.table_type = 'BASE TABLE'  ORDER BY table_name;`);
     return result;
-  },
-}
+  }
+};
