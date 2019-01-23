@@ -34,25 +34,9 @@ app.on('ready', function () {
   Menu.setApplicationMenu(mainMenu);
 });
 
-const mainMenuTemplate = [{
-  label: 'File',
-  submenu: [{
-      label: 'First_thing',
-    },
-    {
-      label: 'Second'
-    },
-    {
-      label: 'Quit',
-      accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
-      click() {
-        app.quit();
-      }
-    }
-  ]
-},
+const mainMenuTemplate = [
 {
-  label: "Edit",
+  label: "Options",
   submenu: [
       { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
       { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
