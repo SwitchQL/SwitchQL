@@ -16,7 +16,7 @@ let queriesMetaData;
 ipcMain.on('url', async (event, info) => {
   info = JSON.parse(info);
   if(info.value.length === 0){
-    info.value = dbController.fuseConnectionString(info);
+    info.value = dbController.buildConnectionString(info);
   }
   let dbMetaData =  await dbController.getSchemaInfoPG(info.value);
   const formattedMetaData = await logicController.formatMetaData(dbMetaData);
