@@ -1,4 +1,4 @@
-const pgp = require('pg-promise')();
+const pgp = require("pg-promise")();
 
 const metadataQuery = `SELECT
 t.table_name,
@@ -43,19 +43,23 @@ LEFT JOIN information_schema.constraint_column_usage AS ccu
 WHERE table_type = 'BASE TABLE'
 AND t.table_schema = 'public'
 AND constraint_type = 'FOREIGN KEY'
-ORDER BY table_name`
-
+ORDER BY table_name`;
 
 async function getSchemaInfoPG(connectionString) {
-  let db = pgp(connectionString);
-  const metadataInfo = await db.any(metadataQuery).then(pgp.end());
-  return metadataInfo;
+  let db = await pgp(connectionString);
+  try {
+    return (metadataInfo = await db.any(metadataQuery));
+  } catch (error) {
+    throw error;
+  }
 }
 
-function buildConnectionString(info){
-  let connectionString = '';
+function buildConnectionString(info) {
+  let connectionString = "";
   info.port = info.port || 5432;
-  connectionString += `postgres://${info.user}:${info.password}@${info.host}:${info.port}/${info.database}`;
+  connectionString += `postgres://${info.user}:${info.password}@${info.host}:${
+    info.port
+  }/${info.database}`;
   return connectionString;
 }
 
