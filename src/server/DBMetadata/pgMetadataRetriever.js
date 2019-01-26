@@ -1,7 +1,7 @@
-const converter = require('../index');
+const converter = require("../index");
 
-const pgp = require('pg-promise')();
-const mysql = require('promise-mysql');
+const pgp = require("pg-promise")();
+const mysql = require("promise-mysql");
 
 module.exports = {
   getSchemaInfoPG: async data => {
@@ -54,9 +54,9 @@ module.exports = {
     return info;
   },
   fuseConnectionString: info => {
-    let connectionString = '';
-    if (info.type === 'PostgreSQL') {
-      connectionString += 'postgres://';
+    let connectionString = "";
+    if (info.type === "PostgreSQL") {
+      connectionString += "postgres://";
     }
     connectionString += `${info.user}:${info.password}@${info.host}:${
       info.port
