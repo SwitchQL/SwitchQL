@@ -1,7 +1,5 @@
 import processed from "./sampleFiles/processedMetadata";
 import retrieved from "./sampleFiles/retrievedMetadata";
-import noRelProcessed from "./sampleFiles/noRelProcessedMetadata";
-import noRelRetrieved from "./sampleFiles/noRelRetrievedMetadata";
 
 import processMetadata from "./pgMetadataProcessor";
 
