@@ -1,5 +1,3 @@
-const converter = require('../index');
-
 const pgp = require('pg-promise')();
 const mysql = require('promise-mysql');
 
