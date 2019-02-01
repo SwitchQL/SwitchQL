@@ -1,4 +1,4 @@
-import ProcessedField from "./classes/processedField";
+const ProcessedField = require("./classes/processedField")
 
 function processMetadata(columnData) {
   if (!columnData || columnData.length === 0)
@@ -66,4 +66,4 @@ function tableInToRef(toRef, tblCol) {
   );
 }
 
-export default processMetadata;
+module.exports = processMetadata;

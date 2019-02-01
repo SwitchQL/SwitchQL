@@ -1,6 +1,8 @@
 const tab = `  `;
 
 function parseClientQueries(tables) {
+  if (Object.keys(tables).length == 0) return ''
+
   let query = "import { gql } from \'apollo-boost\';\n\n";
   const exportNames = [];
 
@@ -8,7 +10,8 @@ function parseClientQueries(tables) {
   for (const tableId in tables) {
     query += buildClientQueryAll(tables[tableId]);
     exportNames.push(`queryEvery${toTitleCase(tables[tableId].type)}`);
-    for(let fieldId in tables[tableId].fields){      
+
+    for (let fieldId in tables[tableId].fields) {
       if (tables[tableId].fields[fieldId].primaryKey) {
         query += buildClientQueryById(tables[tableId], tables[tableId].fields[fieldId]);
         exportNames.push(`query${toTitleCase(tables[tableId].type)}ById `);
@@ -17,6 +20,7 @@ function parseClientQueries(tables) {
   }
 
   let endString = `export {\n`;
+
   exportNames.forEach((name, i) => {
     if (i !== exportNames.length - 1) {
       endString += `${tab}${name},\n`;
@@ -25,7 +29,7 @@ function parseClientQueries(tables) {
     }
   });
 
-  return query += `${endString  }};`;
+  return query += `${endString}};`;
 }
 
 function buildClientQueryAll(table) {
@@ -50,7 +54,7 @@ function buildClientQueryById(table, idField) {
   let string = `const query${toTitleCase(table.type)}ById = gql\`\n`;
   string += `${tab}query($${table.type}: ${idField.type}!) {\n`;
   string += `${tab}${tab}${table.type}(${idField.name}: $${table.type}) {\n`;
-  
+
   for (const fieldId in table.fields) {
     string += `${tab}${tab}${tab}${table.fields[fieldId].name}\n`;
   }

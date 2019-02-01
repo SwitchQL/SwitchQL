@@ -1,4 +1,4 @@
-export default class ProcessedField {
+class ProcessedField {
   constructor(col, tblIdx, fieldIdx) {
     const isPrimaryKey = col.constraint_type === "PRIMARY KEY";
 
@@ -86,12 +86,12 @@ export default class ProcessedField {
 
       const refIndex = `${lookup[foreign_table_name].INDEX}.${
         lookup[foreign_table_name][foreign_column_name]
-      }`;
+        }`;
       this.relation[refIndex] = relationship;
 
       const relatedTo =
         data.tables[lookup[foreign_table_name].INDEX].fields[
-          lookup[foreign_table_name][foreign_column_name]
+        lookup[foreign_table_name][foreign_column_name]
         ];
 
       const relToRefIndex = `${this.tableNum}.${this.fieldNum}`;
@@ -128,3 +128,5 @@ export default class ProcessedField {
     }
   }
 }
+
+module.exports = ProcessedField;

@@ -1,7 +1,7 @@
 const electron = require("electron");
 const { ipcMain } = electron;
 const dbController = require("./DBMetadata/pgMetadataRetriever.js");
-import processMetaData from "./DBMetadata/pgMetadataProcessor";
+const processMetaData = require("./DBMetadata/pgMetadataProcessor");
 const { parseGraphqlServer } = require("./Generators/typeGenerator.js");
 const parseClientMutations = require("./Generators/clientMutationGenerator.js");
 const parseClientQueries = require("./Generators/clientQueryGenerator.js");
@@ -45,7 +45,7 @@ ipcMain.on("directory", async (event, directory) => {
   zip
     .generateNodeStream({ type: "nodebuffer", streamFiles: true })
     .pipe(fs.createWriteStream(path.join(directory, "SwitchQL.zip")))
-    .on("finish", function() {
+    .on("finish", function () {
       // JSZip generates a readable stream with a "end" event,
       // but is piped here in a writable stream which emits a "finish" event.
       event.sender.send("Confirmed ZIP", "Finished!");

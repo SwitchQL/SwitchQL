@@ -46,7 +46,7 @@ AND constraint_type = 'FOREIGN KEY'
 ORDER BY table_name`;
 
 async function getSchemaInfoPG(connectionString) {
-  let db = await pgp(connectionString);
+  let db = pgp(connectionString);
   try {
     return (metadataInfo = await db.any(metadataQuery));
   } catch (error) {
@@ -59,7 +59,7 @@ function buildConnectionString(info) {
   info.port = info.port || 5432;
   connectionString += `postgres://${info.user}:${info.password}@${info.host}:${
     info.port
-  }/${info.database}`;
+    }/${info.database}`;
   return connectionString;
 }
 

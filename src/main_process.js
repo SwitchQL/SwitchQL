@@ -3,9 +3,12 @@ const url = require("url");
 const path = require("path");
 const { app, BrowserWindow, Menu } = electron;
 
+require('./server/server')
+
+
 let mainWindow;
 
-app.on("ready", function() {
+app.on('ready', function () {
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
   //create new window
   mainWindow = new BrowserWindow({
@@ -22,7 +25,7 @@ app.on("ready", function() {
     })
   );
   //Quit App when closed
-  mainWindow.on("closed", function() {
+  mainWindow.on('closed', function () {
     app.quit();
   });
   //Build menu from template
@@ -31,38 +34,49 @@ app.on("ready", function() {
   Menu.setApplicationMenu(mainMenu);
 });
 
-const mainMenuTemplate = [
+const mainMenuTemplate = [{
+  label: 'File',
+  submenu: [{
+    label: 'First_thing',
+  },
+  {
+    label: 'Second'
+  },
+  {
+    label: 'Quit',
+    accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
+    click() {
+      app.quit();
+    }
+  }
+  ]
+},
 {
   label: "Options",
   submenu: [
-      { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-      { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-      { type: "separator" },
-      { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-      { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-      { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-      {
-        label: "Select All",
-        accelerator: "CmdOrCtrl+A",
-        selector: "selectAll:"
-      }
-    ]
-  }
-];
+    { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+    { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+    { type: "separator" },
+    { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+    { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+    { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+    { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+  ]
+}];
 
 //if mac, add empty object to menu
-if (process.platform == "darwin") {
+if (process.platform == 'darwin') {
   mainMenuTemplate.unshift({});
 }
 
 //Add developer tools item if not in prod
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== 'production') {
   mainMenuTemplate.push({
     label: "Developer Tools",
     submenu: [
       {
-        label: "Toggle DevTools",
-        accelerator: process.platform == "darwin" ? "Command+I" : "Ctrl+I",
+        label: 'Toggle DevTools',
+        accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
         click(item, focusedWindow) {
           focusedWindow.toggleDevTools();
         }
