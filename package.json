@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zahaan-jasani/SwitchQL.git"
+    "url": "git+https://github.com/SwitchQL/SwitchQL.git"
   },
-  "author": "Zahaan Jasani, Brian Kim, Edward Kim",
+  "author": "Robin Seitz, Ian Laue, Zahaan Jasani, Brian Kim, Edward Kim",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/zahaan-jasani/SwitchQL/issues"
+    "url": "https://github.com/SwitchQL/SwitchQL/issues"
   },
-  "homepage": "https://github.com/zahaan-jasani/SwitchQL#readme",
+  "homepage": "https://github.com/SwitchQL/SwitchQL#readme",
   "dependencies": {
     "electron": "^3.1.2",
     "file-loader": "^2.0.0",

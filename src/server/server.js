@@ -2,7 +2,7 @@ const electron = require("electron");
 const { ipcMain } = electron;
 const dbController = require("./DBMetadata/pgMetadataRetriever.js");
 const processMetaData = require("./DBMetadata/pgMetadataProcessor");
-const { parseGraphqlServer } = require("./Generators/typeGenerator.js");
+const generateGraphqlServer = require("./Generators/typeGenerator.js");
 const parseClientMutations = require("./Generators/clientMutationGenerator.js");
 const parseClientQueries = require("./Generators/clientQueryGenerator.js");
 const fs = require("fs");
@@ -23,7 +23,7 @@ ipcMain.on("url", async (event, info) => {
     let dbMetaData = await dbController.getSchemaInfoPG(info.value);
     const formattedMetaData = await processMetaData(dbMetaData);
 
-    schemaMetaData = await parseGraphqlServer(
+    schemaMetaData = await generateGraphqlServer(
       formattedMetaData.tables,
       info.type,
       info.value
@@ -39,7 +39,7 @@ ipcMain.on("url", async (event, info) => {
     };
     event.sender.send("data", JSON.stringify(gqlData));
   } catch (err) {
-    event.sender.send('appError', JSON.stringify(err));
+    event.sender.send("appError", JSON.stringify(err));
   }
 });
 
@@ -53,7 +53,7 @@ ipcMain.on("directory", async (event, directory) => {
   zip
     .generateNodeStream({ type: "nodebuffer", streamFiles: true })
     .pipe(fs.createWriteStream(path.join(directory, "SwitchQL.zip")))
-    .on("finish", function () {
+    .on("finish", function() {
       // JSZip generates a readable stream with a "end" event,
       // but is piped here in a writable stream which emits a "finish" event.
       event.sender.send("Confirmed ZIP", "Finished!");
