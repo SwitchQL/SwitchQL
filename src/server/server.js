@@ -14,25 +14,33 @@ let mutationsMetaData;
 let queriesMetaData;
 
 ipcMain.on("url", async (event, info) => {
-  info = JSON.parse(info);
-  if (info.value.length === 0) {
-    info.value = dbController.buildConnectionString(info);
+  try {
+    info = JSON.parse(info);
+    if (info.value.length === 0) {
+      info.value = dbController.buildConnectionString(info);
+    }
+
+    let dbMetaData = await dbController.getSchemaInfoPG(info.value);
+    const formattedMetaData = await processMetaData(dbMetaData);
+
+    schemaMetaData = await parseGraphqlServer(
+      formattedMetaData.tables,
+      info.type,
+      info.value
+    );
+
+    mutationsMetaData = await parseClientMutations(formattedMetaData.tables);
+    queriesMetaData = await parseClientQueries(formattedMetaData.tables);
+
+    const gqlData = {
+      schema: schemaMetaData,
+      mutations: mutationsMetaData,
+      queries: queriesMetaData
+    };
+    event.sender.send("data", JSON.stringify(gqlData));
+  } catch (err) {
+    event.sender.send('appError', JSON.stringify(err));
   }
-  let dbMetaData = await dbController.getSchemaInfoPG(info.value);
-  const formattedMetaData = await processMetaData(dbMetaData);
-  schemaMetaData = await parseGraphqlServer(
-    formattedMetaData.tables,
-    info.type,
-    info.value
-  );
-  mutationsMetaData = await parseClientMutations(formattedMetaData.tables);
-  queriesMetaData = await parseClientQueries(formattedMetaData.tables);
-  const gqlData = {
-    schema: schemaMetaData,
-    mutations: mutationsMetaData,
-    queries: queriesMetaData
-  };
-  event.sender.send("data", JSON.stringify(gqlData));
 });
 
 ipcMain.on("directory", async (event, directory) => {

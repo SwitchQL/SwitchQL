@@ -1,5 +1,5 @@
 html {
-  font-family: 'Lora', sans-serif;
+  font-family: "Lora", sans-serif;
   width: 100%;
 }
 
@@ -31,7 +31,7 @@ textarea {
   display: block;
   border: none;
 }
-  
+
 textarea:focus,
 input:focus {
   outline: 0;
@@ -39,7 +39,7 @@ input:focus {
 
 input.question,
 textarea.question {
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   resize: none;
   height: 18px;
   padding: 1.5px 7px;
@@ -74,7 +74,7 @@ textarea.question {
 }
 
 .question::-webkit-scrollbar-thumb {
-  background-image: linear-gradient( darkgrey, rgb(115, 115, 115));
+  background-image: linear-gradient(darkgrey, rgb(115, 115, 115));
   outline: 1px solid slategrey;
   border-radius: 8px;
 }
@@ -85,17 +85,17 @@ textarea.question {
   margin: auto;
   height: 75vh;
   background: none repeat scroll 0 0 rgba(0, 0, 0, 0.07);
-  border-color: -moz-use-text-color #FFFFFF #FFFFFF -moz-use-text-color;
+  border-color: -moz-use-text-color #ffffff #ffffff -moz-use-text-color;
   border-image: none;
   border-radius: 8px;
   /* background-color: #363a42; */
   background-color: #2b2f35;
-  font-family: 'Inconsolata', monospace;
+  font-family: "Inconsolata", monospace;
   color: rgb(225, 239, 255);
   font-size: 1em;
   line-height: 1.4em;
-  box-shadow: -5px 5px 51px rgba(22, 22, 22, 0.541) inset; 
-  background-image: url('./img/gql.png');
+  box-shadow: -5px 5px 51px rgba(22, 22, 22, 0.541) inset;
+  background-image: url("./img/gql.png");
   background-repeat: no-repeat;
   background-position: -10% 130%;
   background-attachment: fixed;
@@ -113,12 +113,10 @@ textarea.question {
 }
 
 .areaOne::-webkit-scrollbar-thumb {
-  background-image: linear-gradient( rgb(110, 110, 110), rgb(71, 71, 71));
+  background-image: linear-gradient(rgb(110, 110, 110), rgb(71, 71, 71));
   outline: 1px solid slategrey;
   border-radius: 8px;
 }
-
-
 
 .flexTabs {
   position: relative;
@@ -133,9 +131,9 @@ textarea.question {
   text-align: center;
   color: white;
   background-color: #2b2f35;
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 15px;
-  box-shadow:5px 5px 5px rgba(22, 22, 22, 0.425); 
+  box-shadow: 5px 5px 5px rgba(22, 22, 22, 0.425);
   opacity: 0.3;
   outline: none;
   transition: 0.3s;
@@ -144,7 +142,6 @@ textarea.question {
 .formvis {
   border-radius: 10px;
   background-image: linear-gradient(to bottom right, #353e4b, #0f1b25);
-
   height: 520px;
   width: 300px;
   position: absolute;
@@ -194,26 +191,37 @@ textarea.question {
 }
 
 .fadeIn {
-  -webkit-animation-duration: 0.25s; animation-duration: 0.25s;
-  -webkit-animation-fill-mode: both; animation-fill-mode: both;
+  -webkit-animation-duration: 0.25s;
+  animation-duration: 0.25s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
   -webkit-animation-name: fadeIn;
   animation-name: fadeIn;
 }
+
 .fadeOut {
-  -webkit-animation-duration: 0.35s; animation-duration: 0.35s;
-  -webkit-animation-fill-mode: both; animation-fill-mode: both;
+  -webkit-animation-duration: 0.35s;
+  animation-duration: 0.35s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
   -webkit-animation-name: fadeOut;
   animation-name: fadeOut;
 }
+
 .fadeInScale {
-  -webkit-animation-duration: 0.25s; animation-duration: 0.25s;
-  -webkit-animation-fill-mode: both; animation-fill-mode: both;
+  -webkit-animation-duration: 0.25s;
+  animation-duration: 0.25s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
   -webkit-animation-name: fadeInScale;
   animation-name: fadeInScale;
 }
+
 .fadeOutScale {
-  -webkit-animation-duration: 0.35s; animation-duration: 0.35s;
-  -webkit-animation-fill-mode: both; animation-fill-mode: both;
+  -webkit-animation-duration: 0.35s;
+  animation-duration: 0.35s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
   -webkit-animation-name: fadeOutScale;
   animation-name: fadeOutScale;
 }
@@ -228,6 +236,7 @@ textarea.question {
     visibility: visible;
   }
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -238,6 +247,7 @@ textarea.question {
     visibility: visible;
   }
 }
+
 @-webkit-keyframes fadeOut {
   from {
     opacity: 1;
@@ -248,6 +258,7 @@ textarea.question {
     visibility: hidden;
   }
 }
+
 @keyframes fadeOut {
   from {
     opacity: 1;
@@ -258,6 +269,7 @@ textarea.question {
     visibility: hidden;
   }
 }
+
 @-webkit-keyframes fadeInScale {
   0% {
     transform: scale(0.95);
@@ -273,6 +285,7 @@ textarea.question {
     visibility: visible;
   }
 }
+
 @keyframes fadeInScale {
   0% {
     transform: scale(0.95);
@@ -288,6 +301,7 @@ textarea.question {
     visibility: visible;
   }
 }
+
 @-webkit-keyframes fadeOutScale {
   0% {
     transform: scale(1);
@@ -298,11 +312,12 @@ textarea.question {
     transform: scale(1.03);
   }
   100% {
-    transform: scale(0.90);
+    transform: scale(0.9);
     opacity: 0;
     visibility: hidden;
   }
 }
+
 @keyframes fadeOutScale {
   0% {
     transform: scale(1);
@@ -313,12 +328,11 @@ textarea.question {
     transform: scale(1.03);
   }
   100% {
-    transform: scale(0.90);
+    transform: scale(0.9);
     opacity: 0;
     visibility: hidden;
   }
 }
-
 
 .formIn {
   position: relative;
@@ -333,7 +347,6 @@ textarea.question {
   top: 0px;
   width: 100%;
   height: 100%;
-  /* background-image: linear-gradient(to bottom right, #2d3744, #070f1a); */
   background-image: linear-gradient(to bottom right, #1d242e, #050b13);
 }
 
@@ -342,7 +355,7 @@ textarea.question {
   padding: 10px 42px;
   border-radius: 6px;
   margin-top: 20px;
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 15px;
   border: none;
   color: rgb(255, 255, 255);
@@ -353,17 +366,22 @@ textarea.question {
   cursor: pointer;
   outline: none;
 }
-.button:hover {filter: saturate(110%)}
-.button:hover {opacity: 1}
+
+.button:hover {
+  filter: saturate(110%);
+}
+
+.button:hover {
+  opacity: 1;
+}
 
 .headerFont {
   margin: 1% 5% -1% 8%;
   font-size: 60px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   color: white;
   letter-spacing: 1px;
   text-shadow: 2px 2px 6px rgb(12, 12, 12);
-
 }
 
 .logo {
@@ -384,7 +402,7 @@ textarea.question {
   color: rgb(155, 159, 180);
   margin-left: 15%;
   text-align: left;
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
 }
 
 .warning {
@@ -394,13 +412,13 @@ textarea.question {
   color: #fa52b9;
   /* margin-left: 15%; */
   text-align: center;
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
 }
 
 .welcome {
   margin-top: -5px;
   font-size: 30px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   color: white;
   letter-spacing: 1px;
   text-shadow: 2px 2px 2px rgba(12, 12, 12, 0.815);
@@ -414,13 +432,13 @@ textarea.question {
   padding: 5px 10px;
   left: 5vw;
   width: 42vw;
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 15px;
   background-image: linear-gradient(to top left, #2d3b75, #cf4299, #f19858);
   color: white;
   outline: none;
   border: none;
-  box-shadow:5px 5px 5px rgb(22, 22, 22); 
+  box-shadow: 5px 5px 5px rgb(22, 22, 22);
   filter: saturate(0%);
   opacity: 0.4;
   transition: 0.3s;
@@ -429,14 +447,44 @@ textarea.question {
   text-align: center;
 }
 
-.bottomButtons:hover {filter: saturate(100%)}
-.bottomButtons:hover {opacity: 1}
+.bottomButtons:hover {
+  filter: saturate(100%);
+}
+.bottomButtons:hover {
+  opacity: 1;
+}
 
 .inputVis {
   width: 0.1px;
-	height: 0.1px;
-	opacity: 0;
-	overflow: hidden;
-	position: absolute;
-	z-index: -1;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.active {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.loader {
+  max-width: 50%;
+}
+
+.loadWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+}
+
+:global(.loader-hidden) {
+  display: none;
+}
+
+:global(.loader-active) {
+  display: block;
 }

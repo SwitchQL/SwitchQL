@@ -1,4 +1,7 @@
 const pgp = require("pg-promise")();
+const crypto = require('crypto');
+
+const poolCache = {};
 
 const metadataQuery = `SELECT
 t.table_name,
@@ -45,13 +48,37 @@ AND t.table_schema = 'public'
 AND constraint_type = 'FOREIGN KEY'
 ORDER BY table_name`;
 
-async function getSchemaInfoPG(connectionString) {
-  let db = pgp(connectionString);
+async function getSchemaInfoPG(connString) {
+  const db = getDbPool(connString);
   try {
-    return (metadataInfo = await db.any(metadataQuery));
-  } catch (error) {
-    throw error;
+    return metadataInfo = await db.any(metadataQuery);
+  } catch (err) {
+    removeFromCache(connString)
+    throw err;
   }
+}
+
+function getDbPool(connString) {
+  const hash = crypto.createHash('sha256');
+  hash.update(connString)
+
+  const digest = hash.digest('base64')
+
+  if (poolCache[digest]) {
+    return poolCache[digest];
+  }
+
+  let db = pgp(connString);
+  poolCache[digest] = db;
+
+  return db;
+}
+
+function removeFromCache(connString) {
+  const hash = crypto.createHash('sha256');
+  hash.update(connString)
+
+  delete poolCache[hash.digest('base64')]
 }
 
 function buildConnectionString(info) {
