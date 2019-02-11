@@ -62,7 +62,13 @@ class App extends Component {
         <div id="body" className={styles.vis}>
           <ToastContainer />
 
-          <div className={styles.loadWrapper}>
+          <div
+            className={
+              this.state.isLoading
+                ? styles.loadWrapper
+                : styles.loadWrapperHidden
+            }
+          >
             <Loader
               active={this.state.isLoading}
               type="ball-scale-ripple-multiple"

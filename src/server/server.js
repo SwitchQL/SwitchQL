@@ -1,10 +1,10 @@
 const electron = require("electron");
 const { ipcMain } = electron;
-const dbController = require("./DBMetadata/pgMetadataRetriever.js");
+const dbController = require("./DBMetadata/pgMetadataRetriever");
 const processMetaData = require("./DBMetadata/pgMetadataProcessor");
-const generateGraphqlServer = require("./Generators/typeGenerator.js");
-const parseClientMutations = require("./Generators/clientMutationGenerator.js");
-const parseClientQueries = require("./Generators/clientQueryGenerator.js");
+const generateGraphqlServer = require("./Generators/typeGenerator");
+const parseClientMutations = require("./Generators/mutationGenerator");
+const parseClientQueries = require("./Generators/queryGenerator");
 const fs = require("fs");
 const JSZip = require("jszip");
 const path = require("path");

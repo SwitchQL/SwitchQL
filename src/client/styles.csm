@@ -481,6 +481,10 @@ textarea.question {
   position: absolute;
 }
 
+.loadWrapperHidden {
+  display: none;
+}
+
 :global(.loader-hidden) {
   display: none;
 }

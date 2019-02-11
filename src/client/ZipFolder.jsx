@@ -23,7 +23,7 @@ class ZipFolder extends Component {
     }
   }
 
-  render(props) {
+  render() {
     return (
       <div>
         <input
