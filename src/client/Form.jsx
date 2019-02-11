@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import styles from "./styles.csm";
 import logo from "./img/logo.png";
 import icon from "./img/icon.png";
-const { ipcRenderer } = require("electron");
 
 export default class Form extends Component {
   constructor(props) {
@@ -32,7 +31,7 @@ export default class Form extends Component {
     event.preventDefault();
     if (!this.isFormValid()) return false;
 
-    ipcRenderer.send("url", JSON.stringify(this.state));
+    this.props.onSubmit(JSON.stringify(this.state));
 
     this.setState({
       value: "",
@@ -44,9 +43,6 @@ export default class Form extends Component {
       type: "PostgreSQL",
       formError: { twoConnect: false, incomplete: false, emptySubmit: false }
     });
-
-    this.prop;
-    this.props.onSubmit();
   }
 
   isFormValid() {

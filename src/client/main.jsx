@@ -51,7 +51,8 @@ class App extends Component {
     this.setState({ isFormOpen: false, tabIndex: 0 });
   }
 
-  submitForm() {
+  submitForm(formData) {
+    ipcRenderer.send("url", formData);
     this.setState({ isLoading: true, isFormOpen: false });
   }
 
