@@ -1,20 +1,21 @@
+const util = require("../util");
 const tab = `  `;
 
 function parseClientQueries(tables) {
-  if (Object.keys(tables).length == 0) return ''
+  if (Object.keys(tables).length == 0) return "";
 
-  let query = "import { gql } from \'apollo-boost\';\n\n";
+  let query = "import { gql } from 'apollo-boost';\n\n";
   const exportNames = [];
 
   // tables is state.tables from schemaReducer
-  for (const tableId in tables) {
-    query += buildClientQueryAll(tables[tableId]);
-    exportNames.push(`queryEvery${toTitleCase(tables[tableId].type)}`);
+  for (const table of Object.values(tables)) {
+    query += buildClientQueryAll(table);
+    exportNames.push(`queryEvery${util.toTitleCase(table.type)}`);
 
-    for (let fieldId in tables[tableId].fields) {
-      if (tables[tableId].fields[fieldId].primaryKey) {
-        query += buildClientQueryById(tables[tableId], tables[tableId].fields[fieldId]);
-        exportNames.push(`query${toTitleCase(tables[tableId].type)}ById `);
+    for (let field of Object.values(table.fields)) {
+      if (field.primaryKey) {
+        query += buildClientQueryById(table, field);
+        exportNames.push(`query${util.toTitleCase(table.type)}ById `);
       }
     }
   }
@@ -29,37 +30,33 @@ function parseClientQueries(tables) {
     }
   });
 
-  return query += `${endString}};`;
+  return (query += `${endString}};`);
 }
 
 function buildClientQueryAll(table) {
-  let string = `const queryEvery${toTitleCase(table.type)} = gql\`\n`;
+  let string = `const queryEvery${util.toTitleCase(table.type)} = gql\`\n`;
   string += `${tab}{\n`;
-  string += `${tab}${tab}every${toTitleCase(table.type)} {\n`;
+  string += `${tab.repeat(2)}every${util.toTitleCase(table.type)} {\n`;
 
   for (const fieldId in table.fields) {
-    string += `${tab}${tab}${tab}${table.fields[fieldId].name}\n`;
+    string += `${tab.repeat(3)}${table.fields[fieldId].name}\n`;
   }
 
-  return string += `${tab}${tab}}\n${tab}}\n\`\n\n`;
-}
-
-function toTitleCase(refTypeName) {
-  let name = refTypeName[0].toUpperCase();
-  name += refTypeName.slice(1).toLowerCase();
-  return name;
+  return (string += `${tab.repeat(2)}}\n${tab}}\n\`\n\n`);
 }
 
 function buildClientQueryById(table, idField) {
-  let string = `const query${toTitleCase(table.type)}ById = gql\`\n`;
+  let string = `const query${util.toTitleCase(table.type)}ById = gql\`\n`;
   string += `${tab}query($${table.type}: ${idField.type}!) {\n`;
-  string += `${tab}${tab}${table.type}(${idField.name}: $${table.type}) {\n`;
+  string += `${tab.repeat(2)}${table.type}(${idField.name}: $${
+    table.type
+  }) {\n`;
 
   for (const fieldId in table.fields) {
-    string += `${tab}${tab}${tab}${table.fields[fieldId].name}\n`;
+    string += `${tab.repeat(3)}${table.fields[fieldId].name}\n`;
   }
 
-  return string += `${tab}${tab}}\n${tab}}\n\`\n\n`;
+  return (string += `${tab.repeat(2)}}\n${tab}}\n\`\n\n`);
 }
 
 module.exports = parseClientQueries;

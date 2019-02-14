@@ -1,3 +1,5 @@
+const util = require("../util");
+
 const tab = `  `;
 
 function generateGraphqlServer(processedMetadata, dbProvider, connString) {
@@ -167,22 +169,16 @@ function createSubQuery(column, processedMetadata, dbProvider) {
 function createSubQueryName(relationType, relatedTable) {
   switch (relationType) {
     case "one to one":
-      return `related${formatTypeName(relatedTable)}`;
+      return `related${util.toTitleCase(relatedTable)}`;
     case "one to many":
-      return `everyRelated${formatTypeName(relatedTable)}`;
+      return `everyRelated${util.toTitleCase(relatedTable)}`;
     case "many to one":
-      return `related${formatTypeName(relatedTable)}`;
+      return `related${util.toTitleCase(relatedTable)}`;
     case "many to many":
-      return `everyRelated${formatTypeName(relatedTable)}`;
+      return `everyRelated${util.toTitleCase(relatedTable)}`;
     default:
-      return `everyRelated${formatTypeName(relatedTable)}`;
+      return `everyRelated${util.toTitleCase(relatedTable)}`;
   }
-}
-
-function formatTypeName(relatedTableName) {
-  let name = relatedTableName[0].toUpperCase();
-  name += relatedTableName.slice(1).toLowerCase();
-  return name;
 }
 
 function buildGraphqlRootCode(table, dbProvider) {
@@ -203,7 +199,7 @@ function buildGraphqlRootCode(table, dbProvider) {
 
 function createFindAllRootQuery(table, dbProvider) {
   let tableName = table.type;
-  let rootQuery = `${tab}${tab}every${formatTypeName(
+  let rootQuery = `${tab}${tab}every${util.toTitleCase(
     tableName
   )}: {\n${tab}${tab}${tab}type: new GraphQLList(${tableName}Type),\n${tab}${tab}${tab}resolve() {\n${tab}${tab}${tab}${tab}`;
 
@@ -257,7 +253,7 @@ function buildGraphqlMutationCode(table, dbProvider) {
 
 function addMutation(table, dbProvider) {
   let tableName = table.type;
-  let mutationQuery = `${tab}${tab}add${formatTypeName(
+  let mutationQuery = `${tab}${tab}add${util.toTitleCase(
     tableName
   )}: {\n${tab}${tab}${tab}type: ${tableName}Type,\n${tab}${tab}${tab}args: {\n`;
 
@@ -321,7 +317,7 @@ function updateMutation(table, dbProvider) {
     }
   }
 
-  let mutationQuery = `${tab}${tab}update${formatTypeName(
+  let mutationQuery = `${tab}${tab}update${util.toTitleCase(
     tableName
   )}: {\n${tab}${tab}${tab}type: ${tableName}Type,\n${tab}${tab}${tab}args: {\n`;
 
@@ -378,7 +374,7 @@ function deleteMutation(table, dbProvider) {
       idColumn = table.fields[column];
     }
   }
-  let mutationQuery = `${tab}${tab}delete${formatTypeName(
+  let mutationQuery = `${tab}${tab}delete${util.toTitleCase(
     tableName
   )}: {\n${tab}${tab}${tab}type: ${tableName}Type,\n${tab}${tab}${tab}args: {\n${tab}${tab}${tab}${tab}${
     idColumn.name

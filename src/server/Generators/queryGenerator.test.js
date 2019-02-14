@@ -1,4 +1,4 @@
-import parseClientQueries from "./clientQueryGenerator";
+import parseClientQueries from "./queryGenerator";
 import output from "./sampleFiles/queryOutput";
 import input from "../DBMetadata/sampleFiles/processedMetadata";
 
