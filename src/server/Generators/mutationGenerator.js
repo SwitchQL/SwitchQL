@@ -1,52 +1,29 @@
 const util = require("../util");
-
 const tab = `  `;
 
-function parseClientMutations(tables) {
+function generateMutations(tables) {
+  if (Object.keys(tables).length === 0) return "";
+
   let query = "import { gql } from 'apollo-boost';\n\n";
   const exportNames = [];
 
-  // Build mutations
-  for (const tableId in tables) {
-    // Build add mutations
-    query += buildMutationParams(tables[tableId], null, "add");
-    query += buildTypeParams(tables[tableId], null, "add");
-    query += buildReturnValues(tables[tableId]);
-    exportNames.push(`add${util.toTitleCase(tables[tableId].type)}Mutation`);
+  for (const table of Object.values(tables)) {
+    query += buildMutationSignature(table, null, "add");
+    query += buildTypeParams(table, null, "add");
+    query += buildReturnValues(table);
+    exportNames.push(`add${util.toTitleCase(table.type)}Mutation`);
 
-    // check if table has an ID field
-    for (let fieldId in tables[tableId].fields) {
-      if (tables[tableId].fields[fieldId].primaryKey) {
-        // update mutations
-        query += buildMutationParams(
-          tables[tableId],
-          tables[tableId].fields[fieldId],
-          "update"
-        );
-        query += buildTypeParams(
-          tables[tableId],
-          tables[tableId].fields[fieldId],
-          "update"
-        );
-        query += buildReturnValues(tables[tableId]);
-        exportNames.push(
-          `update${util.toTitleCase(tables[tableId].type)}Mutation`
-        );
-        // delete mutations
-        query += buildMutationParams(
-          tables[tableId],
-          tables[tableId].fields[fieldId],
-          "delete"
-        );
-        query += buildTypeParams(
-          tables[tableId],
-          tables[tableId].fields[fieldId],
-          "delete"
-        );
-        query += buildReturnValues(tables[tableId]);
-        exportNames.push(
-          `delete${util.toTitleCase(tables[tableId].type)}Mutation`
-        );
+    for (let field of Object.values(table.fields)) {
+      if (field.primaryKey) {
+        query += buildMutationSignature(table, field, "update");
+        query += buildTypeParams(table, field, "update");
+        query += buildReturnValues(table);
+        exportNames.push(`update${util.toTitleCase(table.type)}Mutation`);
+
+        query += buildMutationSignature(table, field, "delete");
+        query += buildTypeParams(table, field, "delete");
+        query += buildReturnValues(table);
+        exportNames.push(`delete${util.toTitleCase(table.type)}Mutation`);
       }
     }
   }
@@ -60,91 +37,91 @@ function parseClientMutations(tables) {
     }
   });
 
-  return (query += `${endString}};`);
+  query += `${endString}};`;
+  return query;
 }
 
-// builds params for either add or update mutations
-function buildMutationParams(table, idField, mutationType) {
-  let query = `const ${mutationType}${util.toTitleCase(
+function buildMutationSignature(table, idField, mutationType) {
+  let mut = `const ${mutationType}${util.toTitleCase(
     table.type
   )}Mutation = gql\`\n${tab}mutation(`;
 
   if (mutationType === "delete") {
-    query += `$${idField.name}: ${idField.type}!`;
-  } else {
-    let firstLoop = true;
-    for (const fieldId in table.fields) {
-      // if there's an unique id and creating an update mutation, then take in ID
-      if (mutationType === "update") {
-        if (!firstLoop) query += ", ";
-        firstLoop = false;
-
-        query += `$${table.fields[fieldId].name}: `;
-        query += `${checkFieldType(table.fields[fieldId].type)}`;
-        query += `${checkForRequired(table.fields[fieldId].required)}`;
-      }
-      if (mutationType === "add" && !table.fields[fieldId].primaryKey) {
-        if (!firstLoop) query += ", ";
-        firstLoop = false;
-
-        query += `$${table.fields[fieldId].name}: `;
-        query += `${checkFieldType(table.fields[fieldId].type)}`;
-        query += `${checkForRequired(table.fields[fieldId].required)}`;
-      }
-    }
+    mut += `$${idField.name}: ${idField.type}!) {\n${tab}`;
+    return mut;
   }
-  return (query += `) {\n${tab}`);
+
+  const params = [];
+
+  for (const field of Object.values(table.fields)) {
+    let param = "";
+
+    if (mutationType === "update") {
+      param += `$${field.name}: `;
+      param += `${checkType(field.type)}`;
+      param += `${checkRequired(field.required)}`;
+    }
+
+    if (mutationType === "add" && !field.primaryKey) {
+      param += `$${field.name}: `;
+      param += `${checkType(field.type)}`;
+      param += `${checkRequired(field.required)}`;
+    }
+
+    if (param) params.push(param);
+  }
+
+  mut += `${params.join(", ")}) {\n${tab}`;
+  return mut;
 }
 
-// in case the inputed field type is Number, turn to Int to work with GraphQL
-function checkFieldType(fieldType) {
+// If the fieldType is Number it has to be converted to Int per the graphql spec
+function checkType(fieldType) {
   if (fieldType === "Number") return "Int";
   else return fieldType;
 }
 
-function checkForRequired(required) {
-  if (required) {
-    return "!";
-  }
+function checkRequired(required) {
+  if (required) return "!";
   return "";
 }
 
 function buildTypeParams(table, idField, mutationType) {
-  let query = `${tab}${mutationType}${util.toTitleCase(table.type)}(`;
+  let mut = `${tab}${mutationType}${util.toTitleCase(table.type)}(`;
+
   if (mutationType === "delete") {
-    query += `$${idField.name}: ${idField.type}`;
-  } else {
-    let firstLoop = true;
-    for (const fieldId in table.fields) {
-      if (mutationType === "add" && !table.fields[fieldId].primaryKey) {
-        if (!firstLoop) query += ", ";
-        firstLoop = false;
-
-        query += `${table.fields[fieldId].name}: $${
-          table.fields[fieldId].name
-        }`;
-      }
-      if (mutationType === "update") {
-        if (!firstLoop) query += ", ";
-        firstLoop = false;
-
-        query += `${table.fields[fieldId].name}: $${
-          table.fields[fieldId].name
-        }`;
-      }
-    }
+    mut += `$${idField.name}: ${idField.type}) {\n`;
+    return mut;
   }
-  return (query += `) {\n`);
+
+  const params = [];
+  for (const field of Object.values(table.fields)) {
+    let param = "";
+
+    if (mutationType === "add" && !field.primaryKey) {
+      param += `${field.name}: $${field.name}`;
+    }
+
+    if (mutationType === "update") {
+      param += `${field.name}: $${field.name}`;
+    }
+
+    if (param) params.push(param);
+  }
+
+  mut += `${params.join(", ")}) {\n`;
+  return mut;
 }
 
 function buildReturnValues(table) {
-  let query = "";
+  let mut = "";
 
-  for (const fieldId in table.fields) {
-    query += `${tab}${tab}${tab}${table.fields[fieldId].name}\n`;
+  for (const field of Object.values(table.fields)) {
+    mut += `${tab.repeat(3)}${field.name}\n`;
   }
 
-  return (query += `${tab}${tab}}\n${tab}}\n\`\n\n`);
+  mut += `${tab.repeat(2)}}\n${tab}}\n\`\n\n`;
+  return mut;
 }
 
-module.exports = parseClientMutations;
+module.exports = generateMutations;

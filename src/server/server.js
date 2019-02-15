@@ -3,8 +3,8 @@ const { ipcMain } = electron;
 const dbController = require("./DBMetadata/pgMetadataRetriever");
 const processMetaData = require("./DBMetadata/pgMetadataProcessor");
 const generateGraphqlServer = require("./Generators/typeGenerator");
-const parseClientMutations = require("./Generators/mutationGenerator");
-const parseClientQueries = require("./Generators/queryGenerator");
+const generateMutations = require("./Generators/mutationGenerator");
+const generateQueries = require("./Generators/queryGenerator");
 const fs = require("fs");
 const JSZip = require("jszip");
 const path = require("path");
@@ -29,8 +29,8 @@ ipcMain.on("url", async (event, info) => {
       info.value
     );
 
-    mutationsMetaData = await parseClientMutations(formattedMetaData.tables);
-    queriesMetaData = await parseClientQueries(formattedMetaData.tables);
+    mutationsMetaData = await generateMutations(formattedMetaData.tables);
+    queriesMetaData = await generateQueries(formattedMetaData.tables);
 
     const gqlData = {
       schema: schemaMetaData,

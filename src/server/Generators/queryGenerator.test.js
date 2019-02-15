@@ -1,15 +1,15 @@
-import parseClientQueries from "./queryGenerator";
+import generateQueries from "./queryGenerator";
 import output from "./sampleFiles/queryOutput";
 import input from "../DBMetadata/sampleFiles/processedMetadata";
 
-describe("Client Query Generator Tests", () => {
-  it("Should correctly generate client queries given input file", () => {
-    const result = parseClientQueries(input.tables);
+describe("Query Generator Tests", () => {
+  it("Should correctly generate queries given input file", () => {
+    const result = generateQueries(input.tables);
     expect(result).toBe(output);
   });
 
   it("Should return an empty string on empty input", () => {
-    const result = parseClientQueries({});
+    const result = generateQueries({});
     expect(result).toBe("");
   });
 });
