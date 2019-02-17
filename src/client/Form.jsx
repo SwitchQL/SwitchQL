@@ -3,6 +3,8 @@ import styles from "./styles.csm";
 import logo from "./img/logo.png";
 import icon from "./img/icon.png";
 
+const databaseTypes = ["PostgreSQL", "MySQL", "SQLServer"];
+
 export default class Form extends Component {
   constructor(props) {
     super(props);
@@ -121,6 +123,25 @@ export default class Form extends Component {
             <div className={styles.welcome}>
               switch<b>QL</b>
             </div>
+
+            <div className={styles.radioWrapper}>
+              {databaseTypes.map((n, i) => {
+                return (
+                  <label key={i} className={styles.radioBtn}>
+                    <input
+                      type="radio"
+                      name="type"
+                      value={n}
+                      checked={this.state.type === n}
+                      onChange={this.valueChange}
+                      disabled
+                    />
+                    {n}
+                  </label>
+                );
+              })}
+            </div>
+
             <div className={styles.connect}>Connect To Your Database</div>
             <textarea
               placeholder="Connection String"
@@ -144,6 +165,7 @@ export default class Form extends Component {
               value={this.state.host}
               onChange={this.valueChange}
             />
+
             <textarea
               placeholder="Port Number*"
               name="port"
@@ -154,6 +176,7 @@ export default class Form extends Component {
               value={this.state.port}
               onChange={this.valueChange}
             />
+
             <textarea
               placeholder="User Name*"
               name="user"
@@ -164,6 +187,7 @@ export default class Form extends Component {
               value={this.state.user}
               onChange={this.valueChange}
             />
+
             <input
               placeholder="Password*"
               name="password"
@@ -174,6 +198,7 @@ export default class Form extends Component {
               value={this.state.password}
               onChange={this.valueChange}
             />
+
             <textarea
               placeholder="Database Name*"
               name="database"
@@ -184,6 +209,7 @@ export default class Form extends Component {
               value={this.state.database}
               onChange={this.valueChange}
             />
+
             <button
               type="button"
               className={styles.button}
@@ -193,6 +219,7 @@ export default class Form extends Component {
             >
               Generate GraphQL
             </button>
+
             <button
               type="button"
               className={styles.exit}

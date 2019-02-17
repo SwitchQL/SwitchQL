@@ -492,3 +492,16 @@ textarea.question {
 :global(.loader-active) {
   display: block;
 }
+
+.radioBtn, .radioBtn input {
+  display: initial;
+  font-size: 0.80em;
+  font-family: "Raleway", sans-serif;
+  color: rgb(155, 159, 180);
+  vertical-align: sub;
+}
+
+.radioWrapper {
+  display: flex;
+  justify-content: space-evenly;
+}
