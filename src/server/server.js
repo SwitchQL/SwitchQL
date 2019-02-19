@@ -8,12 +8,13 @@ const generateQueries = require("./Generators/queryGenerator");
 const fs = require("fs");
 const JSZip = require("jszip");
 const path = require("path");
+const events = require("./events");
 
 let schemaMetaData;
 let mutationsMetaData;
 let queriesMetaData;
 
-ipcMain.on("url", async (event, info) => {
+ipcMain.on(events.URL, async (event, info) => {
   try {
     info = JSON.parse(info);
     if (info.value.length === 0) {
@@ -37,25 +38,29 @@ ipcMain.on("url", async (event, info) => {
       mutations: mutationsMetaData,
       queries: queriesMetaData
     };
-    event.sender.send("data", JSON.stringify(gqlData));
+    event.sender.send(events.DATA, JSON.stringify(gqlData));
   } catch (err) {
-    event.sender.send("appError", JSON.stringify(err));
+    event.sender.send(events.APP_ERROR, JSON.stringify(err));
   }
 });
 
-ipcMain.on("directory", async (event, directory) => {
-  const zip = new JSZip();
+ipcMain.on(events.DIRECTORY, async (event, directory) => {
+  try {
+    const zip = new JSZip();
 
-  zip.file("Schema.js", schemaMetaData);
-  zip.file("clientMutations.js", mutationsMetaData);
-  zip.file("clientQueries.js", queriesMetaData);
+    zip.file("Schema.js", schemaMetaData);
+    zip.file("clientMutations.js", mutationsMetaData);
+    zip.file("clientQueries.js", queriesMetaData);
 
-  zip
-    .generateNodeStream({ type: "nodebuffer", streamFiles: true })
-    .pipe(fs.createWriteStream(path.join(directory, "SwitchQL.zip")))
-    .on("finish", function() {
-      // JSZip generates a readable stream with a "end" event,
-      // but is piped here in a writable stream which emits a "finish" event.
-      event.sender.send("Confirmed ZIP", "Finished!");
-    });
+    zip
+      .generateNodeStream({ type: "nodebuffer", streamFiles: true })
+      .pipe(fs.createWriteStream(path.join(directory, "SwitchQL.zip")))
+      .on("finish", function() {
+        // JSZip generates a readable stream with a "end" event,
+        // but is piped here in a writable stream which emits a "finish" event.
+        event.sender.send(events.EXPORT_SUCCESS);
+      });
+  } catch (err) {
+    event.sender.send(events.APP_ERROR, JSON.stringify(err));
+  }
 });

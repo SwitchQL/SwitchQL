@@ -1,39 +1,45 @@
 import React, { Component } from "react";
-import { ipcRenderer } from "electron";
 import styles from "./styles.csm";
 
 class ZipFolder extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      value: ""
-    };
-    this.handleChange = this.handleChange.bind(this);
+
+    this.submit = this.submit.bind(this);
+    this.input = React.createRef();
   }
 
-  handleChange(event) {
-    this.setState({ value: event.target.files[0].path });
-  }
+  submit(e) {
+    const path = this.input.current.files[0]
+      ? this.input.current.files[0].path
+      : null;
 
-  componentDidUpdate() {
-    if (this.state.value) {
-      document.getElementById("export").innerHTML = "Export Complete!";
-      ipcRenderer.send("directory", this.state.value);
-      this.setState({ value: "" });
+    if (path) {
+      this.props.onExport(path);
     }
+    e.stopPropagation();
   }
 
   render() {
     return (
-      <div>
+      <div onChange={this.submit}>
         <input
           className={styles.inputVis}
-          id="input"
           type="file"
+          id="input"
           webkitdirectory={1}
-          onChange={this.handleChange}
+          ref={this.input}
+          disabled={this.props.disabled}
         />
-        <label htmlFor="input" id="export" className={styles.bottomButtons}>
+
+        <label
+          htmlFor="input"
+          className={
+            this.props.disabled
+              ? `${styles.bottomButtons} ${styles.btnDisabled}`
+              : styles.bottomButtons
+          }
+        >
           Export Code
         </label>
       </div>

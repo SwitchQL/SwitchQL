@@ -449,9 +449,14 @@ textarea.question {
 
 .bottomButtons:hover {
   filter: saturate(100%);
-}
-.bottomButtons:hover {
   opacity: 1;
+}
+
+.bottomButtons:disabled, 
+.bottomButtons:disabled:hover,
+.btnDisabled  {
+  pointer-events: none;
+  opacity: 0.4;
 }
 
 .inputVis {

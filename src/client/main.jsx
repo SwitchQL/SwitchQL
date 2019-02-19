@@ -10,6 +10,7 @@ import { ipcRenderer } from "electron";
 import logo from "./img/logo.png";
 import { Loader } from "react-loaders";
 import "loaders.css/src/animations/ball-scale-ripple-multiple.scss";
+import * as events from "../server/events";
 
 class App extends Component {
   constructor(props) {
@@ -21,25 +22,45 @@ class App extends Component {
       queries: "",
       isFormOpen: true,
       tabIndex: 0,
-      isLoading: false
+      isLoading: false,
+      exportDisabled: true,
+      formDisabled: false
     };
 
     this.showForm = this.showForm.bind(this);
     this.hideForm = this.hideForm.bind(this);
     this.submitForm = this.submitForm.bind(this);
+    this.onExport = this.onExport.bind(this);
   }
 
   componentDidMount() {
-    ipcRenderer.on("appError", () => {
-      this.setState({ isLoading: false });
+    ipcRenderer.on(events.APP_ERROR, () => {
+      this.setState(prev => ({
+        isLoading: false,
+        formDisabled: false,
+        exportDisabled: !(prev.schema && prev.mutations && prev.queries)
+      }));
       toast.error(`Could not connect to database.
       			 Please check your connection
       			 string and try again`);
     });
 
-    ipcRenderer.on("data", (event, args) => {
+    ipcRenderer.on(events.DATA, (event, args) => {
       const data = JSON.parse(args);
-      this.setState({ ...data, isLoading: false });
+      this.setState({
+        ...data,
+        isLoading: false,
+        exportDisabled: false,
+        formDisabled: false
+      });
+    });
+
+    ipcRenderer.on(events.EXPORT_SUCCESS, () => {
+      this.setState({
+        isLoading: false,
+        exportDisabled: false,
+        formDisabled: false
+      });
     });
   }
 
@@ -52,8 +73,22 @@ class App extends Component {
   }
 
   submitForm(formData) {
-    ipcRenderer.send("url", formData);
-    this.setState({ isLoading: true, isFormOpen: false });
+    ipcRenderer.send(events.URL, formData);
+    this.setState({
+      isLoading: true,
+      isFormOpen: false,
+      formDisabled: true,
+      exportDisabled: true
+    });
+  }
+
+  onExport(path) {
+    ipcRenderer.send(events.DIRECTORY, path);
+    this.setState({
+      isLoading: true,
+      formDisabled: true,
+      exportDisabled: true
+    });
   }
 
   render() {
@@ -118,11 +153,16 @@ class App extends Component {
             </TabPanel>
           </Tabs>
 
-          <ZipFolder />
+          <ZipFolder
+            onExport={this.onExport}
+            disabled={this.state.exportDisabled}
+          />
+
           <button
             type="button"
             className={styles.bottomButtons}
             onClick={() => this.showForm()}
+            disabled={this.state.formDisabled}
           >
             New Database
           </button>
