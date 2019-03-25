@@ -24,7 +24,7 @@
     "electron": "^3.0.7",
     "file-loader": "^2.0.0",
     "fs": "0.0.1-security",
-    "jest": "^23.6.0",
+    "jest": "^24.0.0",
     "jszip": "^3.1.5",
     "mysql": "^2.16.0",
     "normalize.css": "^8.0.0",
