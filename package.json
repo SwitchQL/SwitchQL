@@ -4,9 +4,10 @@
   "description": "Automated Transcription of DB scripts into GraphQL schemas and resolvers",
   "main": "./src/main_process.js",
   "scripts": {
-    "test": "jest math.test.js",
+    "test": "jest --verbose",
     "electron": "electron .",
     "start": "webpack-dev-server --mode development --hot --inline & npm run electron",
+    "win start": "concurrently \"webpack-dev-server --mode development --hot --inline\" \"npm run electron\"",
     "start:webpack": "webpack-dev-server --mode development --hot --inline",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/logo.icns --prune=true --out=release-builds"
   },
@@ -28,7 +29,6 @@
     "loaders.css": "^0.1.2",
     "mysql": "^2.16.0",
     "normalize.css": "^8.0.1",
-    "npm-run-all": "^4.1.5",
     "path": "^0.12.7",
     "pg": "^7.8.0",
     "pg-promise": "^8.5.5",
@@ -45,6 +45,7 @@
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
+    "concurrently": "^4.1.0",
     "css-loader": "^1.0.1",
     "electron-devtools-installer": "^2.2.4",
     "electron-packager": "^12.2.0",
