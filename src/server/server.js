@@ -22,16 +22,16 @@ ipcMain.on(events.URL, async (event, info) => {
     }
 
     let dbMetaData = await dbController.getSchemaInfoPG(info.value);
-    const formattedMetaData = await processMetaData(dbMetaData);
+    const formattedMetaData = processMetaData(dbMetaData);
 
-    schemaMetaData = await generateGraphqlServer(
+    schemaMetaData = generateGraphqlServer(
       formattedMetaData.tables,
       info.type,
       info.value
     );
 
-    mutationsMetaData = await generateMutations(formattedMetaData.tables);
-    queriesMetaData = await generateQueries(formattedMetaData.tables);
+    mutationsMetaData = generateMutations(formattedMetaData.tables);
+    queriesMetaData = generateQueries(formattedMetaData.tables);
 
     const gqlData = {
       schema: schemaMetaData,

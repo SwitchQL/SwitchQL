@@ -1,4 +1,5 @@
-const ProcessedField = require("./classes/processedField")
+const ProcessedField = require("./classes/processedField");
+const ProcessedTable = require("./classes/processedTable");
 
 function processMetadata(columnData) {
   if (!columnData || columnData.length === 0)
@@ -10,7 +11,7 @@ function processMetadata(columnData) {
   let tblIdx = 0;
   let fieldIdx = 0;
   let prevTable = columnData[0].table_name;
-  let props = {};
+  let props = [];
 
   let lookupFields = {};
 
@@ -24,19 +25,19 @@ function processMetadata(columnData) {
   columnData.forEach((tblCol, index) => {
     // Previous table evaluation complete, format and assign to it the accumulated field data.
     if (prevTable !== tblCol.table_name) {
-      data.tables[tblIdx] = { type: prevTable, fields: props };
+      data.tables[tblIdx] = new ProcessedTable(prevTable, props);
       lookupFields["INDEX"] = tblIdx;
       lookup[prevTable] = lookupFields;
 
       tblIdx++;
       fieldIdx = 0;
 
-      props = {};
+      props = [];
       lookupFields = {};
     }
 
     if (index === columnData.length - 1) {
-      data.tables[tblIdx] = { type: prevTable, fields: props };
+      data.tables[tblIdx] = new ProcessedTable(prevTable, props);
     }
 
     const processed = new ProcessedField(tblCol, tblIdx, fieldIdx);
@@ -49,7 +50,7 @@ function processMetadata(columnData) {
       processed.addForeignKeyRef(lookup, tblCol, toRef, data);
     }
 
-    props[fieldIdx] = processed;
+    props.push(processed);
     lookupFields[tblCol.column_name] = fieldIdx;
 
     prevTable = tblCol.table_name;

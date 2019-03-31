@@ -67,23 +67,24 @@ function generateGraphqlServer(processedMetadata, dbProvider, connString) {
 function buildGraphqlTypeSchema(table, processedMetadata, dbProvider) {
   let subQuery = "";
   // creating new graphQL object type
-  let tableName = table.type;
-  let typeQuery = `const ${tableName}Type = new GraphQLObjectType({\n${tab}name: '${tableName}',\n${tab}fields: () => ({`;
+  let typeQuery = `const ${
+    table.name
+  }Type = new GraphQLObjectType({\n${tab}name: '${
+    table.name
+  }',\n${tab}fields: () => ({`;
 
   let firstLoop = true;
-  let columns = table.fields;
   // loop through all the columns in the current table
-  for (let column in columns) {
+  for (const field of table.fields) {
     if (!firstLoop) typeQuery += ",";
     // check the field current name and give it a graphQL type
     typeQuery += `\n${tab}${tab}${
-      columns[column].name
-    }: { type: ${tableDataTypeToGraphqlType(columns[column].type)} }`;
+      field.name
+    }: { type: ${tableDataTypeToGraphqlType(field.type)} }`;
 
     // later try to maintain the foreign key field to be the primary value?? NO
-    if (columns[column].inRelationship) {
-      subQuery +=
-        createSubQuery(columns[column], processedMetadata, dbProvider) + ", ";
+    if (field.inRelationship) {
+      subQuery += createSubQuery(field, processedMetadata, dbProvider) + ", ";
     }
 
     firstLoop = false;
@@ -120,7 +121,7 @@ function createSubQuery(column, processedMetadata, dbProvider) {
   let subQuery = "";
   for (let relatedTableIndex in column.relation) {
     let relatedTableLookup = relatedTableIndex.split(".");
-    const relatedTableName = processedMetadata[relatedTableLookup[0]].type;
+    const relatedTableName = processedMetadata[relatedTableLookup[0]].name;
     const relatedFieldName =
       processedMetadata[relatedTableLookup[0]].fields[relatedTableLookup[1]]
         .name;
@@ -187,10 +188,9 @@ function buildGraphqlRootCode(table, dbProvider) {
   rootQuery += createFindAllRootQuery(table, dbProvider);
 
   // primarykey id is not always the first field in our data
-  let columns = table.fields;
-  for (const column in columns) {
-    if (columns[column].primaryKey) {
-      rootQuery += createFindByIdQuery(table, columns[column], dbProvider);
+  for (const field of table.fields) {
+    if (field.primaryKey) {
+      rootQuery += createFindByIdQuery(table, field, dbProvider);
     }
   }
 
@@ -198,13 +198,14 @@ function buildGraphqlRootCode(table, dbProvider) {
 }
 
 function createFindAllRootQuery(table, dbProvider) {
-  let tableName = table.type;
   let rootQuery = `${tab}${tab}every${util.toTitleCase(
-    tableName
-  )}: {\n${tab}${tab}${tab}type: new GraphQLList(${tableName}Type),\n${tab}${tab}${tab}resolve() {\n${tab}${tab}${tab}${tab}`;
+    table.name
+  )}: {\n${tab}${tab}${tab}type: new GraphQLList(${
+    table.name
+  }Type),\n${tab}${tab}${tab}resolve() {\n${tab}${tab}${tab}${tab}`;
 
   if (dbProvider === "PostgreSQL") {
-    rootQuery += `const sql = \`SELECT * FROM "${tableName}"\``;
+    rootQuery += `const sql = \`SELECT * FROM "${table.name}"\``;
     rootQuery += `;\n${tab}${tab}${tab}${tab}return connect.conn.many(sql)\n`;
     rootQuery += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
     rootQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
@@ -218,15 +219,16 @@ function createFindAllRootQuery(table, dbProvider) {
 }
 
 function createFindByIdQuery(table, idColumn, dbProvider) {
-  let tableName = table.type;
-  let rootQuery = `,\n${tab}${tab}${tableName.toLowerCase()}: {\n${tab}${tab}${tab}type: ${tableName}Type,\n${tab}${tab}${tab}args: {\n${tab}${tab}${tab}${tab}${
+  let rootQuery = `,\n${tab}${tab}${table.name.toLowerCase()}: {\n${tab}${tab}${tab}type: ${
+    table.name
+  }Type,\n${tab}${tab}${tab}args: {\n${tab}${tab}${tab}${tab}${
     idColumn.name
   }: { type: ${tableDataTypeToGraphqlType(
     idColumn.type
   )} }\n${tab}${tab}${tab}},\n${tab}${tab}${tab}resolve(parent, args) {\n${tab}${tab}${tab}${tab}`;
 
   if (dbProvider === "PostgreSQL") {
-    rootQuery += `const sql = \`SELECT * FROM "${tableName}" WHERE "${
+    rootQuery += `const sql = \`SELECT * FROM "${table.name}" WHERE "${
       idColumn.name
     }" = \${args.${idColumn.name}}\`;\n`;
     rootQuery += `${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
@@ -252,27 +254,28 @@ function buildGraphqlMutationCode(table, dbProvider) {
 }
 
 function addMutation(table, dbProvider) {
-  let tableName = table.type;
   let mutationQuery = `${tab}${tab}add${util.toTitleCase(
-    tableName
-  )}: {\n${tab}${tab}${tab}type: ${tableName}Type,\n${tab}${tab}${tab}args: {\n`;
+    table.name
+  )}: {\n${tab}${tab}${tab}type: ${
+    table.name
+  }Type,\n${tab}${tab}${tab}args: {\n`;
 
   let fieldNames = "";
   let argNames = "";
 
   let firstLoop = true;
-  let columns = table.fields;
-  for (const column in columns) {
+
+  for (const field of table.fields) {
     if (!firstLoop) mutationQuery += ",\n";
     firstLoop = false;
 
     // dont need the ID for adding new row because generated in SQL
-    if (!columns[column].primaryKey) {
+    if (!field.primaryKey) {
       mutationQuery += `${tab}${tab}${tab}${tab}${
-        columns[column].name
-      }: ${buildMutationArgType(columns[column])}`;
-      fieldNames += columns[column].name + ", ";
-      argNames += "'${args." + columns[column].name + "}', ";
+        field.name
+      }: ${buildMutationArgType(field)}`;
+      fieldNames += field.name + ", ";
+      argNames += "'${args." + field.name + "}', ";
     } else {
       firstLoop = true;
     }
@@ -283,7 +286,9 @@ function addMutation(table, dbProvider) {
   mutationQuery += `\n${tab}${tab}${tab}},\n${tab}${tab}${tab}resolve(parent, args) {\n${tab}${tab}${tab}${tab}`;
 
   if (dbProvider === "PostgreSQL") {
-    mutationQuery += `const sql = \`INSERT INTO "${tableName}" (${fieldNames}) VALUES (${argNames})\`;\n`;
+    mutationQuery += `const sql = \`INSERT INTO "${
+      table.name
+    }" (${fieldNames}) VALUES (${argNames})\`;\n`;
     mutationQuery += `${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
     mutationQuery += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
     mutationQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
@@ -294,41 +299,31 @@ function addMutation(table, dbProvider) {
   }
 
   return (mutationQuery += `\n${tab}${tab}${tab}}\n${tab}${tab}}`);
-
-  function buildMutationArgType(column) {
-    const mutationQuery = `{ type: ${checkifColumnRequired(
-      column.required,
-      "front"
-    )}${tableDataTypeToGraphqlType(column.type)}${checkifColumnRequired(
-      column.required,
-      "back"
-    )} }`;
-    return mutationQuery;
-  }
 }
 
 function updateMutation(table, dbProvider) {
-  let tableName = table.type;
   let idColumnName;
-  let columns = table.fields;
-  for (let column in columns) {
-    if (columns[column].primaryKey) {
-      idColumnName = columns[column].name;
+
+  for (const field of table.fields) {
+    if (field.primaryKey) {
+      idColumnName = field.name;
     }
   }
 
   let mutationQuery = `${tab}${tab}update${util.toTitleCase(
-    tableName
-  )}: {\n${tab}${tab}${tab}type: ${tableName}Type,\n${tab}${tab}${tab}args: {\n`;
+    table.name
+  )}: {\n${tab}${tab}${tab}type: ${
+    table.name
+  }Type,\n${tab}${tab}${tab}args: {\n`;
 
   let firstLoop = true;
-  for (const column in columns) {
+  for (const field of table.fields) {
     if (!firstLoop) mutationQuery += ",\n";
     firstLoop = false;
 
     mutationQuery += `${tab}${tab}${tab}${tab}${
-      columns[column].name
-    }: ${buildMutationArgType(columns[column])}`;
+      field.name
+    }: ${buildMutationArgType(field)}`;
   }
 
   mutationQuery += `\n${tab}${tab}${tab}},\n${tab}${tab}${tab}resolve(parent, args) {\n`;
@@ -340,7 +335,9 @@ function updateMutation(table, dbProvider) {
     mutationQuery += `${tab}${tab}${tab}${tab}${tab}${tab}updateValues += \`\${prop} = '\${args[prop]}' \`\n`;
     mutationQuery += `${tab}${tab}${tab}${tab}${tab}}\n`;
     mutationQuery += `${tab}${tab}${tab}${tab}}\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}const sql = \`UPDATE "${tableName}" SET \${updateValues} WHERE "${idColumnName}" = \${args.`;
+    mutationQuery += `${tab}${tab}${tab}${tab}const sql = \`UPDATE "${
+      table.name
+    }" SET \${updateValues} WHERE "${idColumnName}" = \${args.`;
     mutationQuery += `${idColumnName}}\`;\n`;
     mutationQuery += `${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
     mutationQuery += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
@@ -352,40 +349,42 @@ function updateMutation(table, dbProvider) {
   }
 
   return (mutationQuery += `\n${tab}${tab}${tab}}\n${tab}${tab}}`);
+}
 
-  function buildMutationArgType(column) {
-    const mutationQuery = `{ type: ${checkifColumnRequired(
-      column.required,
-      "front"
-    )}${tableDataTypeToGraphqlType(column.type)}${checkifColumnRequired(
-      column.required,
-      "back"
-    )} }`;
-    return mutationQuery;
-  }
+function buildMutationArgType(column) {
+  const mutationQuery = `{ type: ${checkifColumnRequired(
+    column.required,
+    "front"
+  )}${tableDataTypeToGraphqlType(column.type)}${checkifColumnRequired(
+    column.required,
+    "back"
+  )} }`;
+  return mutationQuery;
 }
 
 function deleteMutation(table, dbProvider) {
-  let tableName = table.type;
   let idColumn;
-  let columns = table.fields;
-  for (let column in columns) {
-    if (table.fields[column].primaryKey) {
-      idColumn = table.fields[column];
+
+  for (const field of table.fields) {
+    if (field.primaryKey) {
+      idColumn = field;
     }
   }
+
   let mutationQuery = `${tab}${tab}delete${util.toTitleCase(
-    tableName
-  )}: {\n${tab}${tab}${tab}type: ${tableName}Type,\n${tab}${tab}${tab}args: {\n${tab}${tab}${tab}${tab}${
+    table.name
+  )}: {\n${tab}${tab}${tab}type: ${
+    table.name
+  }Type,\n${tab}${tab}${tab}args: {\n${tab}${tab}${tab}${tab}${
     idColumn.name
   }: { type: ${tableDataTypeToGraphqlType(
     idColumn.type
   )} }\n${tab}${tab}${tab}},\n${tab}${tab}${tab}resolve(parent, args) {\n`;
 
   if (dbProvider === "PostgreSQL") {
-    mutationQuery += `${tab}${tab}${tab}${tab}const sql = \`DELETE FROM "${tableName}" WHERE "${
-      idColumn.name
-    }" = \${args.`;
+    mutationQuery += `${tab}${tab}${tab}${tab}const sql = \`DELETE FROM "${
+      table.name
+    }" WHERE "${idColumn.name}" = \${args.`;
     mutationQuery += `${idColumn.name}}\`;\n`;
     mutationQuery += `${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
     mutationQuery += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
