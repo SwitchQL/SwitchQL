@@ -4,7 +4,7 @@
   "description": "Automated Transcription of DB scripts into GraphQL schemas and resolvers",
   "main": "./src/main_process.js",
   "scripts": {
-    "test": "jest math.test.js",
+    "test": "jest --watch",
     "electron": "electron .",
     "start": "webpack-dev-server --mode development --hot --inline & npm run electron",
     "start:webpack": "webpack-dev-server --mode development --hot --inline",
