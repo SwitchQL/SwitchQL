@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import styles from "./styles.csm";
+import "./styles/zip.css";
 
 class ZipFolder extends Component {
   constructor(props) {
@@ -24,7 +24,7 @@ class ZipFolder extends Component {
     return (
       <div onChange={this.submit}>
         <input
-          className={styles.inputVis}
+          className="inputVis"
           type="file"
           id="input"
           webkitdirectory={1}
@@ -35,9 +35,7 @@ class ZipFolder extends Component {
         <label
           htmlFor="input"
           className={
-            this.props.disabled
-              ? `${styles.bottomButtons} ${styles.btnDisabled}`
-              : styles.bottomButtons
+            this.props.disabled ? `bottomButtons btnDisabled` : "bottomButtons"
           }
         >
           Export Code

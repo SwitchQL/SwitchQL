@@ -1,0 +1,62 @@
+html {
+  font-family: "Lora", sans-serif;
+  width: 100%;
+}
+
+.bottomButtons {
+  position: relative;
+  border-radius: 6px;
+  float: left;
+  margin: 2% 1% auto 1%;
+  padding: 5px 10px;
+  left: 5vw;
+  width: 42vw;
+  font-family: "Raleway", sans-serif;
+  font-size: 15px;
+  background-image: linear-gradient(to top left, #2d3b75, #cf4299, #f19858);
+  color: white;
+  outline: none;
+  border: none;
+  box-shadow: 5px 5px 5px rgb(22, 22, 22);
+  filter: saturate(0%);
+  opacity: 0.4;
+  transition: 0.3s;
+  cursor: pointer;
+  outline: none;
+  text-align: center;
+}
+
+.bottomButtons:hover {
+  filter: saturate(100%);
+  opacity: 1;
+}
+
+.bottomButtons:disabled,
+.bottomButtons:disabled:hover,
+.btnDisabled {
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+h1 {
+  color: white;
+  font-size: 28px;
+  margin-bottom: 2.5%;
+}
+
+h5 {
+  color: white;
+}
+
+input,
+span,
+label,
+textarea {
+  display: block;
+  border: none;
+}
+
+textarea:focus,
+input:focus {
+  outline: 0;
+}

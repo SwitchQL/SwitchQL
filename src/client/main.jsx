@@ -1,11 +1,11 @@
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.min.css";
+import "react-toastify/dist/ReactToastify.css";
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import Form from "./Form.jsx";
 import ZipFolder from "./ZipFolder.jsx";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import styles from "./styles.csm";
+import "./styles/main.css";
 import { ipcRenderer } from "electron";
 import logo from "./img/logo.png";
 import { Loader } from "react-loaders";
@@ -94,59 +94,57 @@ class App extends Component {
   render() {
     return (
       <div>
-        <div id="body" className={styles.vis}>
+        <div id="body" className="vis">
           <ToastContainer />
 
           <div
             className={
-              this.state.isLoading
-                ? styles.loadWrapper
-                : styles.loadWrapperHidden
+              this.state.isLoading ? "loadWrapper" : "loadWrapperHidden"
             }
           >
             <Loader
               active={this.state.isLoading}
               type="ball-scale-ripple-multiple"
-              className={styles.loader}
+              className="loader"
               color={"#ffc1df"}
             />
           </div>
 
-          <div className={styles.headerFont}>
-            <img src={logo} className={styles.logoMain} />
+          <div className="headerFont">
+            <img src={logo} className="logoMain" />
             switch<b>QL</b>
           </div>
 
           <Tabs
             selectedIndex={this.state.tabIndex}
             onSelect={tabIndex => this.setState({ tabIndex })}
-            selectedTabClassName={styles.active}
+            selectedTabClassName="active"
           >
             <TabList>
               <div>
-                <Tab className={styles.flexTabs}>Type Definitions</Tab>
-                <Tab className={styles.flexTabs}>Client Mutations</Tab>
-                <Tab className={styles.flexTabs}>Client Queries</Tab>
+                <Tab className="flexTabs">Type Definitions</Tab>
+                <Tab className="flexTabs">Client Mutations</Tab>
+                <Tab className="flexTabs">Client Queries</Tab>
               </div>
             </TabList>
 
             <TabPanel>
               <textarea
-                className={styles.areaOne}
+                className="areaOne"
                 value={this.state.schema}
                 readOnly
               />
             </TabPanel>
             <TabPanel>
               <textarea
-                className={styles.areaOne}
+                className="areaOne"
                 value={this.state.mutations}
                 readOnly
               />
             </TabPanel>
             <TabPanel>
               <textarea
-                className={styles.areaOne}
+                className="areaOne"
                 value={this.state.queries}
                 readOnly
               />
@@ -160,7 +158,7 @@ class App extends Component {
 
           <button
             type="button"
-            className={styles.bottomButtons}
+            className="bottomButtons"
             onClick={() => this.showForm()}
             disabled={this.state.formDisabled}
           >
