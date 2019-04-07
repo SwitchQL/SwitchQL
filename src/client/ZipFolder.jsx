@@ -6,6 +6,7 @@ class ZipFolder extends Component {
     super(props);
 
     this.submit = this.submit.bind(this);
+    this.resetValue = this.resetValue.bind(this);
     this.input = React.createRef();
   }
 
@@ -20,9 +21,17 @@ class ZipFolder extends Component {
     e.stopPropagation();
   }
 
+  /* 
+    Necessary to fix bug where the same folder cannot be selected more 
+    than once in a row.
+  */
+  resetValue(e) {
+    e.target.value = null;
+  }
+
   render() {
     return (
-      <div onChange={this.submit}>
+      <div onChange={this.submit} onClick={this.resetValue}>
         <input
           className="inputVis"
           type="file"
