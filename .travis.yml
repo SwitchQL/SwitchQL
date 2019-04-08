@@ -10,9 +10,6 @@ os:
 
 jobs:
   include:
-    # - stage: test
-    #   script: npm run test:ci
-
     - stage: build
       install:
         - npm i
@@ -27,10 +24,3 @@ jobs:
         - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm run package:deb64; fi
         - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then npm run build:windows; fi
         - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then npm run package:win64; fi
-
-matrix:
-  exclude:
-    - stage: test
-    - os:
-        - windows
-        - osx
