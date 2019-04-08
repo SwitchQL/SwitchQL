@@ -3,8 +3,20 @@ language: node_js
 node_js:
   - "node"
 
-os: osx
+os:
+  - osx
+  - linux
+  - windows
+
+before_script:
+  script:
+    - "mkdir dist"
+    - "mkdir dist/installers"
 
 script:
-  - npm run build:mac
-  - npm run package:mac64
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm run build:mac; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm run package:mac64; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm run build:linux; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm run package:deb64; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then npm run build:windows; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then npm run package:win64; fi
