@@ -5,6 +5,7 @@
   "main": "./src/main_process.js",
   "scripts": {
     "test": "jest --watch",
+    "test:ci": "jest",
     "electron": "electron .",
     "start": "webpack-dev-server --mode development --hot --inline & npm run electron",
     "start:webpack": "webpack-dev-server --mode development --hot --inline",
