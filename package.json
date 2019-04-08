@@ -12,7 +12,7 @@
     "build:linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=assets/icons/mac/logo.icns --prune=true --out dist/",
     "build:windows": "electron-packager . --overwrite --platform win32 --arch x64 --icon=assets/icons/mac/logo.icns --prune=true --out dist/",
     "package:deb64": "electron-installer-debian --src dist/switchql-linux-x64/ --dest dist/installers/ --arch amd64",
-    "package:mac64": "electron-installer-dmg ./switchql-darwin-x64/switchql.app dist/installers/",
+    "package:mac64": "electron-installer-dmg dist/switchql-darwin-x64/switchql.app dist/installers/",
     "package:win64": "electron-installer-windows --src dist/switchql-win32-x64/ --dest dist/installers/"
   },
   "repository": {

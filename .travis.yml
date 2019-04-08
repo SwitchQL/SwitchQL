@@ -1,3 +1,10 @@
 language: node_js
+
 node_js:
   - "node"
+
+os: osx
+
+script:
+  - npm run build:mac
+  - npm run package:mac64
