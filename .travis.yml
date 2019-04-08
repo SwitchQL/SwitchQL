@@ -10,8 +10,8 @@ os:
 
 jobs:
   include:
-    - stage: test
-      script: npm run test:ci
+    # - stage: test
+    #   script: npm run test:ci
 
     - stage: build
       install:
