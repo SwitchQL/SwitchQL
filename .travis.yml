@@ -3,16 +3,17 @@ language: node_js
 node_js:
   - "node"
 
-os:
-  - osx
-  - linux
-  - windows
-
 jobs:
   include:
     - stage: test
+      os: linux
       script: npm run test:ci
+
     - stage: build
+      os:
+        - osx
+        - linux
+        - windows
       install:
         - npm i
         - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then apt-get install fakeroot; fi
