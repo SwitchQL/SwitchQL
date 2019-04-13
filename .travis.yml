@@ -3,23 +3,32 @@ language: node_js
 node_js:
   - "node"
 
+os:
+  - osx
+  - linux
+  - windows
+
+install:
+  - npm i
+
+before_script:
+  - "mkdir dist"
+  - "mkdir dist/installers"
+
 jobs:
   include:
-    - stage: build
-      os:
-        - osx
-        - linux
-        - windows
-      install:
-        - npm i
-        - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then apt-get install fakeroot; fi
-      before_script:
-        - "mkdir dist"
-        - "mkdir dist/installers"
+    - stage: buildWin
+      os: windows
       script:
-        - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm run build:mac; fi
-        - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm run package:mac64; fi
-        - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm run build:linux; fi
-        - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm run package:deb64; fi
-        - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then npm run build:windows; fi
-        - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then npm run package:win64; fi
+        - npm run build:windows
+        - npm run package:win64
+    - stage: buildMac
+      os: osx
+      script:
+        - npm run build:mac
+        - npm run package:mac64
+    - stage: buildLinux
+      os: linux
+      script:
+        - npm run build:linux
+        - npm run package:deb64
