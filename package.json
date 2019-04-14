@@ -9,12 +9,8 @@
     "electron": "electron .",
     "start": "webpack-dev-server --mode development --hot --inline & npm run electron",
     "start:webpack": "webpack-dev-server --mode development --hot --inline",
-    "build:mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/logo.icns --prune=true --out dist/",
-    "build:linux": "electron-packager . --overwrite --platform=linux --arch=x64 --prune=true --out dist/",
-    "build:windows": "electron-packager . --overwrite --platform win32 --arch x64 --prune=true --out dist/",
-    "package:deb64": "electron-installer-debian --src dist/switchql-linux-x64/ --dest dist/installers/ --arch amd64",
-    "package:mac64": "electron-installer-dmg dist/switchql-darwin-x64/switchql.app dist/installers/",
-    "package:win64": "electron-installer-windows --src dist/switchql-win32-x64/ --dest dist/installers/"
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "repository": {
     "type": "git",
@@ -27,7 +23,6 @@
   },
   "homepage": "https://github.com/SwitchQL/SwitchQL#readme",
   "dependencies": {
-    "electron": "^3.1.8",
     "file-loader": "^2.0.0",
     "fs": "0.0.1-security",
     "jszip": "^3.2.1",
@@ -47,16 +42,14 @@
     "regenerator-runtime": "^0.13.2"
   },
   "devDependencies": {
+    "electron": "^3.1.8",
     "@babel/core": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
     "css-loader": "^1.0.1",
+    "electron-builder": "^20.39.0",
     "electron-devtools-installer": "^2.2.4",
-    "electron-installer-debian": "^1.1.1",
-    "electron-installer-dmg": "^2.0.0",
-    "electron-installer-windows": "^1.1.1",
-    "electron-packager": "^12.2.0",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.5.0",
     "node-sass": "^4.11.0",
