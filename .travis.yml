@@ -10,17 +10,17 @@ before_script:
 matrix:
   include:
     - os: windows
-        script:
-          - npm run build:windows
-          - npm run package:win64
+      script:
+        - npm run build:windows
+        - npm run package:win64
     - os: osx
-        script:
-          - npm run build:mac
-          - npm run package:mac64
+      script:
+        - npm run build:mac
+        - npm run package:mac64
     - os: linux
-        before_script:
-          - sudo apt-get update
-          - sudo apt-get install fakeroot
-        script:
-          - npm run build:linux
-          - npm run package:deb64
+      before_script:
+        - sudo apt-get update
+        - sudo apt-get install fakeroot
+      script:
+        - npm run build:linux
+        - npm run package:deb64
