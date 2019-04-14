@@ -8,13 +8,13 @@ before_script:
   - "mkdir dist/installers"
 
   stages:
-  - test
-  - name: buildMac 
-    if: [[ "$TRAVIS_OS_NAME" == "osx" ]] 
-  - name: buildWin
-    if: [[ "$TRAVIS_OS_NAME" == "windows" ]] 
-  - name: buildLinux 
-    if: [[ "$TRAVIS_OS_NAME" == "linux" ]] 
+    - test
+    - name: buildMac 
+      if: [[ "$TRAVIS_OS_NAME" == "osx" ]] 
+    - name: buildWin
+      if: [[ "$TRAVIS_OS_NAME" == "windows" ]] 
+    - name: buildLinux 
+      if: [[ "$TRAVIS_OS_NAME" == "linux" ]] 
 
 
 jobs:
