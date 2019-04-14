@@ -7,29 +7,20 @@ before_script:
   - "mkdir dist"
   - "mkdir dist/installers"
 
-jobs:
+matrix:
   include:
-    - stage: test
-      os: osx
-      script: npm run test:ci
-
-    - stage: BuildWin
-      os: windows
-      script:
-        - npm run build:windows
-        - npm run package:win64
-
-    - stage: BuildMac
-      os: osx
-      script:
-        - npm run build:mac
-        - npm run package:mac64
-
-    - stage: BuildLinux
-      os: linux
-      before_script:
-        - sudo apt-get update
-        - sudo apt-get install fakeroot
-      script:
-        - npm run build:linux
-        - npm run package:deb64
+    - os: windows
+        script:
+          - npm run build:windows
+          - npm run package:win64
+    - os: osx
+        script:
+          - npm run build:mac
+          - npm run package:mac64
+    - os: linux
+        before_script:
+          - sudo apt-get update
+          - sudo apt-get install fakeroot
+        script:
+          - npm run build:linux
+          - npm run package:deb64
