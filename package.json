@@ -10,10 +10,7 @@
     "start": "webpack-dev-server --mode development --hot --inline & npm run electron",
     "start:webpack": "webpack-dev-server --mode development --hot --inline",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
-  },
-  "build": {
-    "publish": "never"
+    "dist": "electron-builder -p never"
   },
   "repository": {
     "type": "git",
