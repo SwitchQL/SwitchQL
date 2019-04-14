@@ -12,6 +12,9 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
+  "build": {
+    "publish": "never"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SwitchQL/SwitchQL.git"
