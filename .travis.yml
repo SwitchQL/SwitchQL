@@ -3,15 +3,20 @@ language: node_js
 node_js:
   - "node"
 
-os:
-  - linux
-  - windows
-  - osx
-
 jobs:
   include:
     - stage: test
+      os: osx
       script: npm run test:ci
+
     - stage: build
-      script:
-        - npm run dist
+      os: linux
+      script: npm run dist
+
+    - stage: build
+      os: linux
+      script: npm run dist
+
+    - stage: build
+      os: linux
+      script: npm run dist
