@@ -9,13 +9,7 @@ before_script:
 
   stages:
     - test
-    - name: buildMac 
-      if: [[ "$TRAVIS_OS_NAME" == "osx" ]] 
-    - name: buildWin
-      if: [[ "$TRAVIS_OS_NAME" == "windows" ]] 
-    - name: buildLinux 
-      if: [[ "$TRAVIS_OS_NAME" == "linux" ]] 
-
+    - build
 
 jobs:
   include:
@@ -23,19 +17,22 @@ jobs:
       script: npm run test:ci
       os: osx
     
-    - stage: buildMac
+    - stage: build
+      if: os = osx 
       os: osx
       script:
         - npm run build:mac
         - npm run package:mac64
     
-    - stage: buildWin
+    - stage: build
+      if: os = windows
       os: windows
       script:
         - npm run build:windows
         - npm run package:win64
     
-    - stage: buildWin
+    - stage: build
+      if: os = linux
       os: linux
       before_script:
         - sudo apt-get update
