@@ -9,22 +9,27 @@ before_script:
 
 jobs:
   include:
-    - stage: buildWin
+    - stage: test
+      os: osx
+      script: npm run test:ci
+
+    - stage: BuildWin
       os: windows
       script:
         - npm run build:windows
         - npm run package:win64
 
-    - stage: buildMac
+    - stage: BuildMac
       os: osx
       script:
         - npm run build:mac
         - npm run package:mac64
 
-    - stage: buildLinux
+    - stage: BuildLinux
       os: linux
       before_script:
-        - apt-get install fakeroot
+        - sudo apt-get update
+        - sudo apt-get install fakeroot
       script:
         - npm run build:linux
         - npm run package:deb64
