@@ -12,6 +12,12 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder -p never"
   },
+  "build": {
+    "appId": "dd70c8ae-971a-4477-8b84-aea310f6ad63",
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SwitchQL/SwitchQL.git"
