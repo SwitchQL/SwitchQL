@@ -14,9 +14,9 @@ jobs:
       script: npm run dist
 
     - stage: build
-      os: linux
+      os: osx
       script: npm run dist
 
     - stage: build
-      os: linux
+      os: windows
       script: npm run dist
