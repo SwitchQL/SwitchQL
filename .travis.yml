@@ -7,6 +7,12 @@ before_script:
   - "mkdir dist"
   - "mkdir dist/installers"
 
+jobs:
+  include:
+    - stage: test
+      script: npm run test:ci
+      os: osx
+
 matrix:
   include:
     - os: windows
