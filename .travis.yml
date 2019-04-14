@@ -7,26 +7,39 @@ before_script:
   - "mkdir dist"
   - "mkdir dist/installers"
 
+  stages:
+  - test
+  - name: buildMac 
+    if: [[ "$TRAVIS_OS_NAME" == "osx" ]] 
+  - name: buildWin
+    if: [[ "$TRAVIS_OS_NAME" == "windows" ]] 
+  - name: buildLinux 
+    if: [[ "$TRAVIS_OS_NAME" == "linux" ]] 
+
+
 jobs:
   include:
     - stage: test
       script: npm run test:ci
       os: osx
-    - stage: build
-      matrix:
-        include:
-          - os: windows
-            script:
-              - npm run build:windows
-              - npm run package:win64
-          - os: osx
-            script:
-              - npm run build:mac
-              - npm run package:mac64
-          - os: linux
-            before_script:
-              - sudo apt-get update
-              - sudo apt-get install fakeroot
-            script:
-              - npm run build:linux
-              - npm run package:deb64
+    
+    - stage: buildMac
+      os: osx
+      script:
+        - npm run build:mac
+        - npm run package:mac64
+    
+    - stage: buildWin
+      os: windows
+      script:
+        - npm run build:windows
+        - npm run package:win64
+    
+    - stage: buildWin
+      os: linux
+      before_script:
+        - sudo apt-get update
+        - sudo apt-get install fakeroot
+      script:
+        - npm run build:linux
+        - npm run package:deb64
