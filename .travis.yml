@@ -22,7 +22,7 @@ jobs:
         skip_cleanup: true
         draft: true
         on:
-          branches:
+          branch:
             - master
             - testing
 
@@ -36,7 +36,7 @@ jobs:
         skip_cleanup: true
         draft: true
         on:
-          branches:
+          branch:
             - master
             - testing
 
@@ -50,6 +50,6 @@ jobs:
         skip_cleanup: true
         draft: true
         on:
-          branches:
+          branch:
             - master
             - testing
