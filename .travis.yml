@@ -20,11 +20,9 @@ jobs:
           - dist/switchql_1.0.0_amd64.snap
           - dist/switchql 1.0.0.AppImage
         skip_cleanup: true
-        draft: true
         on:
-          branch:
-            - master
-            - testing
+          branch: master
+          tags: true
 
     - stage: build
       os: osx
@@ -34,11 +32,9 @@ jobs:
         api_key: $GH_TOKEN
         file: dist/switchql-1.0.0.dmg
         skip_cleanup: true
-        draft: true
         on:
-          branch:
-            - master
-            - testing
+          branch: master
+          tags: true
 
     - stage: build
       filter_secrets: false
@@ -49,8 +45,6 @@ jobs:
         api_key: $GH_TOKEN
         file: dist\switchql Setup 1.0.0.exe
         skip_cleanup: true
-        draft: true
         on:
-          branch:
-            - master
-            - testing
+          branch: master
+          tags: true
