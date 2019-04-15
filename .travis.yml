@@ -41,6 +41,7 @@ jobs:
             - testing
 
     - stage: build
+      filter_secrets: false
       os: windows
       script: npm run dist
       deploy:
