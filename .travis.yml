@@ -20,8 +20,7 @@ jobs:
           - dist/switchql_1.0.0_amd64.snap
           - dist/switchql 1.0.0.AppImage
         skip_cleanup: true
-        on:
-          tags: true
+        draft: true
 
     - stage: build
       os: osx
@@ -31,8 +30,7 @@ jobs:
         api_key: "GITHUB OAUTH TOKEN"
         file: dist/switchql-1.0.0.dmg
         skip_cleanup: true
-        on:
-          tags: true
+        draft: true
 
     - stage: build
       os: windows
@@ -42,5 +40,4 @@ jobs:
         api_key: "GITHUB OAUTH TOKEN"
         file: dist\switchql Setup 1.0.0.exe
         skip_cleanup: true
-        on:
-          tags: true
+        draft: true
