@@ -21,6 +21,10 @@ jobs:
           - dist/switchql 1.0.0.AppImage
         skip_cleanup: true
         draft: true
+        on:
+          branches:
+            - master
+            - testing
 
     - stage: build
       os: osx
@@ -31,6 +35,10 @@ jobs:
         file: dist/switchql-1.0.0.dmg
         skip_cleanup: true
         draft: true
+        on:
+          branches:
+            - master
+            - testing
 
     - stage: build
       os: windows
@@ -41,3 +49,7 @@ jobs:
         file: dist\switchql Setup 1.0.0.exe
         skip_cleanup: true
         draft: true
+        on:
+          branches:
+            - master
+            - testing
