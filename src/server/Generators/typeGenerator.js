@@ -5,12 +5,10 @@ const tab = `  `;
 function generateGraphqlServer(processedMetadata, dbProvider, connString) {
   let graphqlCode = `const graphql = require('graphql');\nconst graphql_iso_date = require('graphql-iso-date');\n`;
 
-  if (dbProvider === "PostgreSQL") {
-    graphqlCode += `const pgp = require('pg-promise')();\n`;
-    graphqlCode += `const connect = {};\n`;
-    graphqlCode += `// WARNING - Properly secure the connection string\n`;
-    graphqlCode += `connect.conn = pgp('${connString}');\n`;
-  }
+  graphqlCode += `const pgp = require('pg-promise')();\n`;
+  graphqlCode += `const connect = {};\n`;
+  graphqlCode += `// WARNING - Properly secure the connection string\n`;
+  graphqlCode += `connect.conn = pgp('${connString}');\n`;
 
   graphqlCode += `\nconst { 
   GraphQLObjectType,
@@ -40,18 +38,14 @@ function generateGraphqlServer(processedMetadata, dbProvider, connString) {
   for (const table in processedMetadata) {
     typeSchemaCode += buildGraphqlTypeSchema(
       processedMetadata[table],
-      processedMetadata,
-      dbProvider
+      processedMetadata
     );
 
     if (!firstLoop) rootQueryCode += ",\n";
-    rootQueryCode += buildGraphqlRootCode(processedMetadata[table], dbProvider);
+    rootQueryCode += buildGraphqlRootCode(processedMetadata[table]);
 
     if (!firstLoop) mutationCode += ",\n";
-    mutationCode += buildGraphqlMutationCode(
-      processedMetadata[table],
-      dbProvider
-    );
+    mutationCode += buildGraphqlMutationCode(processedMetadata[table]);
 
     firstLoop = false;
   }
@@ -64,7 +58,7 @@ function generateGraphqlServer(processedMetadata, dbProvider, connString) {
   return graphqlCode;
 }
 
-function buildGraphqlTypeSchema(table, processedMetadata, dbProvider) {
+function buildGraphqlTypeSchema(table, processedMetadata) {
   let subQuery = "";
   // creating new graphQL object type
   let typeQuery = `const ${
@@ -78,13 +72,13 @@ function buildGraphqlTypeSchema(table, processedMetadata, dbProvider) {
   for (const field of table.fields) {
     if (!firstLoop) typeQuery += ",";
     // check the field current name and give it a graphQL type
-    typeQuery += `\n${tab}${tab}${
+    typeQuery += `\n${tab.repeat(2)}${
       field.name
     }: { type: ${tableDataTypeToGraphqlType(field.type)} }`;
 
     // later try to maintain the foreign key field to be the primary value?? NO
     if (field.inRelationship) {
-      subQuery += createSubQuery(field, processedMetadata, dbProvider) + ", ";
+      subQuery += createSubQuery(field, processedMetadata) + ", ";
     }
 
     firstLoop = false;
@@ -117,7 +111,7 @@ function tableDataTypeToGraphqlType(type) {
   }
 }
 
-function createSubQuery(column, processedMetadata, dbProvider) {
+function createSubQuery(column, processedMetadata) {
   let subQuery = "";
   for (let relatedTableIndex in column.relation) {
     let relatedTableLookup = relatedTableIndex.split(".");
@@ -127,10 +121,10 @@ function createSubQuery(column, processedMetadata, dbProvider) {
         .name;
     const relatedTableRelationType = column.relation[relatedTableIndex].refType;
 
-    subQuery += `\n${tab}${tab}${createSubQueryName(
+    subQuery += `\n${tab.repeat(2)}${createSubQueryName(
       relatedTableRelationType,
       relatedTableName
-    )}: {\n${tab}${tab}${tab}type: `;
+    )}: {\n${tab.repeat(3)}type: `;
 
     if (
       relatedTableRelationType === "one to many" ||
@@ -140,29 +134,27 @@ function createSubQuery(column, processedMetadata, dbProvider) {
     } else {
       subQuery += `${relatedTableName}Type,`;
     }
-    subQuery += `\n${tab}${tab}${tab}resolve(parent, args) {\n${tab}${tab}${tab}${tab}`;
+    subQuery += `\n${tab.repeat(3)}resolve(parent, args) {\n${tab.repeat(4)}`;
 
-    if (dbProvider === "PostgreSQL") {
-      subQuery += `const sql = \`SELECT * FROM "${relatedTableName}" WHERE `;
+    subQuery += `const sql = \`SELECT * FROM "${relatedTableName}" WHERE `;
 
-      subQuery += `"${relatedFieldName}" = \${parent.${column.name}}\``;
-      if (
-        relatedTableRelationType === "one to many" ||
-        relatedTableRelationType === "many to many"
-      ) {
-        subQuery += `;\n${tab}${tab}${tab}${tab}return connect.conn.many(sql)\n`;
-      } else {
-        subQuery += `;\n${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
-      }
-      subQuery += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
-      subQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
-      subQuery += `${tab}${tab}${tab}${tab}${tab}})\n`;
-      subQuery += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
-      subQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return ('The error is', err);\n`;
-      subQuery += `${tab}${tab}${tab}${tab}${tab}})\n`;
-      subQuery += `${tab}${tab}${tab}}\n`;
-      subQuery += `${tab}${tab}}`;
+    subQuery += `"${relatedFieldName}" = \${parent.${column.name}}\``;
+    if (
+      relatedTableRelationType === "one to many" ||
+      relatedTableRelationType === "many to many"
+    ) {
+      subQuery += `;\n${tab.repeat(4)}return connect.conn.many(sql)\n`;
+    } else {
+      subQuery += `;\n${tab.repeat(4)}return connect.conn.one(sql)\n`;
     }
+    subQuery += `${tab.repeat(5)}.then(data => {\n`;
+    subQuery += `${tab.repeat(6)}return data;\n`;
+    subQuery += `${tab.repeat(5)}})\n`;
+    subQuery += `${tab.repeat(5)}.catch(err => {\n`;
+    subQuery += `${tab.repeat(6)}return ('The error is', err);\n`;
+    subQuery += `${tab.repeat(5)}})\n`;
+    subQuery += `${tab.repeat(3)}}\n`;
+    subQuery += `${tab.repeat(2)}}`;
   }
   return subQuery;
 }
@@ -182,83 +174,80 @@ function createSubQueryName(relationType, relatedTable) {
   }
 }
 
-function buildGraphqlRootCode(table, dbProvider) {
+function buildGraphqlRootCode(table) {
   let rootQuery = "";
 
-  rootQuery += createFindAllRootQuery(table, dbProvider);
+  rootQuery += createFindAllRootQuery(table);
 
   // primarykey id is not always the first field in our data
   for (const field of table.fields) {
     if (field.primaryKey) {
-      rootQuery += createFindByIdQuery(table, field, dbProvider);
+      rootQuery += createFindByIdQuery(table, field);
     }
   }
 
   return rootQuery;
 }
 
-function createFindAllRootQuery(table, dbProvider) {
-  let rootQuery = `${tab}${tab}every${util.toTitleCase(
+function createFindAllRootQuery(table) {
+  let rootQuery = `${tab.repeat(2)}every${util.toTitleCase(
     table.name
-  )}: {\n${tab}${tab}${tab}type: new GraphQLList(${
+  )}: {\n${tab.repeat(3)}type: new GraphQLList(${
     table.name
-  }Type),\n${tab}${tab}${tab}resolve() {\n${tab}${tab}${tab}${tab}`;
+  }Type),\n${tab.repeat(3)}resolve() {\n${tab.repeat(4)}`;
 
-  if (dbProvider === "PostgreSQL") {
-    rootQuery += `const sql = \`SELECT * FROM "${table.name}"\``;
-    rootQuery += `;\n${tab}${tab}${tab}${tab}return connect.conn.many(sql)\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}${tab}})\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return ('The error is', err)\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}${tab}})`;
-  }
+  rootQuery += `const sql = \`SELECT * FROM "${table.name}"\``;
+  rootQuery += `;\n${tab.repeat(4)}return connect.conn.many(sql)\n`;
+  rootQuery += `${tab.repeat(5)}.then(data => {\n`;
+  rootQuery += `${tab.repeat(6)}return data;\n`;
+  rootQuery += `${tab.repeat(5)}})\n`;
+  rootQuery += `${tab.repeat(5)}.catch(err => {\n`;
+  rootQuery += `${tab.repeat(6)}return ('The error is', err)\n`;
+  rootQuery += `${tab.repeat(5)}})`;
 
-  return (rootQuery += `\n${tab}${tab}${tab}}\n${tab}${tab}}`);
+  return (rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }
 
-function createFindByIdQuery(table, idColumn, dbProvider) {
-  let rootQuery = `,\n${tab}${tab}${table.name.toLowerCase()}: {\n${tab}${tab}${tab}type: ${
+function createFindByIdQuery(table, idColumn) {
+  let rootQuery = `,\n${tab.repeat(
+    2
+  )}${table.name.toLowerCase()}: {\n${tab.repeat(3)}type: ${
     table.name
-  }Type,\n${tab}${tab}${tab}args: {\n${tab}${tab}${tab}${tab}${
+  }Type,\n${tab.repeat(3)}args: {\n${tab.repeat(4)}${
     idColumn.name
-  }: { type: ${tableDataTypeToGraphqlType(
-    idColumn.type
-  )} }\n${tab}${tab}${tab}},\n${tab}${tab}${tab}resolve(parent, args) {\n${tab}${tab}${tab}${tab}`;
+  }: { type: ${tableDataTypeToGraphqlType(idColumn.type)} }\n${tab.repeat(
+    3
+  )}},\n${tab.repeat(3)}resolve(parent, args) {\n${tab.repeat(4)}`;
 
-  if (dbProvider === "PostgreSQL") {
-    rootQuery += `const sql = \`SELECT * FROM "${table.name}" WHERE "${
-      idColumn.name
-    }" = \${args.${idColumn.name}}\`;\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}${tab}})\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return ('The error is', err)\n`;
-    rootQuery += `${tab}${tab}${tab}${tab}${tab}})`;
-  }
+  rootQuery += `const sql = \`SELECT * FROM "${table.name}" WHERE "${
+    idColumn.name
+  }" = \${args.${idColumn.name}}\`;\n`;
 
-  return (rootQuery += `\n${tab}${tab}${tab}}\n${tab}${tab}}`);
+  rootQuery += `${tab.repeat(4)}return connect.conn.one(sql)\n`;
+  rootQuery += `${tab.repeat(5)}.then(data => {\n`;
+  rootQuery += `${tab.repeat(6)}return data;\n`;
+  rootQuery += `${tab.repeat(5)}})\n`;
+  rootQuery += `${tab.repeat(5)}.catch(err => {\n`;
+  rootQuery += `${tab.repeat(6)}return ('The error is', err)\n`;
+  rootQuery += `${tab.repeat(5)}})`;
+
+  return (rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }
 
-function buildGraphqlMutationCode(table, dbProvider) {
+function buildGraphqlMutationCode(table) {
   let mutationQuery = ``;
-  mutationQuery += `${addMutation(table, dbProvider)}`;
+  mutationQuery += `${addMutation(table)}`;
   if (table.fields[0]) {
-    mutationQuery += `,\n${updateMutation(table, dbProvider)},\n`;
-    mutationQuery += `${deleteMutation(table, dbProvider)}`;
+    mutationQuery += `,\n${updateMutation(table)},\n`;
+    mutationQuery += `${deleteMutation(table)}`;
   }
   return mutationQuery;
 }
 
-function addMutation(table, dbProvider) {
-  let mutationQuery = `${tab}${tab}add${util.toTitleCase(
+function addMutation(table) {
+  let mutationQuery = `${tab.repeat(2)}add${util.toTitleCase(
     table.name
-  )}: {\n${tab}${tab}${tab}type: ${
-    table.name
-  }Type,\n${tab}${tab}${tab}args: {\n`;
+  )}: {\n${tab.repeat(3)}type: ${table.name}Type,\n${tab.repeat(3)}args: {\n`;
 
   let fieldNames = "";
   let argNames = "";
@@ -271,9 +260,9 @@ function addMutation(table, dbProvider) {
 
     // dont need the ID for adding new row because generated in SQL
     if (!field.primaryKey) {
-      mutationQuery += `${tab}${tab}${tab}${tab}${
-        field.name
-      }: ${buildMutationArgType(field)}`;
+      mutationQuery += `${tab.repeat(4)}${field.name}: ${buildMutationArgType(
+        field
+      )}`;
       fieldNames += field.name + ", ";
       argNames += "'${args." + field.name + "}', ";
     } else {
@@ -283,25 +272,25 @@ function addMutation(table, dbProvider) {
 
   fieldNames = fieldNames.slice(0, -2);
   argNames = argNames.slice(0, -2);
-  mutationQuery += `\n${tab}${tab}${tab}},\n${tab}${tab}${tab}resolve(parent, args) {\n${tab}${tab}${tab}${tab}`;
+  mutationQuery += `\n${tab.repeat(3)}},\n${tab.repeat(
+    3
+  )}resolve(parent, args) {\n${tab.repeat(4)}`;
 
-  if (dbProvider === "PostgreSQL") {
-    mutationQuery += `const sql = \`INSERT INTO "${
-      table.name
-    }" (${fieldNames}) VALUES (${argNames})\`;\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}})\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return ('The error is', err);\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}})`;
-  }
+  mutationQuery += `const sql = \`INSERT INTO "${
+    table.name
+  }" (${fieldNames}) VALUES (${argNames})\`;\n`;
+  mutationQuery += `${tab.repeat(4)}return connect.conn.one(sql)\n`;
+  mutationQuery += `${tab.repeat(5)}.then(data => {\n`;
+  mutationQuery += `${tab.repeat(6)}return data;\n`;
+  mutationQuery += `${tab.repeat(5)}})\n`;
+  mutationQuery += `${tab.repeat(5)}.catch(err => {\n`;
+  mutationQuery += `${tab.repeat(6)}return ('The error is', err);\n`;
+  mutationQuery += `${tab.repeat(5)}})`;
 
-  return (mutationQuery += `\n${tab}${tab}${tab}}\n${tab}${tab}}`);
+  return (mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }
 
-function updateMutation(table, dbProvider) {
+function updateMutation(table) {
   let idColumnName;
 
   for (const field of table.fields) {
@@ -310,45 +299,48 @@ function updateMutation(table, dbProvider) {
     }
   }
 
-  let mutationQuery = `${tab}${tab}update${util.toTitleCase(
+  let mutationQuery = `${tab.repeat(2)}update${util.toTitleCase(
     table.name
-  )}: {\n${tab}${tab}${tab}type: ${
-    table.name
-  }Type,\n${tab}${tab}${tab}args: {\n`;
+  )}: {\n${tab.repeat(3)}type: ${table.name}Type,\n${tab.repeat(3)}args: {\n`;
 
   let firstLoop = true;
   for (const field of table.fields) {
     if (!firstLoop) mutationQuery += ",\n";
     firstLoop = false;
 
-    mutationQuery += `${tab}${tab}${tab}${tab}${
-      field.name
-    }: ${buildMutationArgType(field)}`;
+    mutationQuery += `${tab.repeat(4)}${field.name}: ${buildMutationArgType(
+      field
+    )}`;
   }
 
-  mutationQuery += `\n${tab}${tab}${tab}},\n${tab}${tab}${tab}resolve(parent, args) {\n`;
+  mutationQuery += `\n${tab.repeat(3)}},\n${tab.repeat(
+    3
+  )}resolve(parent, args) {\n`;
 
-  if (dbProvider === "PostgreSQL") {
-    mutationQuery += `${tab}${tab}${tab}${tab}let updateValues = '';\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}for (const prop in args) {\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}if (prop !== "${idColumnName}") {\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}${tab}updateValues += \`\${prop} = '\${args[prop]}' \`\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}}\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}}\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}const sql = \`UPDATE "${
-      table.name
-    }" SET \${updateValues} WHERE "${idColumnName}" = \${args.`;
-    mutationQuery += `${idColumnName}}\`;\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}})\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return ('The error is', err);\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}})`;
-  }
+  mutationQuery += `${tab.repeat(4)}let updateValues = '';\n`;
+  mutationQuery += `${tab.repeat(4)}for (const prop in args) {\n`;
+  mutationQuery += `${tab.repeat(5)}if (prop !== "${idColumnName}") {\n`;
+  mutationQuery += `${tab.repeat(
+    6
+  )}updateValues += \`\${prop} = '\${args[prop]}' \`\n`;
 
-  return (mutationQuery += `\n${tab}${tab}${tab}}\n${tab}${tab}}`);
+  mutationQuery += `${tab.repeat(5)}}\n`;
+  mutationQuery += `${tab.repeat(4)}}\n`;
+  mutationQuery += `${tab.repeat(4)}const sql = \`UPDATE "${
+    table.name
+  }" SET \${updateValues} WHERE "${idColumnName}" = \${args.`;
+
+  mutationQuery += `${idColumnName}}\`;\n`;
+  mutationQuery += `${tab.repeat(4)}return connect.conn.one(sql)\n`;
+  mutationQuery += `${tab.repeat(5)}.then(data => {\n`;
+  mutationQuery += `${tab.repeat(6)}return data;\n`;
+
+  mutationQuery += `${tab.repeat(5)}})\n`;
+  mutationQuery += `${tab.repeat(5)}.catch(err => {\n`;
+  mutationQuery += `${tab.repeat(6)}return ('The error is', err);\n`;
+  mutationQuery += `${tab.repeat(5)}})`;
+
+  return (mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }
 
 function buildMutationArgType(column) {
@@ -362,7 +354,7 @@ function buildMutationArgType(column) {
   return mutationQuery;
 }
 
-function deleteMutation(table, dbProvider) {
+function deleteMutation(table) {
   let idColumn;
 
   for (const field of table.fields) {
@@ -371,31 +363,29 @@ function deleteMutation(table, dbProvider) {
     }
   }
 
-  let mutationQuery = `${tab}${tab}delete${util.toTitleCase(
+  let mutationQuery = `${tab.repeat(2)}delete${util.toTitleCase(
     table.name
-  )}: {\n${tab}${tab}${tab}type: ${
-    table.name
-  }Type,\n${tab}${tab}${tab}args: {\n${tab}${tab}${tab}${tab}${
+  )}: {\n${tab.repeat(3)}type: ${table.name}Type,\n${tab.repeat(
+    3
+  )}args: {\n${tab.repeat(4)}${
     idColumn.name
-  }: { type: ${tableDataTypeToGraphqlType(
-    idColumn.type
-  )} }\n${tab}${tab}${tab}},\n${tab}${tab}${tab}resolve(parent, args) {\n`;
+  }: { type: ${tableDataTypeToGraphqlType(idColumn.type)} }\n${tab.repeat(
+    3
+  )}},\n${tab.repeat(3)}resolve(parent, args) {\n`;
 
-  if (dbProvider === "PostgreSQL") {
-    mutationQuery += `${tab}${tab}${tab}${tab}const sql = \`DELETE FROM "${
-      table.name
-    }" WHERE "${idColumn.name}" = \${args.`;
-    mutationQuery += `${idColumn.name}}\`;\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}return connect.conn.one(sql)\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}.then(data => {\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return data;\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}})\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}.catch(err => {\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}${tab}return ('The error is', err);\n`;
-    mutationQuery += `${tab}${tab}${tab}${tab}${tab}})`;
-  }
+  mutationQuery += `${tab.repeat(4)}const sql = \`DELETE FROM "${
+    table.name
+  }" WHERE "${idColumn.name}" = \${args.`;
+  mutationQuery += `${idColumn.name}}\`;\n`;
+  mutationQuery += `${tab.repeat(4)}return connect.conn.one(sql)\n`;
+  mutationQuery += `${tab.repeat(5)}.then(data => {\n`;
+  mutationQuery += `${tab.repeat(6)}return data;\n`;
+  mutationQuery += `${tab.repeat(5)}})\n`;
+  mutationQuery += `${tab.repeat(5)}.catch(err => {\n`;
+  mutationQuery += `${tab.repeat(6)}return ('The error is', err);\n`;
+  mutationQuery += `${tab.repeat(5)}})`;
 
-  return (mutationQuery += `\n${tab}${tab}${tab}}\n${tab}${tab}}`);
+  return (mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }
 
 function checkifColumnRequired(required, position) {
