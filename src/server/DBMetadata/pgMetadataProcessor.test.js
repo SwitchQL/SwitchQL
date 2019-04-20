@@ -26,4 +26,9 @@ describe("Format Metadata Tests", () => {
       "Invalid data format. Column Data must be an array"
     );
   });
+
+  it("Should match the snapshot", () => {
+    const result = processMetadata(retrieved);
+    expect(result).toMatchSnapshot();
+  });
 });

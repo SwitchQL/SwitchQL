@@ -12,4 +12,9 @@ describe("Mutation Generator Tests", () => {
     const result = generateMutations({});
     expect(result).toBe("");
   });
+
+  it("Should match the snapshot", () => {
+    const result = generateMutations(input.tables);
+    expect(result).toMatchSnapshot();
+  });
 });

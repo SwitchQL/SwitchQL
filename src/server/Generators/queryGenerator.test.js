@@ -12,4 +12,9 @@ describe("Query Generator Tests", () => {
     const result = generateQueries({});
     expect(result).toBe("");
   });
+
+  it("Should match the snapshot", () => {
+    const result = generateQueries(input.tables);
+    expect(result).toMatchSnapshot();
+  });
 });
