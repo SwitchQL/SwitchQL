@@ -38,14 +38,18 @@ function generateGraphqlServer(processedMetadata, dbProvider, connString) {
   for (const table in processedMetadata) {
     typeSchemaCode += buildGraphqlTypeSchema(
       processedMetadata[table],
-      processedMetadata
+      processedMetadata,
+      dbProvider
     );
 
     if (!firstLoop) rootQueryCode += ",\n";
-    rootQueryCode += buildGraphqlRootCode(processedMetadata[table]);
+    rootQueryCode += buildGraphqlRootCode(processedMetadata[table], dbProvider);
 
     if (!firstLoop) mutationCode += ",\n";
-    mutationCode += buildGraphqlMutationCode(processedMetadata[table]);
+    mutationCode += buildGraphqlMutationCode(
+      processedMetadata[table],
+      dbProvider
+    );
 
     firstLoop = false;
   }
@@ -58,7 +62,7 @@ function generateGraphqlServer(processedMetadata, dbProvider, connString) {
   return graphqlCode;
 }
 
-function buildGraphqlTypeSchema(table, processedMetadata) {
+function buildGraphqlTypeSchema(table, processedMetadata, dbProvider) {
   let subQuery = "";
   // creating new graphQL object type
   let typeQuery = `const ${
@@ -78,7 +82,7 @@ function buildGraphqlTypeSchema(table, processedMetadata) {
 
     // later try to maintain the foreign key field to be the primary value?? NO
     if (field.inRelationship) {
-      subQuery += createSubQuery(field, processedMetadata) + ", ";
+      subQuery += createSubQuery(field, processedMetadata, dbProvider) + ", ";
     }
 
     firstLoop = false;
@@ -111,7 +115,7 @@ function tableDataTypeToGraphqlType(type) {
   }
 }
 
-function createSubQuery(column, processedMetadata) {
+function createSubQuery(column, processedMetadata, dbProvider) {
   let subQuery = "";
   for (let relatedTableIndex in column.relation) {
     let relatedTableLookup = relatedTableIndex.split(".");
@@ -126,27 +130,20 @@ function createSubQuery(column, processedMetadata) {
       relatedTableName
     )}: {\n${tab.repeat(3)}type: `;
 
-    if (
-      relatedTableRelationType === "one to many" ||
-      relatedTableRelationType === "many to many"
-    ) {
+    if (relatedTableRelationType === "one to many") {
       subQuery += `new GraphQLList(${relatedTableName}Type),`;
     } else {
       subQuery += `${relatedTableName}Type,`;
     }
     subQuery += `\n${tab.repeat(3)}resolve(parent, args) {\n${tab.repeat(4)}`;
 
-    subQuery += `const sql = \`SELECT * FROM "${relatedTableName}" WHERE `;
+    subQuery += `const sql = ${dbProvider.selectWithWhere(
+      relatedTableName,
+      relatedFieldName,
+      `parent.${column.name}`,
+      relatedTableRelationType === "one to many"
+    )}`;
 
-    subQuery += `"${relatedFieldName}" = \${parent.${column.name}}\``;
-    if (
-      relatedTableRelationType === "one to many" ||
-      relatedTableRelationType === "many to many"
-    ) {
-      subQuery += `;\n${tab.repeat(4)}return connect.conn.many(sql)\n`;
-    } else {
-      subQuery += `;\n${tab.repeat(4)}return connect.conn.one(sql)\n`;
-    }
     subQuery += `${tab.repeat(5)}.then(data => {\n`;
     subQuery += `${tab.repeat(6)}return data;\n`;
     subQuery += `${tab.repeat(5)}})\n`;
@@ -163,41 +160,42 @@ function createSubQueryName(relationType, relatedTable) {
   switch (relationType) {
     case "one to one":
       return `related${util.toTitleCase(relatedTable)}`;
+
     case "one to many":
       return `everyRelated${util.toTitleCase(relatedTable)}`;
+
     case "many to one":
       return `related${util.toTitleCase(relatedTable)}`;
-    case "many to many":
-      return `everyRelated${util.toTitleCase(relatedTable)}`;
+
     default:
       return `everyRelated${util.toTitleCase(relatedTable)}`;
   }
 }
 
-function buildGraphqlRootCode(table) {
+function buildGraphqlRootCode(table, dbProvider) {
   let rootQuery = "";
 
-  rootQuery += createFindAllRootQuery(table);
+  rootQuery += createFindAllRootQuery(table, dbProvider);
 
   // primarykey id is not always the first field in our data
   for (const field of table.fields) {
     if (field.primaryKey) {
-      rootQuery += createFindByIdQuery(table, field);
+      rootQuery += createFindByIdQuery(table, field, dbProvider);
     }
   }
 
   return rootQuery;
 }
 
-function createFindAllRootQuery(table) {
+function createFindAllRootQuery(table, dbProvider) {
   let rootQuery = `${tab.repeat(2)}every${util.toTitleCase(
     table.name
   )}: {\n${tab.repeat(3)}type: new GraphQLList(${
     table.name
   }Type),\n${tab.repeat(3)}resolve() {\n${tab.repeat(4)}`;
 
-  rootQuery += `const sql = \`SELECT * FROM "${table.name}"\``;
-  rootQuery += `;\n${tab.repeat(4)}return connect.conn.many(sql)\n`;
+  rootQuery += `const sql = ${dbProvider.select(table.name)}`;
+
   rootQuery += `${tab.repeat(5)}.then(data => {\n`;
   rootQuery += `${tab.repeat(6)}return data;\n`;
   rootQuery += `${tab.repeat(5)}})\n`;
@@ -208,7 +206,7 @@ function createFindAllRootQuery(table) {
   return (rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }
 
-function createFindByIdQuery(table, idColumn) {
+function createFindByIdQuery(table, idColumn, dbProvider) {
   let rootQuery = `,\n${tab.repeat(
     2
   )}${table.name.toLowerCase()}: {\n${tab.repeat(3)}type: ${
@@ -219,11 +217,13 @@ function createFindByIdQuery(table, idColumn) {
     3
   )}},\n${tab.repeat(3)}resolve(parent, args) {\n${tab.repeat(4)}`;
 
-  rootQuery += `const sql = \`SELECT * FROM "${table.name}" WHERE "${
-    idColumn.name
-  }" = \${args.${idColumn.name}}\`;\n`;
+  rootQuery += `const sql = ${dbProvider.selectWithWhere(
+    table.name,
+    idColumn.name,
+    `args.${idColumn.name}`,
+    false
+  )}`;
 
-  rootQuery += `${tab.repeat(4)}return connect.conn.one(sql)\n`;
   rootQuery += `${tab.repeat(5)}.then(data => {\n`;
   rootQuery += `${tab.repeat(6)}return data;\n`;
   rootQuery += `${tab.repeat(5)}})\n`;
@@ -234,17 +234,17 @@ function createFindByIdQuery(table, idColumn) {
   return (rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }
 
-function buildGraphqlMutationCode(table) {
+function buildGraphqlMutationCode(table, dbProvider) {
   let mutationQuery = ``;
-  mutationQuery += `${addMutation(table)}`;
+  mutationQuery += `${addMutation(table, dbProvider)}`;
   if (table.fields[0]) {
-    mutationQuery += `,\n${updateMutation(table)},\n`;
-    mutationQuery += `${deleteMutation(table)}`;
+    mutationQuery += `,\n${updateMutation(table, dbProvider)},\n`;
+    mutationQuery += `${deleteMutation(table, dbProvider)}`;
   }
   return mutationQuery;
 }
 
-function addMutation(table) {
+function addMutation(table, dbProvider) {
   let mutationQuery = `${tab.repeat(2)}add${util.toTitleCase(
     table.name
   )}: {\n${tab.repeat(3)}type: ${table.name}Type,\n${tab.repeat(3)}args: {\n`;
@@ -276,10 +276,12 @@ function addMutation(table) {
     3
   )}resolve(parent, args) {\n${tab.repeat(4)}`;
 
-  mutationQuery += `const sql = \`INSERT INTO "${
-    table.name
-  }" (${fieldNames}) VALUES (${argNames})\`;\n`;
-  mutationQuery += `${tab.repeat(4)}return connect.conn.one(sql)\n`;
+  mutationQuery += `const sql = ${dbProvider.insert(
+    table.name,
+    fieldNames,
+    argNames
+  )}`;
+
   mutationQuery += `${tab.repeat(5)}.then(data => {\n`;
   mutationQuery += `${tab.repeat(6)}return data;\n`;
   mutationQuery += `${tab.repeat(5)}})\n`;
@@ -290,7 +292,7 @@ function addMutation(table) {
   return (mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }
 
-function updateMutation(table) {
+function updateMutation(table, dbProvider) {
   let idColumnName;
 
   for (const field of table.fields) {
@@ -326,12 +328,12 @@ function updateMutation(table) {
 
   mutationQuery += `${tab.repeat(5)}}\n`;
   mutationQuery += `${tab.repeat(4)}}\n`;
-  mutationQuery += `${tab.repeat(4)}const sql = \`UPDATE "${
-    table.name
-  }" SET \${updateValues} WHERE "${idColumnName}" = \${args.`;
 
-  mutationQuery += `${idColumnName}}\`;\n`;
-  mutationQuery += `${tab.repeat(4)}return connect.conn.one(sql)\n`;
+  mutationQuery += `${tab.repeat(4)}const sql = ${dbProvider.update(
+    table.name,
+    idColumnName
+  )}`;
+
   mutationQuery += `${tab.repeat(5)}.then(data => {\n`;
   mutationQuery += `${tab.repeat(6)}return data;\n`;
 
@@ -354,7 +356,7 @@ function buildMutationArgType(column) {
   return mutationQuery;
 }
 
-function deleteMutation(table) {
+function deleteMutation(table, dbProvider) {
   let idColumn;
 
   for (const field of table.fields) {
@@ -373,11 +375,11 @@ function deleteMutation(table) {
     3
   )}},\n${tab.repeat(3)}resolve(parent, args) {\n`;
 
-  mutationQuery += `${tab.repeat(4)}const sql = \`DELETE FROM "${
-    table.name
-  }" WHERE "${idColumn.name}" = \${args.`;
-  mutationQuery += `${idColumn.name}}\`;\n`;
-  mutationQuery += `${tab.repeat(4)}return connect.conn.one(sql)\n`;
+  mutationQuery += `${tab.repeat(4)}const sql = ${dbProvider.delete(
+    table.name,
+    idColumn.name
+  )}`;
+
   mutationQuery += `${tab.repeat(5)}.then(data => {\n`;
   mutationQuery += `${tab.repeat(6)}return data;\n`;
   mutationQuery += `${tab.repeat(5)}})\n`;

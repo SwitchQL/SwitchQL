@@ -34,8 +34,8 @@ const authorType = new GraphQLObjectType({
     everyRelatedBooks: {
       type: new GraphQLList(booksType),
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"books\\" WHERE \\"author_id\\" = \${parent.id}\`;
-        return connect.conn.many(sql)
+        const sql = 'SELECT * FROM \\"books\\" WHERE \\"author_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
           .then(data => {
             return data;
           })
@@ -56,8 +56,8 @@ const book_orderType = new GraphQLObjectType({
     relatedBooks: {
       type: booksType,
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"books\\" WHERE \\"id\\" = \${parent.book_id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"books\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.book_id)
           .then(data => {
             return data;
           })
@@ -69,8 +69,8 @@ const book_orderType = new GraphQLObjectType({
     relatedOrder: {
       type: orderType,
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"order\\" WHERE \\"id\\" = \${parent.order_id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"order\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.order_id)
           .then(data => {
             return data;
           })
@@ -94,8 +94,8 @@ const booksType = new GraphQLObjectType({
     relatedGenre: {
       type: genreType,
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"genre\\" WHERE \\"id\\" = \${parent.genre_id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"genre\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.genre_id)
           .then(data => {
             return data;
           })
@@ -107,8 +107,8 @@ const booksType = new GraphQLObjectType({
     everyRelatedBook_order: {
       type: new GraphQLList(book_orderType),
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"book_order\\" WHERE \\"book_id\\" = \${parent.id}\`;
-        return connect.conn.many(sql)
+        const sql = 'SELECT * FROM \\"book_order\\" WHERE \\"book_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
           .then(data => {
             return data;
           })
@@ -120,8 +120,8 @@ const booksType = new GraphQLObjectType({
     relatedAuthor: {
       type: authorType,
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"author\\" WHERE \\"id\\" = \${parent.author_id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"author\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.author_id)
           .then(data => {
             return data;
           })
@@ -141,8 +141,8 @@ const genreType = new GraphQLObjectType({
     everyRelatedBooks: {
       type: new GraphQLList(booksType),
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"books\\" WHERE \\"genre_id\\" = \${parent.id}\`;
-        return connect.conn.many(sql)
+        const sql = 'SELECT * FROM \\"books\\" WHERE \\"genre_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
           .then(data => {
             return data;
           })
@@ -165,8 +165,8 @@ const orderType = new GraphQLObjectType({
     everyRelatedBook_order: {
       type: new GraphQLList(book_orderType),
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"book_order\\" WHERE \\"order_id\\" = \${parent.id}\`;
-        return connect.conn.many(sql)
+        const sql = 'SELECT * FROM \\"book_order\\" WHERE \\"order_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
           .then(data => {
             return data;
           })
@@ -178,8 +178,8 @@ const orderType = new GraphQLObjectType({
     relatedUser: {
       type: userType,
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"user\\" WHERE \\"id\\" = \${parent.user_id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"user\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.user_id)
           .then(data => {
             return data;
           })
@@ -191,8 +191,8 @@ const orderType = new GraphQLObjectType({
     relatedStatus: {
       type: statusType,
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"status\\" WHERE \\"id\\" = \${parent.status_id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"status\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.status_id)
           .then(data => {
             return data;
           })
@@ -204,8 +204,8 @@ const orderType = new GraphQLObjectType({
     relatedShipping_method: {
       type: shipping_methodType,
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"shipping_method\\" WHERE \\"id\\" = \${parent.shipping_id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"shipping_method\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.shipping_id)
           .then(data => {
             return data;
           })
@@ -225,8 +225,8 @@ const shipping_methodType = new GraphQLObjectType({
     everyRelatedOrder: {
       type: new GraphQLList(orderType),
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"order\\" WHERE \\"shipping_id\\" = \${parent.id}\`;
-        return connect.conn.many(sql)
+        const sql = 'SELECT * FROM \\"order\\" WHERE \\"shipping_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
           .then(data => {
             return data;
           })
@@ -246,8 +246,8 @@ const statusType = new GraphQLObjectType({
     everyRelatedOrder: {
       type: new GraphQLList(orderType),
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"order\\" WHERE \\"status_id\\" = \${parent.id}\`;
-        return connect.conn.many(sql)
+        const sql = 'SELECT * FROM \\"order\\" WHERE \\"status_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
           .then(data => {
             return data;
           })
@@ -269,8 +269,8 @@ const userType = new GraphQLObjectType({
     everyRelatedOrder: {
       type: new GraphQLList(orderType),
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"order\\" WHERE \\"user_id\\" = \${parent.id}\`;
-        return connect.conn.many(sql)
+        const sql = 'SELECT * FROM \\"order\\" WHERE \\"user_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
           .then(data => {
             return data;
           })
@@ -288,7 +288,7 @@ const RootQuery = new GraphQLObjectType({
     everyAuthor: {
       type: new GraphQLList(authorType),
       resolve() {
-        const sql = \`SELECT * FROM \\"author\\"\`;
+        const sql = 'SELECT * FROM \\"author\\"';
         return connect.conn.many(sql)
           .then(data => {
             return data;
@@ -304,8 +304,8 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"author\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"author\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -317,7 +317,7 @@ const RootQuery = new GraphQLObjectType({
     everyBook_order: {
       type: new GraphQLList(book_orderType),
       resolve() {
-        const sql = \`SELECT * FROM \\"book_order\\"\`;
+        const sql = 'SELECT * FROM \\"book_order\\"';
         return connect.conn.many(sql)
           .then(data => {
             return data;
@@ -333,8 +333,8 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"book_order\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"book_order\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -346,7 +346,7 @@ const RootQuery = new GraphQLObjectType({
     everyBooks: {
       type: new GraphQLList(booksType),
       resolve() {
-        const sql = \`SELECT * FROM \\"books\\"\`;
+        const sql = 'SELECT * FROM \\"books\\"';
         return connect.conn.many(sql)
           .then(data => {
             return data;
@@ -362,8 +362,8 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"books\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"books\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -375,7 +375,7 @@ const RootQuery = new GraphQLObjectType({
     everyGenre: {
       type: new GraphQLList(genreType),
       resolve() {
-        const sql = \`SELECT * FROM \\"genre\\"\`;
+        const sql = 'SELECT * FROM \\"genre\\"';
         return connect.conn.many(sql)
           .then(data => {
             return data;
@@ -391,8 +391,8 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"genre\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"genre\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -404,7 +404,7 @@ const RootQuery = new GraphQLObjectType({
     everyOrder: {
       type: new GraphQLList(orderType),
       resolve() {
-        const sql = \`SELECT * FROM \\"order\\"\`;
+        const sql = 'SELECT * FROM \\"order\\"';
         return connect.conn.many(sql)
           .then(data => {
             return data;
@@ -420,8 +420,8 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"order\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"order\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -433,7 +433,7 @@ const RootQuery = new GraphQLObjectType({
     everyShipping_method: {
       type: new GraphQLList(shipping_methodType),
       resolve() {
-        const sql = \`SELECT * FROM \\"shipping_method\\"\`;
+        const sql = 'SELECT * FROM \\"shipping_method\\"';
         return connect.conn.many(sql)
           .then(data => {
             return data;
@@ -449,8 +449,8 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"shipping_method\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"shipping_method\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -462,7 +462,7 @@ const RootQuery = new GraphQLObjectType({
     everyStatus: {
       type: new GraphQLList(statusType),
       resolve() {
-        const sql = \`SELECT * FROM \\"status\\"\`;
+        const sql = 'SELECT * FROM \\"status\\"';
         return connect.conn.many(sql)
           .then(data => {
             return data;
@@ -478,8 +478,8 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"status\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"status\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -491,7 +491,7 @@ const RootQuery = new GraphQLObjectType({
     everyUser: {
       type: new GraphQLList(userType),
       resolve() {
-        const sql = \`SELECT * FROM \\"user\\"\`;
+        const sql = 'SELECT * FROM \\"user\\"';
         return connect.conn.many(sql)
           .then(data => {
             return data;
@@ -507,8 +507,8 @@ const RootQuery = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`SELECT * FROM \\"user\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'SELECT * FROM \\"user\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -529,8 +529,8 @@ const Mutation = new GraphQLObjectType({
         name: { type: GraphQLString }
       },
       resolve(parent, args) {
-        const sql = \`INSERT INTO \\"author\\" (name) VALUES ('\${args.name}')\`;
-        return connect.conn.one(sql)
+        const sql = 'INSERT INTO \\"author\\" (name) VALUES ($1) RETURNING *';
+        return connect.conn.one(sql, [args.name])
           .then(data => {
             return data;
           })
@@ -568,8 +568,8 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`DELETE FROM \\"author\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'DELETE FROM \\"author\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -585,8 +585,8 @@ const Mutation = new GraphQLObjectType({
         order_id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`INSERT INTO \\"book_order\\" (book_id, order_id) VALUES ('\${args.book_id}', '\${args.order_id}')\`;
-        return connect.conn.one(sql)
+        const sql = 'INSERT INTO \\"book_order\\" (book_id, order_id) VALUES ($1, $2) RETURNING *';
+        return connect.conn.one(sql, [args.book_id, args.order_id])
           .then(data => {
             return data;
           })
@@ -625,8 +625,8 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`DELETE FROM \\"book_order\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'DELETE FROM \\"book_order\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -645,8 +645,8 @@ const Mutation = new GraphQLObjectType({
         author_id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`INSERT INTO \\"books\\" (genre_id, test, name, publish_date, author_id) VALUES ('\${args.genre_id}', '\${args.test}', '\${args.name}', '\${args.publish_date}', '\${args.author_id}')\`;
-        return connect.conn.one(sql)
+        const sql = 'INSERT INTO \\"books\\" (genre_id, test, name, publish_date, author_id) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+        return connect.conn.one(sql, [args.genre_id, args.test, args.name, args.publish_date, args.author_id])
           .then(data => {
             return data;
           })
@@ -688,8 +688,8 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`DELETE FROM \\"books\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'DELETE FROM \\"books\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -704,8 +704,8 @@ const Mutation = new GraphQLObjectType({
         name: { type: GraphQLString }
       },
       resolve(parent, args) {
-        const sql = \`INSERT INTO \\"genre\\" (name) VALUES ('\${args.name}')\`;
-        return connect.conn.one(sql)
+        const sql = 'INSERT INTO \\"genre\\" (name) VALUES ($1) RETURNING *';
+        return connect.conn.one(sql, [args.name])
           .then(data => {
             return data;
           })
@@ -743,8 +743,8 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`DELETE FROM \\"genre\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'DELETE FROM \\"genre\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -762,8 +762,8 @@ const Mutation = new GraphQLObjectType({
         shipping_id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`INSERT INTO \\"order\\" (created_at, user_id, status_id, shipping_id) VALUES ('\${args.created_at}', '\${args.user_id}', '\${args.status_id}', '\${args.shipping_id}')\`;
-        return connect.conn.one(sql)
+        const sql = 'INSERT INTO \\"order\\" (created_at, user_id, status_id, shipping_id) VALUES ($1, $2, $3, $4) RETURNING *';
+        return connect.conn.one(sql, [args.created_at, args.user_id, args.status_id, args.shipping_id])
           .then(data => {
             return data;
           })
@@ -804,8 +804,8 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`DELETE FROM \\"order\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'DELETE FROM \\"order\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -820,8 +820,8 @@ const Mutation = new GraphQLObjectType({
         method: { type: GraphQLString }
       },
       resolve(parent, args) {
-        const sql = \`INSERT INTO \\"shipping_method\\" (method) VALUES ('\${args.method}')\`;
-        return connect.conn.one(sql)
+        const sql = 'INSERT INTO \\"shipping_method\\" (method) VALUES ($1) RETURNING *';
+        return connect.conn.one(sql, [args.method])
           .then(data => {
             return data;
           })
@@ -859,8 +859,8 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`DELETE FROM \\"shipping_method\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'DELETE FROM \\"shipping_method\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -875,8 +875,8 @@ const Mutation = new GraphQLObjectType({
         code: { type: GraphQLString }
       },
       resolve(parent, args) {
-        const sql = \`INSERT INTO \\"status\\" (code) VALUES ('\${args.code}')\`;
-        return connect.conn.one(sql)
+        const sql = 'INSERT INTO \\"status\\" (code) VALUES ($1) RETURNING *';
+        return connect.conn.one(sql, [args.code])
           .then(data => {
             return data;
           })
@@ -914,8 +914,8 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`DELETE FROM \\"status\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'DELETE FROM \\"status\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })
@@ -932,8 +932,8 @@ const Mutation = new GraphQLObjectType({
         name: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(parent, args) {
-        const sql = \`INSERT INTO \\"user\\" (phone_number, address, name) VALUES ('\${args.phone_number}', '\${args.address}', '\${args.name}')\`;
-        return connect.conn.one(sql)
+        const sql = 'INSERT INTO \\"user\\" (phone_number, address, name) VALUES ($1, $2, $3) RETURNING *';
+        return connect.conn.one(sql, [args.phone_number, args.address, args.name])
           .then(data => {
             return data;
           })
@@ -973,8 +973,8 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = \`DELETE FROM \\"user\\" WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'DELETE FROM \\"user\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
           })

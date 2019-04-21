@@ -9,6 +9,7 @@ const fs = require("fs");
 const JSZip = require("jszip");
 const path = require("path");
 const events = require("./events");
+const PgSqlProvider = require("./Generators/classes/pgSqlProvider");
 
 let schemaMetaData;
 let mutationsMetaData;
@@ -26,7 +27,7 @@ ipcMain.on(events.URL, async (event, info) => {
 
     schemaMetaData = generateGraphqlServer(
       formattedMetaData.tables,
-      info.type,
+      new PgSqlProvider(),
       info.value
     );
 
