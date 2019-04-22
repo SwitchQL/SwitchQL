@@ -5,10 +5,7 @@ const tab = `  `;
 function generateGraphqlServer(processedMetadata, dbProvider, connString) {
   let graphqlCode = `const graphql = require('graphql');\nconst graphql_iso_date = require('graphql-iso-date');\n`;
 
-  graphqlCode += `const pgp = require('pg-promise')();\n`;
-  graphqlCode += `const connect = {};\n`;
-  graphqlCode += `// WARNING - Properly secure the connection string\n`;
-  graphqlCode += `connect.conn = pgp('${connString}');\n`;
+  graphqlCode += dbProvider.connection(connString);
 
   graphqlCode += `\nconst { 
   GraphQLObjectType,
@@ -144,12 +141,7 @@ function createSubQuery(column, processedMetadata, dbProvider) {
       relatedTableRelationType === "one to many"
     )}`;
 
-    subQuery += `${tab.repeat(5)}.then(data => {\n`;
-    subQuery += `${tab.repeat(6)}return data;\n`;
-    subQuery += `${tab.repeat(5)}})\n`;
-    subQuery += `${tab.repeat(5)}.catch(err => {\n`;
-    subQuery += `${tab.repeat(6)}return ('The error is', err);\n`;
-    subQuery += `${tab.repeat(5)}})\n`;
+    subQuery += "\n";
     subQuery += `${tab.repeat(3)}}\n`;
     subQuery += `${tab.repeat(2)}}`;
   }
@@ -196,13 +188,6 @@ function createFindAllRootQuery(table, dbProvider) {
 
   rootQuery += `const sql = ${dbProvider.select(table.name)}`;
 
-  rootQuery += `${tab.repeat(5)}.then(data => {\n`;
-  rootQuery += `${tab.repeat(6)}return data;\n`;
-  rootQuery += `${tab.repeat(5)}})\n`;
-  rootQuery += `${tab.repeat(5)}.catch(err => {\n`;
-  rootQuery += `${tab.repeat(6)}return ('The error is', err)\n`;
-  rootQuery += `${tab.repeat(5)}})`;
-
   return (rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }
 
@@ -223,13 +208,6 @@ function createFindByIdQuery(table, idColumn, dbProvider) {
     `args.${idColumn.name}`,
     false
   )}`;
-
-  rootQuery += `${tab.repeat(5)}.then(data => {\n`;
-  rootQuery += `${tab.repeat(6)}return data;\n`;
-  rootQuery += `${tab.repeat(5)}})\n`;
-  rootQuery += `${tab.repeat(5)}.catch(err => {\n`;
-  rootQuery += `${tab.repeat(6)}return ('The error is', err)\n`;
-  rootQuery += `${tab.repeat(5)}})`;
 
   return (rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }
@@ -282,13 +260,6 @@ function addMutation(table, dbProvider) {
     argNames
   )}`;
 
-  mutationQuery += `${tab.repeat(5)}.then(data => {\n`;
-  mutationQuery += `${tab.repeat(6)}return data;\n`;
-  mutationQuery += `${tab.repeat(5)}})\n`;
-  mutationQuery += `${tab.repeat(5)}.catch(err => {\n`;
-  mutationQuery += `${tab.repeat(6)}return ('The error is', err);\n`;
-  mutationQuery += `${tab.repeat(5)}})`;
-
   return (mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }
 
@@ -320,11 +291,14 @@ function updateMutation(table, dbProvider) {
   )}resolve(parent, args) {\n`;
 
   mutationQuery += `${tab.repeat(4)}let updateValues = '';\n`;
+  mutationQuery += `${tab.repeat(4)}let idx = 2;\n\n`;
+
   mutationQuery += `${tab.repeat(4)}for (const prop in args) {\n`;
   mutationQuery += `${tab.repeat(5)}if (prop !== "${idColumnName}") {\n`;
   mutationQuery += `${tab.repeat(
     6
-  )}updateValues += \`\${prop} = '\${args[prop]}' \`\n`;
+  )}updateValues += \`\${prop} = '\$\${idx}' \`\n`;
+  mutationQuery += `${tab.repeat(6)}idx++;\n`;
 
   mutationQuery += `${tab.repeat(5)}}\n`;
   mutationQuery += `${tab.repeat(4)}}\n`;
@@ -333,14 +307,6 @@ function updateMutation(table, dbProvider) {
     table.name,
     idColumnName
   )}`;
-
-  mutationQuery += `${tab.repeat(5)}.then(data => {\n`;
-  mutationQuery += `${tab.repeat(6)}return data;\n`;
-
-  mutationQuery += `${tab.repeat(5)}})\n`;
-  mutationQuery += `${tab.repeat(5)}.catch(err => {\n`;
-  mutationQuery += `${tab.repeat(6)}return ('The error is', err);\n`;
-  mutationQuery += `${tab.repeat(5)}})`;
 
   return (mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }
@@ -379,13 +345,6 @@ function deleteMutation(table, dbProvider) {
     table.name,
     idColumn.name
   )}`;
-
-  mutationQuery += `${tab.repeat(5)}.then(data => {\n`;
-  mutationQuery += `${tab.repeat(6)}return data;\n`;
-  mutationQuery += `${tab.repeat(5)}})\n`;
-  mutationQuery += `${tab.repeat(5)}.catch(err => {\n`;
-  mutationQuery += `${tab.repeat(6)}return ('The error is', err);\n`;
-  mutationQuery += `${tab.repeat(5)}})`;
 
   return (mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
 }

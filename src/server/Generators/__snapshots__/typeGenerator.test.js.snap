@@ -294,7 +294,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -310,7 +310,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -323,7 +323,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -339,7 +339,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -352,7 +352,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -368,7 +368,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -381,7 +381,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -397,7 +397,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -410,7 +410,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -426,7 +426,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -439,7 +439,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -455,7 +455,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -468,7 +468,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -484,7 +484,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -497,7 +497,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     },
@@ -513,7 +513,7 @@ const RootQuery = new GraphQLObjectType({
             return data;
           })
           .catch(err => {
-            return ('The error is', err)
+            return ('The error is', err);
           })
       }
     }
@@ -547,13 +547,16 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         let updateValues = '';
+        let idx = 2;
+
         for (const prop in args) {
           if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '\${args[prop]}' \`
+            updateValues += \`\${prop} = '$\${idx}' \`
+            idx++;
           }
         }
-        const sql = \`UPDATE \\"author\\" SET \${updateValues} WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'UPDATE \\"author\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
+        return connect.conn.one(sql, [args.id, ...Object.values(args)])
           .then(data => {
             return data;
           })
@@ -604,13 +607,16 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         let updateValues = '';
+        let idx = 2;
+
         for (const prop in args) {
           if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '\${args[prop]}' \`
+            updateValues += \`\${prop} = '$\${idx}' \`
+            idx++;
           }
         }
-        const sql = \`UPDATE \\"book_order\\" SET \${updateValues} WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'UPDATE \\"book_order\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
+        return connect.conn.one(sql, [args.id, ...Object.values(args)])
           .then(data => {
             return data;
           })
@@ -667,13 +673,16 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         let updateValues = '';
+        let idx = 2;
+
         for (const prop in args) {
           if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '\${args[prop]}' \`
+            updateValues += \`\${prop} = '$\${idx}' \`
+            idx++;
           }
         }
-        const sql = \`UPDATE \\"books\\" SET \${updateValues} WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'UPDATE \\"books\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
+        return connect.conn.one(sql, [args.id, ...Object.values(args)])
           .then(data => {
             return data;
           })
@@ -722,13 +731,16 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         let updateValues = '';
+        let idx = 2;
+
         for (const prop in args) {
           if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '\${args[prop]}' \`
+            updateValues += \`\${prop} = '$\${idx}' \`
+            idx++;
           }
         }
-        const sql = \`UPDATE \\"genre\\" SET \${updateValues} WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'UPDATE \\"genre\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
+        return connect.conn.one(sql, [args.id, ...Object.values(args)])
           .then(data => {
             return data;
           })
@@ -783,13 +795,16 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         let updateValues = '';
+        let idx = 2;
+
         for (const prop in args) {
           if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '\${args[prop]}' \`
+            updateValues += \`\${prop} = '$\${idx}' \`
+            idx++;
           }
         }
-        const sql = \`UPDATE \\"order\\" SET \${updateValues} WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'UPDATE \\"order\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
+        return connect.conn.one(sql, [args.id, ...Object.values(args)])
           .then(data => {
             return data;
           })
@@ -838,13 +853,16 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         let updateValues = '';
+        let idx = 2;
+
         for (const prop in args) {
           if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '\${args[prop]}' \`
+            updateValues += \`\${prop} = '$\${idx}' \`
+            idx++;
           }
         }
-        const sql = \`UPDATE \\"shipping_method\\" SET \${updateValues} WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'UPDATE \\"shipping_method\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
+        return connect.conn.one(sql, [args.id, ...Object.values(args)])
           .then(data => {
             return data;
           })
@@ -893,13 +911,16 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         let updateValues = '';
+        let idx = 2;
+
         for (const prop in args) {
           if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '\${args[prop]}' \`
+            updateValues += \`\${prop} = '$\${idx}' \`
+            idx++;
           }
         }
-        const sql = \`UPDATE \\"status\\" SET \${updateValues} WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'UPDATE \\"status\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
+        return connect.conn.one(sql, [args.id, ...Object.values(args)])
           .then(data => {
             return data;
           })
@@ -952,13 +973,16 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         let updateValues = '';
+        let idx = 2;
+
         for (const prop in args) {
           if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '\${args[prop]}' \`
+            updateValues += \`\${prop} = '$\${idx}' \`
+            idx++;
           }
         }
-        const sql = \`UPDATE \\"user\\" SET \${updateValues} WHERE \\"id\\" = \${args.id}\`;
-        return connect.conn.one(sql)
+        const sql = 'UPDATE \\"user\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
+        return connect.conn.one(sql, [args.id, ...Object.values(args)])
           .then(data => {
             return data;
           })
