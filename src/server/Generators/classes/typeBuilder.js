@@ -2,9 +2,9 @@ const util = require("../../util");
 const tab = `  `;
 
 class TypeBuilder {
-  constructor(dbProvider, connString) {
+  constructor(dbProvider) {
     this.provider = dbProvider;
-    this.graphqlCode = init(this.provider, connString);
+    this.graphqlCode = init(this.provider);
     this.typeSchemaCode = "";
     this.rootQueryCode = `const RootQuery = new GraphQLObjectType({\n${tab}name: 'RootQueryType',\n${tab}fields: {\n`;
     this.mutationCode = `const Mutation = new GraphQLObjectType({\n${tab}name: 'Mutation',\n${tab}fields: {\n`;
@@ -32,6 +32,7 @@ class TypeBuilder {
     }',\n${tab}fields: () => ({`;
 
     let firstLoop = true;
+
     for (const field of table.fields) {
       if (!firstLoop) typeQuery += ",";
 
@@ -295,9 +296,9 @@ function createSubQueryName(relationType, relatedTable) {
   }
 }
 
-function init(dbProvider, connString) {
+function init(dbProvider) {
   let str = `const graphql = require('graphql');\nconst graphql_iso_date = require('graphql-iso-date');\n`;
-  str += dbProvider.connection(connString);
+  str += dbProvider.connection();
 
   str += `\nconst { 
   GraphQLObjectType,

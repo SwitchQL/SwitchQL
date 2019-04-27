@@ -1,11 +1,15 @@
 const tab = `  `;
 
 class PgSqlProvider {
-  connection(connString) {
+  constructor(connString) {
+    this.connString = connString;
+  }
+
+  connection() {
     let conn = `const pgp = require('pg-promise')();\n`;
     conn += `const connect = {};\n`;
     conn += `// WARNING - Properly secure the connection string\n`;
-    conn += `connect.conn = pgp('${connString}');\n`;
+    conn += `connect.conn = pgp('${this.connString}');\n`;
 
     return conn;
   }

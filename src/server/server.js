@@ -2,9 +2,7 @@ const electron = require("electron");
 const { ipcMain } = electron;
 const dbController = require("./DBMetadata/pgMetadataRetriever");
 const processMetaData = require("./DBMetadata/pgMetadataProcessor");
-const generateGraphqlServer = require("./Generators/typeGenerator");
-const generateMutations = require("./Generators/mutationGenerator");
-const generateQueries = require("./Generators/queryGenerator");
+const generateGraphQL = require("./Generators/graphQLGenerator");
 const fs = require("fs");
 const JSZip = require("jszip");
 const path = require("path");
@@ -22,17 +20,17 @@ ipcMain.on(events.URL, async (event, info) => {
       info.value = dbController.buildConnectionString(info);
     }
 
-    let dbMetaData = await dbController.getSchemaInfoPG(info.value);
+    const dbMetaData = await dbController.getSchemaInfoPG(info.value);
     const formattedMetaData = processMetaData(dbMetaData);
 
-    schemaMetaData = generateGraphqlServer(
+    ({
+      types: schemaMetaData,
+      mutations: mutationsMetaData,
+      queries: queriesMetaData
+    } = generateGraphQL(
       formattedMetaData.tables,
-      new PgSqlProvider(),
-      info.value
-    );
-
-    mutationsMetaData = generateMutations(formattedMetaData.tables);
-    queriesMetaData = generateQueries(formattedMetaData.tables);
+      new PgSqlProvider(info.value)
+    ));
 
     const gqlData = {
       schema: schemaMetaData,
