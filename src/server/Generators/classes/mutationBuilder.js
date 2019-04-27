@@ -26,6 +26,8 @@ class MutationBuilder {
         this.exportNames.push(`delete${util.toTitleCase(table.name)}Mutation`);
       }
     }
+
+    return this;
   }
 
   build() {

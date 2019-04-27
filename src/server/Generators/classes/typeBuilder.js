@@ -52,6 +52,8 @@ class TypeBuilder {
     typeQuery += `\n${tab}})\n});\n\n`;
 
     this.typeSchemaCode += typeQuery;
+
+    return this;
   }
 
   createSubQuery(column, processedMetadata) {
@@ -108,6 +110,7 @@ class TypeBuilder {
     }
 
     this.rootQueryCode += rootQuery;
+    return this;
   }
 
   createFindAllRootQuery(table) {
@@ -152,6 +155,7 @@ class TypeBuilder {
     }
 
     this.mutationCode += mutationQuery;
+    return this;
   }
 
   addMutation(table) {
@@ -275,7 +279,7 @@ class TypeBuilder {
   }
 }
 
-const createSubQueryName = (relationType, relatedTable) => {
+function createSubQueryName(relationType, relatedTable) {
   switch (relationType) {
     case "one to one":
       return `related${util.toTitleCase(relatedTable)}`;
@@ -289,9 +293,9 @@ const createSubQueryName = (relationType, relatedTable) => {
     default:
       return `everyRelated${util.toTitleCase(relatedTable)}`;
   }
-};
+}
 
-const init = (dbProvider, connString) => {
+function init(dbProvider, connString) {
   let str = `const graphql = require('graphql');\nconst graphql_iso_date = require('graphql-iso-date');\n`;
   str += dbProvider.connection(connString);
 
@@ -316,9 +320,9 @@ const init = (dbProvider, connString) => {
   \n`;
 
   return str;
-};
+}
 
-const tableDataTypeToGraphqlType = type => {
+function tableDataTypeToGraphqlType(type) {
   switch (type) {
     case "ID":
       return "GraphQLID";
@@ -339,9 +343,9 @@ const tableDataTypeToGraphqlType = type => {
     default:
       return "GraphQLString";
   }
-};
+}
 
-const buildMutationArgType = column => {
+function buildMutationArgType(column) {
   const mutationQuery = `{ type: ${checkifColumnRequired(
     column.required,
     "front"
@@ -350,9 +354,9 @@ const buildMutationArgType = column => {
     "back"
   )} }`;
   return mutationQuery;
-};
+}
 
-const checkifColumnRequired = (required, position) => {
+function checkifColumnRequired(required, position) {
   if (required) {
     if (position === "front") {
       return "new GraphQLNonNull(";
@@ -360,6 +364,6 @@ const checkifColumnRequired = (required, position) => {
     return ")";
   }
   return "";
-};
+}
 
 module.exports = TypeBuilder;
