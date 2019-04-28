@@ -7,15 +7,17 @@
     "test": "jest --verbose",
     "electron": "electron .",
     "start": "webpack-dev-server --mode development --hot --inline & npm run electron",
-    "win start": "concurrently \"webpack-dev-server --mode development --hot --inline\" \"npm run electron\"",
+    "win:start": "concurrently \"webpack-dev-server --mode development --hot --inline\" \"npm run electron\"",
     "start:webpack": "webpack-dev-server --mode development --hot --inline",
-    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/logo.icns --prune=true --out=release-builds"
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/logo.icns --prune=true --out=release-builds",
+    "package-linx": "hello there",
+    "package-win": ""
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SwitchQL/SwitchQL.git"
   },
-  "author": "Robin Seitz, Ian Laue, Zahaan Jasani, Brian Kim, Edward Kim",
+  "author": "Zahaan Jasani, Brian Kim, Edward Kim, Ian Laue, Robin Seitz",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/SwitchQL/SwitchQL/issues"
