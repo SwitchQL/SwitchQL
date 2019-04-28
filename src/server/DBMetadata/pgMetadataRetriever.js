@@ -1,5 +1,6 @@
 const pgp = require("pg-promise")();
 const crypto = require('crypto');
+const utilty = require('../util');
 
 const poolCache = {};
 
@@ -48,10 +49,12 @@ AND t.table_schema = 'public'
 AND constraint_type = 'FOREIGN KEY'
 ORDER BY table_name`;
 
+
+
 async function getSchemaInfoPG(connString) {
   const db = getDbPool(connString);
   try {
-    return metadataInfo = await db.any(metadataQuery);
+    return metadataInfo = utilty.promiseTimeout(10000, db.any(metadataQuery));
   } catch (err) {
     removeFromCache(connString)
     throw err;
