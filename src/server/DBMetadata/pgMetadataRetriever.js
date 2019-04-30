@@ -54,7 +54,7 @@ ORDER BY table_name`;
 async function getSchemaInfoPG(connString) {
   const db = getDbPool(connString);
   try {
-    return metadataInfo = utilty.promiseTimeout(10000, db.any(metadataQuery));
+    return metadataInfo = await utilty.promiseTimeout(10000, db.any(metadataQuery));
   } catch (err) {
     removeFromCache(connString)
     throw err;
