@@ -14,7 +14,6 @@ function promiseTimeout(msDelay, promise) {
     }, msDelay)
   })
 
-  //
   return Promise.race([
     promise,
     timeout
