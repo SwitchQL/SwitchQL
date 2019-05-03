@@ -17,6 +17,8 @@ class QueryBuilder {
         this.exportNames.push(`query${util.toTitleCase(table.name)}ById `);
       }
     }
+
+    return this;
   }
 
   build() {
