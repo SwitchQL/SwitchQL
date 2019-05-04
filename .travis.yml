@@ -6,7 +6,7 @@ node_js:
 jobs:
   include:
     - stage: test
-      os: osx
+      os: linux
       osx_image: xcode9.0
       script: npm run test:ci
 
