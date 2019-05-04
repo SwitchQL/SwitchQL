@@ -1,24 +1,23 @@
-const webpack = require('webpack');
-const path = require('path');
+const path = require("path");
 
 module.exports = {
   watch: true,
-  
-  target: 'electron-renderer',
+
+  target: "electron-renderer",
 
   entry: {
-    app: ['webpack/hot/dev-server', './src/client/main.jsx']
+    app: ["webpack/hot/dev-server", "./src/client/main.jsx"]
   },
 
   output: {
-    path: path.join(__dirname, './public/built'),
-    filename: 'bundle.js',
-    publicPath: 'http://localhost:8080/built/'
+    path: path.join(__dirname, "./public/built"),
+    filename: "bundle.js",
+    publicPath: "http://localhost:8080/built"
   },
 
   devServer: {
-    contentBase: './public',
-    publicPath: 'http://localhost:8080/built'
+    contentBase: "./public",
+    publicPath: "http://localhost:8080/built"
   },
 
   module: {
@@ -27,32 +26,40 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-        },
+          loader: "babel-loader"
+        }
       },
       {
-        test: /\.css$/,
-        
+        test: /\.csm$/,
         use: [
           {
-            loader: 'style-loader',
+            loader: "style-loader"
           },
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
-              modules:true,
-              importLoaders: 1,
-              localIdentName: '[name]_[local]_[hash: base64]',
+              modules: true,
+              importLoaders: 2,
               sourceMap: true,
-              minimize: true,
-            },
+              minimize: true
+            }
+          }
+        ]
+      },
+      {
+        test: /\.(css|scss)$/,
+        use: [
+          {
+            loader: "style-loader"
           },
-        ],
+          { loader: "css-loader" },
+          { loader: "sass-loader" }
+        ]
       },
       {
         test: /\.(?:png|jpg|svg)$/,
-        loader: 'url-loader',
+        loader: "url-loader"
       }
-    ],
-  },
-}
+    ]
+  }
+};
