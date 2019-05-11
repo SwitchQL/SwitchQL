@@ -2,10 +2,23 @@ const electron = require("electron");
 const url = require("url");
 const path = require("path");
 const { app, BrowserWindow, Menu } = electron;
+const isDev = require("electron-is-dev");
 
 require("./server/server");
 
 let mainWindow;
+
+const uri = isDev
+  ? url.format({
+      pathname: "localhost:3000",
+      protocol: "http:",
+      slashes: true
+    })
+  : url.format({
+      pathname: path.join(__dirname, "../build/index.html"),
+      protocol: "file:",
+      slashes: true
+    });
 
 app.on("ready", function() {
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -13,16 +26,11 @@ app.on("ready", function() {
   mainWindow = new BrowserWindow({
     width: width / 2,
     height: height
-    // titleBarStyle: 'customButtonsOnHover', frame: false
   });
+
   //Load HTML into window
-  mainWindow.loadURL(
-    url.format({
-      pathname: path.join(__dirname, "index.html"),
-      protocol: "file:",
-      slashes: true
-    })
-  );
+  mainWindow.loadURL(uri);
+
   //Quit App when closed
   mainWindow.on("closed", function() {
     app.quit();
