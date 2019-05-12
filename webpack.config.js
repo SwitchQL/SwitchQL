@@ -1,24 +1,45 @@
 const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { spawn } = require("child_process");
+
+const SRC_DIR = path.resolve(__dirname, "src");
+
+const OUTPUT_DIR = path.resolve(__dirname, "build");
 
 module.exports = {
-  watch: true,
-
   target: "electron-renderer",
 
-  entry: {
-    app: ["webpack/hot/dev-server", "./src/client/main.jsx"]
-  },
+  entry: path.join(SRC_DIR, "/client/main.jsx"),
 
   output: {
-    path: path.join(__dirname, "./public/built"),
-    filename: "bundle.js",
-    publicPath: "http://localhost:8080/built"
+    path: OUTPUT_DIR,
+    filename: "bundle.js"
   },
 
   devServer: {
-    contentBase: "./public",
-    publicPath: "http://localhost:8080/built"
+    contentBase: OUTPUT_DIR,
+    stats: {
+      colors: true,
+      chunks: false,
+      children: false
+    },
+    before() {
+      spawn("electron", [path.join(SRC_DIR, "main_process.js")], {
+        shell: true,
+        env: process.env,
+        stdio: "inherit"
+      })
+        .on("close", code => process.exit(0))
+        .on("error", spawnError => console.error(spawnError));
+    }
   },
+
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "./src/index.html",
+      inject: "body"
+    })
+  ],
 
   module: {
     rules: [
