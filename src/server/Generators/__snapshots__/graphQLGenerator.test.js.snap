@@ -23,7 +23,7 @@ const updateAuthorMutation = gql\`
 
 const deleteAuthorMutation = gql\`
   mutation($id: ID!) {
-    deleteAuthor($id: ID) {
+    deleteAuthor(id: $id) {
       id
       name
     }
@@ -52,7 +52,7 @@ const updateBook_orderMutation = gql\`
 
 const deleteBook_orderMutation = gql\`
   mutation($id: ID!) {
-    deleteBook_order($id: ID) {
+    deleteBook_order(id: $id) {
       id
       book_id
       order_id
@@ -88,7 +88,7 @@ const updateBooksMutation = gql\`
 
 const deleteBooksMutation = gql\`
   mutation($id: ID!) {
-    deleteBooks($id: ID) {
+    deleteBooks(id: $id) {
       genre_id
       id
       test
@@ -119,7 +119,7 @@ const updateGenreMutation = gql\`
 
 const deleteGenreMutation = gql\`
   mutation($id: ID!) {
-    deleteGenre($id: ID) {
+    deleteGenre(id: $id) {
       id
       name
     }
@@ -152,7 +152,7 @@ const updateOrderMutation = gql\`
 
 const deleteOrderMutation = gql\`
   mutation($id: ID!) {
-    deleteOrder($id: ID) {
+    deleteOrder(id: $id) {
       id
       created_at
       user_id
@@ -182,7 +182,7 @@ const updateShipping_methodMutation = gql\`
 
 const deleteShipping_methodMutation = gql\`
   mutation($id: ID!) {
-    deleteShipping_method($id: ID) {
+    deleteShipping_method(id: $id) {
       id
       method
     }
@@ -209,7 +209,7 @@ const updateStatusMutation = gql\`
 
 const deleteStatusMutation = gql\`
   mutation($id: ID!) {
-    deleteStatus($id: ID) {
+    deleteStatus(id: $id) {
       id
       code
     }
@@ -240,7 +240,7 @@ const updateUserMutation = gql\`
 
 const deleteUserMutation = gql\`
   mutation($id: ID!) {
-    deleteUser($id: ID) {
+    deleteUser(id: $id) {
       id
       phone_number
       address
@@ -1014,7 +1014,7 @@ const Mutation = new GraphQLObjectType({
         let updateValues = '';
         let idx = 2;
 
-        for (const prop in args) {
+        for (const prop in rest) {
             updateValues += \`\${prop} = $\${idx} \`
             idx++;
         }
@@ -1073,7 +1073,7 @@ const Mutation = new GraphQLObjectType({
         let updateValues = '';
         let idx = 2;
 
-        for (const prop in args) {
+        for (const prop in rest) {
             updateValues += \`\${prop} = $\${idx} \`
             idx++;
         }
@@ -1138,7 +1138,7 @@ const Mutation = new GraphQLObjectType({
         let updateValues = '';
         let idx = 2;
 
-        for (const prop in args) {
+        for (const prop in rest) {
             updateValues += \`\${prop} = $\${idx} \`
             idx++;
         }
@@ -1195,7 +1195,7 @@ const Mutation = new GraphQLObjectType({
         let updateValues = '';
         let idx = 2;
 
-        for (const prop in args) {
+        for (const prop in rest) {
             updateValues += \`\${prop} = $\${idx} \`
             idx++;
         }
@@ -1258,7 +1258,7 @@ const Mutation = new GraphQLObjectType({
         let updateValues = '';
         let idx = 2;
 
-        for (const prop in args) {
+        for (const prop in rest) {
             updateValues += \`\${prop} = $\${idx} \`
             idx++;
         }
@@ -1315,7 +1315,7 @@ const Mutation = new GraphQLObjectType({
         let updateValues = '';
         let idx = 2;
 
-        for (const prop in args) {
+        for (const prop in rest) {
             updateValues += \`\${prop} = $\${idx} \`
             idx++;
         }
@@ -1372,7 +1372,7 @@ const Mutation = new GraphQLObjectType({
         let updateValues = '';
         let idx = 2;
 
-        for (const prop in args) {
+        for (const prop in rest) {
             updateValues += \`\${prop} = $\${idx} \`
             idx++;
         }
@@ -1433,7 +1433,7 @@ const Mutation = new GraphQLObjectType({
         let updateValues = '';
         let idx = 2;
 
-        for (const prop in args) {
+        for (const prop in rest) {
             updateValues += \`\${prop} = $\${idx} \`
             idx++;
         }

@@ -20,7 +20,7 @@ const updateAuthorMutation = gql\`
 
 const deleteAuthorMutation = gql\`
   mutation($id: ID!) {
-    deleteAuthor($id: ID) {
+    deleteAuthor(id: $id) {
       id
       name
     }
@@ -30,18 +30,18 @@ const deleteAuthorMutation = gql\`
 const addBook_orderMutation = gql\`
   mutation($book_id: ID, $order_id: ID) {
     addBook_order(book_id: $book_id, order_id: $order_id) {
-      id
       book_id
+      id
       order_id
     }
   }
 \`
 
 const updateBook_orderMutation = gql\`
-  mutation($id: ID!, $book_id: ID, $order_id: ID) {
-    updateBook_order(id: $id, book_id: $book_id, order_id: $order_id) {
-      id
+  mutation($book_id: ID, $id: ID!, $order_id: ID) {
+    updateBook_order(book_id: $book_id, id: $id, order_id: $order_id) {
       book_id
+      id
       order_id
     }
   }
@@ -49,49 +49,49 @@ const updateBook_orderMutation = gql\`
 
 const deleteBook_orderMutation = gql\`
   mutation($id: ID!) {
-    deleteBook_order($id: ID) {
-      id
+    deleteBook_order(id: $id) {
       book_id
+      id
       order_id
     }
   }
 \`
 
 const addBooksMutation = gql\`
-  mutation($genre_id: ID, $test: Float, $name: String, $publish_date: Date, $author_id: ID) {
-    addBooks(genre_id: $genre_id, test: $test, name: $name, publish_date: $publish_date, author_id: $author_id) {
+  mutation($author_id: ID, $genre_id: ID, $name: String, $publish_date: Date, $test: Float) {
+    addBooks(author_id: $author_id, genre_id: $genre_id, name: $name, publish_date: $publish_date, test: $test) {
+      author_id
       genre_id
       id
-      test
       name
       publish_date
-      author_id
+      test
     }
   }
 \`
 
 const updateBooksMutation = gql\`
-  mutation($genre_id: ID, $id: ID!, $test: Float, $name: String, $publish_date: Date, $author_id: ID) {
-    updateBooks(genre_id: $genre_id, id: $id, test: $test, name: $name, publish_date: $publish_date, author_id: $author_id) {
+  mutation($author_id: ID, $genre_id: ID, $id: ID!, $name: String, $publish_date: Date, $test: Float) {
+    updateBooks(author_id: $author_id, genre_id: $genre_id, id: $id, name: $name, publish_date: $publish_date, test: $test) {
+      author_id
       genre_id
       id
-      test
       name
       publish_date
-      author_id
+      test
     }
   }
 \`
 
 const deleteBooksMutation = gql\`
   mutation($id: ID!) {
-    deleteBooks($id: ID) {
+    deleteBooks(id: $id) {
+      author_id
       genre_id
       id
-      test
       name
       publish_date
-      author_id
+      test
     }
   }
 \`
@@ -116,7 +116,7 @@ const updateGenreMutation = gql\`
 
 const deleteGenreMutation = gql\`
   mutation($id: ID!) {
-    deleteGenre($id: ID) {
+    deleteGenre(id: $id) {
       id
       name
     }
@@ -124,37 +124,37 @@ const deleteGenreMutation = gql\`
 \`
 
 const addOrderMutation = gql\`
-  mutation($created_at: Date, $user_id: ID, $status_id: ID, $shipping_id: ID) {
-    addOrder(created_at: $created_at, user_id: $user_id, status_id: $status_id, shipping_id: $shipping_id) {
-      id
+  mutation($created_at: Date, $shipping_id: ID, $status_id: ID, $user_id: ID) {
+    addOrder(created_at: $created_at, shipping_id: $shipping_id, status_id: $status_id, user_id: $user_id) {
       created_at
-      user_id
-      status_id
+      id
       shipping_id
+      status_id
+      user_id
     }
   }
 \`
 
 const updateOrderMutation = gql\`
-  mutation($id: ID!, $created_at: Date, $user_id: ID, $status_id: ID, $shipping_id: ID) {
-    updateOrder(id: $id, created_at: $created_at, user_id: $user_id, status_id: $status_id, shipping_id: $shipping_id) {
-      id
+  mutation($created_at: Date, $id: ID!, $shipping_id: ID, $status_id: ID, $user_id: ID) {
+    updateOrder(created_at: $created_at, id: $id, shipping_id: $shipping_id, status_id: $status_id, user_id: $user_id) {
       created_at
-      user_id
-      status_id
+      id
       shipping_id
+      status_id
+      user_id
     }
   }
 \`
 
 const deleteOrderMutation = gql\`
   mutation($id: ID!) {
-    deleteOrder($id: ID) {
-      id
+    deleteOrder(id: $id) {
       created_at
-      user_id
-      status_id
+      id
       shipping_id
+      status_id
+      user_id
     }
   }
 \`
@@ -179,7 +179,7 @@ const updateShipping_methodMutation = gql\`
 
 const deleteShipping_methodMutation = gql\`
   mutation($id: ID!) {
-    deleteShipping_method($id: ID) {
+    deleteShipping_method(id: $id) {
       id
       method
     }
@@ -189,59 +189,59 @@ const deleteShipping_methodMutation = gql\`
 const addStatusMutation = gql\`
   mutation($code: String) {
     addStatus(code: $code) {
-      id
       code
+      id
     }
   }
 \`
 
 const updateStatusMutation = gql\`
-  mutation($id: ID!, $code: String) {
-    updateStatus(id: $id, code: $code) {
-      id
+  mutation($code: String, $id: ID!) {
+    updateStatus(code: $code, id: $id) {
       code
+      id
     }
   }
 \`
 
 const deleteStatusMutation = gql\`
   mutation($id: ID!) {
-    deleteStatus($id: ID) {
-      id
+    deleteStatus(id: $id) {
       code
+      id
     }
   }
 \`
 
 const addUserMutation = gql\`
-  mutation($phone_number: String, $address: String, $name: String!) {
-    addUser(phone_number: $phone_number, address: $address, name: $name) {
-      id
-      phone_number
+  mutation($address: String, $name: String!, $phone_number: String) {
+    addUser(address: $address, name: $name, phone_number: $phone_number) {
       address
+      id
       name
+      phone_number
     }
   }
 \`
 
 const updateUserMutation = gql\`
-  mutation($id: ID!, $phone_number: String, $address: String, $name: String!) {
-    updateUser(id: $id, phone_number: $phone_number, address: $address, name: $name) {
-      id
-      phone_number
+  mutation($address: String, $id: ID!, $name: String!, $phone_number: String) {
+    updateUser(address: $address, id: $id, name: $name, phone_number: $phone_number) {
       address
+      id
       name
+      phone_number
     }
   }
 \`
 
 const deleteUserMutation = gql\`
   mutation($id: ID!) {
-    deleteUser($id: ID) {
-      id
-      phone_number
+    deleteUser(id: $id) {
       address
+      id
       name
+      phone_number
     }
   }
 \`
