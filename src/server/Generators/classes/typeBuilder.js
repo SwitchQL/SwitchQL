@@ -227,17 +227,17 @@ class TypeBuilder {
       3
     )}resolve(parent, args) {\n`;
 
+    mutationQuery += `${tab.repeat(4)}const { id, ...rest } = args;\n`;
     mutationQuery += `${tab.repeat(4)}let updateValues = '';\n`;
     mutationQuery += `${tab.repeat(4)}let idx = 2;\n\n`;
 
-    mutationQuery += `${tab.repeat(4)}for (const prop in args) {\n`;
-    mutationQuery += `${tab.repeat(5)}if (prop !== "${idColumnName}") {\n`;
+    mutationQuery += `${tab.repeat(4)}for (const prop in rest) {\n`;
+
     mutationQuery += `${tab.repeat(
       6
-    )}updateValues += \`\${prop} = '\$\${idx}' \`\n`;
+    )}updateValues += \`\${prop} = \$\${idx} \`\n`;
     mutationQuery += `${tab.repeat(6)}idx++;\n`;
 
-    mutationQuery += `${tab.repeat(5)}}\n`;
     mutationQuery += `${tab.repeat(4)}}\n`;
 
     mutationQuery += `${tab.repeat(4)}const sql = ${this.provider.update(
