@@ -1010,17 +1010,16 @@ const Mutation = new GraphQLObjectType({
         name: { type: GraphQLString }
       },
       resolve(parent, args) {
+        const { id, ...rest } = args;
         let updateValues = '';
         let idx = 2;
 
         for (const prop in args) {
-          if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '$\${idx}' \`
+            updateValues += \`\${prop} = $\${idx} \`
             idx++;
-          }
         }
-        const sql = 'UPDATE \\"author\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
-        return connect.conn.one(sql, [args.id, ...Object.values(args)])
+        const sql = \`UPDATE \\"author\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
           })
@@ -1070,17 +1069,16 @@ const Mutation = new GraphQLObjectType({
         order_id: { type: GraphQLID }
       },
       resolve(parent, args) {
+        const { id, ...rest } = args;
         let updateValues = '';
         let idx = 2;
 
         for (const prop in args) {
-          if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '$\${idx}' \`
+            updateValues += \`\${prop} = $\${idx} \`
             idx++;
-          }
         }
-        const sql = 'UPDATE \\"book_order\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
-        return connect.conn.one(sql, [args.id, ...Object.values(args)])
+        const sql = \`UPDATE \\"book_order\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
           })
@@ -1136,17 +1134,16 @@ const Mutation = new GraphQLObjectType({
         author_id: { type: GraphQLID }
       },
       resolve(parent, args) {
+        const { id, ...rest } = args;
         let updateValues = '';
         let idx = 2;
 
         for (const prop in args) {
-          if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '$\${idx}' \`
+            updateValues += \`\${prop} = $\${idx} \`
             idx++;
-          }
         }
-        const sql = 'UPDATE \\"books\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
-        return connect.conn.one(sql, [args.id, ...Object.values(args)])
+        const sql = \`UPDATE \\"books\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
           })
@@ -1194,17 +1191,16 @@ const Mutation = new GraphQLObjectType({
         name: { type: GraphQLString }
       },
       resolve(parent, args) {
+        const { id, ...rest } = args;
         let updateValues = '';
         let idx = 2;
 
         for (const prop in args) {
-          if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '$\${idx}' \`
+            updateValues += \`\${prop} = $\${idx} \`
             idx++;
-          }
         }
-        const sql = 'UPDATE \\"genre\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
-        return connect.conn.one(sql, [args.id, ...Object.values(args)])
+        const sql = \`UPDATE \\"genre\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
           })
@@ -1258,17 +1254,16 @@ const Mutation = new GraphQLObjectType({
         shipping_id: { type: GraphQLID }
       },
       resolve(parent, args) {
+        const { id, ...rest } = args;
         let updateValues = '';
         let idx = 2;
 
         for (const prop in args) {
-          if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '$\${idx}' \`
+            updateValues += \`\${prop} = $\${idx} \`
             idx++;
-          }
         }
-        const sql = 'UPDATE \\"order\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
-        return connect.conn.one(sql, [args.id, ...Object.values(args)])
+        const sql = \`UPDATE \\"order\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
           })
@@ -1316,17 +1311,16 @@ const Mutation = new GraphQLObjectType({
         method: { type: GraphQLString }
       },
       resolve(parent, args) {
+        const { id, ...rest } = args;
         let updateValues = '';
         let idx = 2;
 
         for (const prop in args) {
-          if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '$\${idx}' \`
+            updateValues += \`\${prop} = $\${idx} \`
             idx++;
-          }
         }
-        const sql = 'UPDATE \\"shipping_method\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
-        return connect.conn.one(sql, [args.id, ...Object.values(args)])
+        const sql = \`UPDATE \\"shipping_method\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
           })
@@ -1374,17 +1368,16 @@ const Mutation = new GraphQLObjectType({
         code: { type: GraphQLString }
       },
       resolve(parent, args) {
+        const { id, ...rest } = args;
         let updateValues = '';
         let idx = 2;
 
         for (const prop in args) {
-          if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '$\${idx}' \`
+            updateValues += \`\${prop} = $\${idx} \`
             idx++;
-          }
         }
-        const sql = 'UPDATE \\"status\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
-        return connect.conn.one(sql, [args.id, ...Object.values(args)])
+        const sql = \`UPDATE \\"status\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
           })
@@ -1436,17 +1429,16 @@ const Mutation = new GraphQLObjectType({
         name: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(parent, args) {
+        const { id, ...rest } = args;
         let updateValues = '';
         let idx = 2;
 
         for (const prop in args) {
-          if (prop !== \\"id\\") {
-            updateValues += \`\${prop} = '$\${idx}' \`
+            updateValues += \`\${prop} = $\${idx} \`
             idx++;
-          }
         }
-        const sql = 'UPDATE \\"user\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *';
-        return connect.conn.one(sql, [args.id, ...Object.values(args)])
+        const sql = \`UPDATE \\"user\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
           })
