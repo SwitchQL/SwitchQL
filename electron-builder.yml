@@ -4,6 +4,6 @@ productName: "Switch QL"
 files:
   - "src"
   - "build/*"
-artifactName: "switchql-${version}.${ext}"
+artifactName: "switchql.${ext}"
 mac:
   category: public.app-category.developer-tools
