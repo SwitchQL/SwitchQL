@@ -90,7 +90,7 @@ function buildTypeParams(table, idField, mutationType) {
   let mut = `${tab}${mutationType}${util.toTitleCase(table.name)}(`;
 
   if (mutationType === "delete") {
-    mut += `$${idField.name}: ${idField.type}) {\n`;
+    mut += `${idField.name}: $${idField.name}) {\n`;
     return mut;
   }
 

@@ -5,14 +5,6 @@ import input from "../DBMetadata/sampleFiles/processedMetadata";
 import PgSqlProvider from "./classes/pgSqlProvider";
 
 describe("Mutation Generation Tests", () => {
-  it("Should correctly generate mutations given input file", () => {
-    const { mutations: result } = generateGraphQL(
-      input.tables,
-      new PgSqlProvider("postgres://test@test.com:5432/test")
-    );
-    expect(result).toBe(mutationOutput);
-  });
-
   it("Should return an empty string on empty input", () => {
     const { mutations: result } = generateGraphQL(
       {},

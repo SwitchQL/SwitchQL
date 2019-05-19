@@ -53,10 +53,10 @@ class PgSqlProvider {
   }
 
   update(table, idColumnName) {
-    let query = `'UPDATE "${table}" SET \${updateValues} WHERE "${idColumnName}" = $1 RETURNING *';\n`;
+    let query = `\`UPDATE "${table}" SET \${updateValues} WHERE "${idColumnName}" = $1 RETURNING *\`;\n`;
     query += `${tab.repeat(
       4
-    )}return connect.conn.one(sql, [args.${idColumnName}, ...Object.values(args)])\n`;
+    )}return connect.conn.one(sql, [id, ...Object.values(rest)])\n`;
 
     query += addPromiseResolution();
     return query;
