@@ -16,8 +16,8 @@ jobs:
         provider: releases
         api_key: $GH_TOKEN
         file:
-          - dist/switchql_1.0.0_amd64.snap
-          - dist/switchql 1.0.0.AppImage
+          - dist/switchql.snap
+          - dist/switchql.AppImage
         skip_cleanup: true
         on:
           branch: master
@@ -29,7 +29,7 @@ jobs:
       deploy:
         provider: releases
         api_key: $GH_TOKEN
-        file: dist/switchql-1.0.0.dmg
+        file: dist/switchql.dmg
         skip_cleanup: true
         on:
           branch: master
@@ -42,7 +42,7 @@ jobs:
       deploy:
         provider: releases
         api_key: $GH_TOKEN
-        file: dist\switchql Setup 1.0.0.exe
+        file: dist\switchql.exe
         skip_cleanup: true
         on:
           branch: master
