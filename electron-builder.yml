@@ -1,0 +1,9 @@
+appId: d70c8ae-971a-4477-8b84-aea310f6ad63
+icon: "assets/icons/logo.png"
+productName: "Switch QL"
+files:
+  - "src"
+  - "build/*"
+artifactName: "switchql-${version}.${ext}"
+mac:
+  category: public.app-category.developer-tools

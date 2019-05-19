@@ -1,3 +1,49 @@
 language: node_js
+
 node_js:
   - "node"
+
+jobs:
+  include:
+    - stage: test
+      os: linux
+      script: npm run test:ci
+
+    - stage: build
+      os: linux
+      script: npm run dist
+      deploy:
+        provider: releases
+        api_key: $GH_TOKEN
+        file:
+          - dist/switchql_1.0.0_amd64.snap
+          - dist/switchql 1.0.0.AppImage
+        skip_cleanup: true
+        on:
+          branch: master
+          tags: true
+
+    - stage: build
+      os: osx
+      script: npm run dist
+      deploy:
+        provider: releases
+        api_key: $GH_TOKEN
+        file: dist/switchql-1.0.0.dmg
+        skip_cleanup: true
+        on:
+          branch: master
+          tags: true
+
+    - stage: build
+      filter_secrets: false
+      os: windows
+      script: npm run dist
+      deploy:
+        provider: releases
+        api_key: $GH_TOKEN
+        file: dist\switchql Setup 1.0.0.exe
+        skip_cleanup: true
+        on:
+          branch: master
+          tags: true

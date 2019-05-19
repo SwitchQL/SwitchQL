@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import styles from "./styles.csm";
+import "./styles/form.css";
 import logo from "./img/logo.png";
 import icon from "./img/icon.png";
 
@@ -88,46 +88,46 @@ export default class Form extends Component {
 
     if (this.state.formError.twoConnect) {
       formError = (
-        <div className={styles.warning}>
+        <div className="warning">
           Please use <b>one</b> connection method.
         </div>
       );
     } else if (this.state.formError.incomplete) {
       formError = (
-        <div className={styles.warning}>
+        <div className="warning">
           <b>*</b>These fields are required.
         </div>
       );
     } else if (this.state.formError.emptySubmit) {
       formError = (
-        <div className={styles.warning}>Please choose a connection method.</div>
+        <div className="warning">Please choose a connection method.</div>
       );
     }
 
     const classList = this.props.isOpen
-      ? `${styles.formvis} ${styles.fadeInScale}`
-      : `${styles.formvis} ${styles.fadeOutScale}`;
+      ? `formvis fadeInScale`
+      : `formvis fadeOutScale`;
 
     return (
-      <div className={classList} id="form">
+      <div className={classList}>
         <form onSubmit={this.submit}>
-          <div className={styles.formIn}>
+          <div className="formIn">
             <a
               href="https://github.com/SwitchQL/SwitchQL/blob/master/README.md"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img src={icon} className={styles.icon} />
+              <img src={icon} className="icon" />
             </a>
-            <img src={logo} className={styles.logo} />
-            <div className={styles.welcome}>
+            <img src={logo} className="logo" />
+            <div className="welcome">
               switch<b>QL</b>
             </div>
 
-            <div className={styles.radioWrapper}>
+            <div className="radioWrapper">
               {databaseTypes.map((n, i) => {
                 return (
-                  <label key={i} className={styles.radioBtn}>
+                  <label key={i} className="radioBtn">
                     <input
                       type="radio"
                       name="type"
@@ -142,11 +142,11 @@ export default class Form extends Component {
               })}
             </div>
 
-            <div className={styles.connect}>Connect To Your Database</div>
+            <div className="connect">Connect To Your Database</div>
             <textarea
               placeholder="Connection String"
               name="value"
-              className={styles.question}
+              className="question"
               required
               autoComplete="off"
               type="text"
@@ -154,11 +154,11 @@ export default class Form extends Component {
               onChange={this.valueChange}
             />
 
-            <div className={styles.connect}>Connection String Unavailable?</div>
+            <div className="connect">Connection String Unavailable?</div>
             <textarea
               placeholder="Host Name*"
               name="host"
-              className={styles.question}
+              className="question"
               required
               autoComplete="off"
               type="text"
@@ -169,7 +169,7 @@ export default class Form extends Component {
             <textarea
               placeholder="Port Number*"
               name="port"
-              className={styles.question}
+              className="question"
               required
               autoComplete="off"
               type="text"
@@ -180,7 +180,7 @@ export default class Form extends Component {
             <textarea
               placeholder="User Name*"
               name="user"
-              className={styles.question}
+              className="question"
               required
               autoComplete="off"
               type="text"
@@ -191,7 +191,7 @@ export default class Form extends Component {
             <input
               placeholder="Password*"
               name="password"
-              className={styles.question}
+              className="question"
               required
               autoComplete="off"
               type="password"
@@ -202,7 +202,7 @@ export default class Form extends Component {
             <textarea
               placeholder="Database Name*"
               name="database"
-              className={styles.question}
+              className="question"
               required
               autoComplete="off"
               type="text"
@@ -212,7 +212,7 @@ export default class Form extends Component {
 
             <button
               type="button"
-              className={styles.button}
+              className="button"
               onClick={() => {
                 this.submit();
               }}
@@ -222,7 +222,7 @@ export default class Form extends Component {
 
             <button
               type="button"
-              className={styles.exit}
+              className="exit"
               onClick={() => this.props.onClose()}
             >
               ×

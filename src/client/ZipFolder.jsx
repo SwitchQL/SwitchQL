@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import styles from "./styles.csm";
+import "./styles/zip.css";
 
 class ZipFolder extends Component {
   constructor(props) {
     super(props);
 
     this.submit = this.submit.bind(this);
+    this.resetValue = this.resetValue.bind(this);
     this.input = React.createRef();
   }
 
@@ -20,11 +21,19 @@ class ZipFolder extends Component {
     e.stopPropagation();
   }
 
+  /* 
+    Necessary to fix bug where the same folder cannot be selected more 
+    than once in a row.
+  */
+  resetValue(e) {
+    e.target.value = null;
+  }
+
   render() {
     return (
-      <div onChange={this.submit}>
+      <div onChange={this.submit} onClick={this.resetValue}>
         <input
-          className={styles.inputVis}
+          className="inputVis"
           type="file"
           id="input"
           webkitdirectory={1}
@@ -35,9 +44,7 @@ class ZipFolder extends Component {
         <label
           htmlFor="input"
           className={
-            this.props.disabled
-              ? `${styles.bottomButtons} ${styles.btnDisabled}`
-              : styles.bottomButtons
+            this.props.disabled ? `bottomButtons btnDisabled` : "bottomButtons"
           }
         >
           Export Code

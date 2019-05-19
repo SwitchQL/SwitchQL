@@ -1,0 +1,1473 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Mutation Generation Tests Should match the snapshot 1`] = `
+"import { gql } from 'apollo-boost';
+
+const addAuthorMutation = gql\`
+  mutation($name: String) {
+    addAuthor(name: $name) {
+      id
+      name
+    }
+  }
+\`
+
+const updateAuthorMutation = gql\`
+  mutation($id: ID!, $name: String) {
+    updateAuthor(id: $id, name: $name) {
+      id
+      name
+    }
+  }
+\`
+
+const deleteAuthorMutation = gql\`
+  mutation($id: ID!) {
+    deleteAuthor(id: $id) {
+      id
+      name
+    }
+  }
+\`
+
+const addBook_orderMutation = gql\`
+  mutation($book_id: ID, $order_id: ID) {
+    addBook_order(book_id: $book_id, order_id: $order_id) {
+      id
+      book_id
+      order_id
+    }
+  }
+\`
+
+const updateBook_orderMutation = gql\`
+  mutation($id: ID!, $book_id: ID, $order_id: ID) {
+    updateBook_order(id: $id, book_id: $book_id, order_id: $order_id) {
+      id
+      book_id
+      order_id
+    }
+  }
+\`
+
+const deleteBook_orderMutation = gql\`
+  mutation($id: ID!) {
+    deleteBook_order(id: $id) {
+      id
+      book_id
+      order_id
+    }
+  }
+\`
+
+const addBooksMutation = gql\`
+  mutation($genre_id: ID, $test: Float, $name: String, $publish_date: Date, $author_id: ID) {
+    addBooks(genre_id: $genre_id, test: $test, name: $name, publish_date: $publish_date, author_id: $author_id) {
+      genre_id
+      id
+      test
+      name
+      publish_date
+      author_id
+    }
+  }
+\`
+
+const updateBooksMutation = gql\`
+  mutation($genre_id: ID, $id: ID!, $test: Float, $name: String, $publish_date: Date, $author_id: ID) {
+    updateBooks(genre_id: $genre_id, id: $id, test: $test, name: $name, publish_date: $publish_date, author_id: $author_id) {
+      genre_id
+      id
+      test
+      name
+      publish_date
+      author_id
+    }
+  }
+\`
+
+const deleteBooksMutation = gql\`
+  mutation($id: ID!) {
+    deleteBooks(id: $id) {
+      genre_id
+      id
+      test
+      name
+      publish_date
+      author_id
+    }
+  }
+\`
+
+const addGenreMutation = gql\`
+  mutation($name: String) {
+    addGenre(name: $name) {
+      id
+      name
+    }
+  }
+\`
+
+const updateGenreMutation = gql\`
+  mutation($id: ID!, $name: String) {
+    updateGenre(id: $id, name: $name) {
+      id
+      name
+    }
+  }
+\`
+
+const deleteGenreMutation = gql\`
+  mutation($id: ID!) {
+    deleteGenre(id: $id) {
+      id
+      name
+    }
+  }
+\`
+
+const addOrderMutation = gql\`
+  mutation($created_at: Date, $user_id: ID, $status_id: ID, $shipping_id: ID) {
+    addOrder(created_at: $created_at, user_id: $user_id, status_id: $status_id, shipping_id: $shipping_id) {
+      id
+      created_at
+      user_id
+      status_id
+      shipping_id
+    }
+  }
+\`
+
+const updateOrderMutation = gql\`
+  mutation($id: ID!, $created_at: Date, $user_id: ID, $status_id: ID, $shipping_id: ID) {
+    updateOrder(id: $id, created_at: $created_at, user_id: $user_id, status_id: $status_id, shipping_id: $shipping_id) {
+      id
+      created_at
+      user_id
+      status_id
+      shipping_id
+    }
+  }
+\`
+
+const deleteOrderMutation = gql\`
+  mutation($id: ID!) {
+    deleteOrder(id: $id) {
+      id
+      created_at
+      user_id
+      status_id
+      shipping_id
+    }
+  }
+\`
+
+const addShipping_methodMutation = gql\`
+  mutation($method: String) {
+    addShipping_method(method: $method) {
+      id
+      method
+    }
+  }
+\`
+
+const updateShipping_methodMutation = gql\`
+  mutation($id: ID!, $method: String) {
+    updateShipping_method(id: $id, method: $method) {
+      id
+      method
+    }
+  }
+\`
+
+const deleteShipping_methodMutation = gql\`
+  mutation($id: ID!) {
+    deleteShipping_method(id: $id) {
+      id
+      method
+    }
+  }
+\`
+
+const addStatusMutation = gql\`
+  mutation($code: String) {
+    addStatus(code: $code) {
+      id
+      code
+    }
+  }
+\`
+
+const updateStatusMutation = gql\`
+  mutation($id: ID!, $code: String) {
+    updateStatus(id: $id, code: $code) {
+      id
+      code
+    }
+  }
+\`
+
+const deleteStatusMutation = gql\`
+  mutation($id: ID!) {
+    deleteStatus(id: $id) {
+      id
+      code
+    }
+  }
+\`
+
+const addUserMutation = gql\`
+  mutation($phone_number: String, $address: String, $name: String!) {
+    addUser(phone_number: $phone_number, address: $address, name: $name) {
+      id
+      phone_number
+      address
+      name
+    }
+  }
+\`
+
+const updateUserMutation = gql\`
+  mutation($id: ID!, $phone_number: String, $address: String, $name: String!) {
+    updateUser(id: $id, phone_number: $phone_number, address: $address, name: $name) {
+      id
+      phone_number
+      address
+      name
+    }
+  }
+\`
+
+const deleteUserMutation = gql\`
+  mutation($id: ID!) {
+    deleteUser(id: $id) {
+      id
+      phone_number
+      address
+      name
+    }
+  }
+\`
+
+export {
+  addAuthorMutation,
+  updateAuthorMutation,
+  deleteAuthorMutation,
+  addBook_orderMutation,
+  updateBook_orderMutation,
+  deleteBook_orderMutation,
+  addBooksMutation,
+  updateBooksMutation,
+  deleteBooksMutation,
+  addGenreMutation,
+  updateGenreMutation,
+  deleteGenreMutation,
+  addOrderMutation,
+  updateOrderMutation,
+  deleteOrderMutation,
+  addShipping_methodMutation,
+  updateShipping_methodMutation,
+  deleteShipping_methodMutation,
+  addStatusMutation,
+  updateStatusMutation,
+  deleteStatusMutation,
+  addUserMutation,
+  updateUserMutation,
+  deleteUserMutation
+};"
+`;
+
+exports[`Query Generation Tests Should match the snapshot 1`] = `
+"import { gql } from 'apollo-boost';
+
+const queryEveryAuthor = gql\`
+  {
+    everyAuthor {
+      id
+      name
+    }
+  }
+\`
+
+const queryAuthorById = gql\`
+  query($author: ID!) {
+    author(id: $author) {
+      id
+      name
+    }
+  }
+\`
+
+const queryEveryBook_order = gql\`
+  {
+    everyBook_order {
+      id
+      book_id
+      order_id
+    }
+  }
+\`
+
+const queryBook_orderById = gql\`
+  query($book_order: ID!) {
+    book_order(id: $book_order) {
+      id
+      book_id
+      order_id
+    }
+  }
+\`
+
+const queryEveryBooks = gql\`
+  {
+    everyBooks {
+      genre_id
+      id
+      test
+      name
+      publish_date
+      author_id
+    }
+  }
+\`
+
+const queryBooksById = gql\`
+  query($books: ID!) {
+    books(id: $books) {
+      genre_id
+      id
+      test
+      name
+      publish_date
+      author_id
+    }
+  }
+\`
+
+const queryEveryGenre = gql\`
+  {
+    everyGenre {
+      id
+      name
+    }
+  }
+\`
+
+const queryGenreById = gql\`
+  query($genre: ID!) {
+    genre(id: $genre) {
+      id
+      name
+    }
+  }
+\`
+
+const queryEveryOrder = gql\`
+  {
+    everyOrder {
+      id
+      created_at
+      user_id
+      status_id
+      shipping_id
+    }
+  }
+\`
+
+const queryOrderById = gql\`
+  query($order: ID!) {
+    order(id: $order) {
+      id
+      created_at
+      user_id
+      status_id
+      shipping_id
+    }
+  }
+\`
+
+const queryEveryShipping_method = gql\`
+  {
+    everyShipping_method {
+      id
+      method
+    }
+  }
+\`
+
+const queryShipping_methodById = gql\`
+  query($shipping_method: ID!) {
+    shipping_method(id: $shipping_method) {
+      id
+      method
+    }
+  }
+\`
+
+const queryEveryStatus = gql\`
+  {
+    everyStatus {
+      id
+      code
+    }
+  }
+\`
+
+const queryStatusById = gql\`
+  query($status: ID!) {
+    status(id: $status) {
+      id
+      code
+    }
+  }
+\`
+
+const queryEveryUser = gql\`
+  {
+    everyUser {
+      id
+      phone_number
+      address
+      name
+    }
+  }
+\`
+
+const queryUserById = gql\`
+  query($user: ID!) {
+    user(id: $user) {
+      id
+      phone_number
+      address
+      name
+    }
+  }
+\`
+
+export {
+  queryEveryAuthor,
+  queryAuthorById ,
+  queryEveryBook_order,
+  queryBook_orderById ,
+  queryEveryBooks,
+  queryBooksById ,
+  queryEveryGenre,
+  queryGenreById ,
+  queryEveryOrder,
+  queryOrderById ,
+  queryEveryShipping_method,
+  queryShipping_methodById ,
+  queryEveryStatus,
+  queryStatusById ,
+  queryEveryUser,
+  queryUserById 
+};"
+`;
+
+exports[`Type generation tests Should match the snapshot 1`] = `
+"const graphql = require('graphql');
+const graphql_iso_date = require('graphql-iso-date');
+const pgp = require('pg-promise')();
+const connect = {};
+// WARNING - Properly secure the connection string
+connect.conn = pgp('postgres://test@test.com:5432/test');
+
+const { 
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLID,
+  GraphQLString, 
+  GraphQLInt, 
+  GraphQLBoolean,
+  GraphQLList,
+  GraphQLFloat,
+  GraphQLNonNull
+} = graphql;
+  
+const { 
+  GraphQLDate,
+  GraphQLTime,
+  GraphQLDateTime
+} = graphql_iso_date;
+  
+const authorType = new GraphQLObjectType({
+  name: 'author',
+  fields: () => ({
+    id: { type: GraphQLID },
+    name: { type: GraphQLString },
+    everyRelatedBooks: {
+      type: new GraphQLList(booksType),
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"books\\" WHERE \\"author_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }
+  })
+});
+
+const book_orderType = new GraphQLObjectType({
+  name: 'book_order',
+  fields: () => ({
+    id: { type: GraphQLID },
+    book_id: { type: GraphQLID },
+    order_id: { type: GraphQLID },
+    relatedBooks: {
+      type: booksType,
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"books\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.book_id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }, 
+    relatedOrder: {
+      type: orderType,
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"order\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.order_id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }
+  })
+});
+
+const booksType = new GraphQLObjectType({
+  name: 'books',
+  fields: () => ({
+    genre_id: { type: GraphQLID },
+    id: { type: GraphQLID },
+    test: { type: GraphQLFloat },
+    name: { type: GraphQLString },
+    publish_date: { type: GraphQLDate },
+    author_id: { type: GraphQLID },
+    relatedGenre: {
+      type: genreType,
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"genre\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.genre_id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }, 
+    everyRelatedBook_order: {
+      type: new GraphQLList(book_orderType),
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"book_order\\" WHERE \\"book_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }, 
+    relatedAuthor: {
+      type: authorType,
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"author\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.author_id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }
+  })
+});
+
+const genreType = new GraphQLObjectType({
+  name: 'genre',
+  fields: () => ({
+    id: { type: GraphQLID },
+    name: { type: GraphQLString },
+    everyRelatedBooks: {
+      type: new GraphQLList(booksType),
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"books\\" WHERE \\"genre_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }
+  })
+});
+
+const orderType = new GraphQLObjectType({
+  name: 'order',
+  fields: () => ({
+    id: { type: GraphQLID },
+    created_at: { type: GraphQLDate },
+    user_id: { type: GraphQLID },
+    status_id: { type: GraphQLID },
+    shipping_id: { type: GraphQLID },
+    everyRelatedBook_order: {
+      type: new GraphQLList(book_orderType),
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"book_order\\" WHERE \\"order_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }, 
+    relatedUser: {
+      type: userType,
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"user\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.user_id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }, 
+    relatedStatus: {
+      type: statusType,
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"status\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.status_id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }, 
+    relatedShipping_method: {
+      type: shipping_methodType,
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"shipping_method\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, parent.shipping_id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }
+  })
+});
+
+const shipping_methodType = new GraphQLObjectType({
+  name: 'shipping_method',
+  fields: () => ({
+    id: { type: GraphQLID },
+    method: { type: GraphQLString },
+    everyRelatedOrder: {
+      type: new GraphQLList(orderType),
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"order\\" WHERE \\"shipping_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }
+  })
+});
+
+const statusType = new GraphQLObjectType({
+  name: 'status',
+  fields: () => ({
+    id: { type: GraphQLID },
+    code: { type: GraphQLString },
+    everyRelatedOrder: {
+      type: new GraphQLList(orderType),
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"order\\" WHERE \\"status_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }
+  })
+});
+
+const userType = new GraphQLObjectType({
+  name: 'user',
+  fields: () => ({
+    id: { type: GraphQLID },
+    phone_number: { type: GraphQLString },
+    address: { type: GraphQLString },
+    name: { type: GraphQLString },
+    everyRelatedOrder: {
+      type: new GraphQLList(orderType),
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"order\\" WHERE \\"user_id\\" = $1';
+        return connect.conn.many(sql, parent.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }
+  })
+});
+
+const RootQuery = new GraphQLObjectType({
+  name: 'RootQueryType',
+  fields: {
+    everyAuthor: {
+      type: new GraphQLList(authorType),
+      resolve() {
+        const sql = 'SELECT * FROM \\"author\\"';
+        return connect.conn.many(sql)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    author: {
+      type: authorType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"author\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    everyBook_order: {
+      type: new GraphQLList(book_orderType),
+      resolve() {
+        const sql = 'SELECT * FROM \\"book_order\\"';
+        return connect.conn.many(sql)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    book_order: {
+      type: book_orderType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"book_order\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    everyBooks: {
+      type: new GraphQLList(booksType),
+      resolve() {
+        const sql = 'SELECT * FROM \\"books\\"';
+        return connect.conn.many(sql)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    books: {
+      type: booksType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"books\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    everyGenre: {
+      type: new GraphQLList(genreType),
+      resolve() {
+        const sql = 'SELECT * FROM \\"genre\\"';
+        return connect.conn.many(sql)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    genre: {
+      type: genreType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"genre\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    everyOrder: {
+      type: new GraphQLList(orderType),
+      resolve() {
+        const sql = 'SELECT * FROM \\"order\\"';
+        return connect.conn.many(sql)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    order: {
+      type: orderType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"order\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    everyShipping_method: {
+      type: new GraphQLList(shipping_methodType),
+      resolve() {
+        const sql = 'SELECT * FROM \\"shipping_method\\"';
+        return connect.conn.many(sql)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    shipping_method: {
+      type: shipping_methodType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"shipping_method\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    everyStatus: {
+      type: new GraphQLList(statusType),
+      resolve() {
+        const sql = 'SELECT * FROM \\"status\\"';
+        return connect.conn.many(sql)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    status: {
+      type: statusType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"status\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    everyUser: {
+      type: new GraphQLList(userType),
+      resolve() {
+        const sql = 'SELECT * FROM \\"user\\"';
+        return connect.conn.many(sql)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    user: {
+      type: userType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'SELECT * FROM \\"user\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }
+  }
+});
+
+const Mutation = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: {
+    addAuthor: {
+      type: authorType,
+      args: {
+        name: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        const sql = 'INSERT INTO \\"author\\" (name) VALUES ($1) RETURNING *';
+        return connect.conn.one(sql, [args.name])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    updateAuthor: {
+      type: authorType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        const { id, ...rest } = args;
+        let updateValues = '';
+        let idx = 2;
+
+        for (const prop in rest) {
+            updateValues += \`\${prop} = $\${idx} \`
+            idx++;
+        }
+        const sql = \`UPDATE \\"author\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    deleteAuthor: {
+      type: authorType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'DELETE FROM \\"author\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    addBook_order: {
+      type: book_orderType,
+      args: {
+        book_id: { type: GraphQLID },
+        order_id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'INSERT INTO \\"book_order\\" (book_id, order_id) VALUES ($1, $2) RETURNING *';
+        return connect.conn.one(sql, [args.book_id, args.order_id])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    updateBook_order: {
+      type: book_orderType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        book_id: { type: GraphQLID },
+        order_id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const { id, ...rest } = args;
+        let updateValues = '';
+        let idx = 2;
+
+        for (const prop in rest) {
+            updateValues += \`\${prop} = $\${idx} \`
+            idx++;
+        }
+        const sql = \`UPDATE \\"book_order\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    deleteBook_order: {
+      type: book_orderType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'DELETE FROM \\"book_order\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    addBooks: {
+      type: booksType,
+      args: {
+        genre_id: { type: GraphQLID },
+        test: { type: GraphQLFloat },
+        name: { type: GraphQLString },
+        publish_date: { type: GraphQLDate },
+        author_id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'INSERT INTO \\"books\\" (genre_id, test, name, publish_date, author_id) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+        return connect.conn.one(sql, [args.genre_id, args.test, args.name, args.publish_date, args.author_id])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    updateBooks: {
+      type: booksType,
+      args: {
+        genre_id: { type: GraphQLID },
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        test: { type: GraphQLFloat },
+        name: { type: GraphQLString },
+        publish_date: { type: GraphQLDate },
+        author_id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const { id, ...rest } = args;
+        let updateValues = '';
+        let idx = 2;
+
+        for (const prop in rest) {
+            updateValues += \`\${prop} = $\${idx} \`
+            idx++;
+        }
+        const sql = \`UPDATE \\"books\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    deleteBooks: {
+      type: booksType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'DELETE FROM \\"books\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    addGenre: {
+      type: genreType,
+      args: {
+        name: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        const sql = 'INSERT INTO \\"genre\\" (name) VALUES ($1) RETURNING *';
+        return connect.conn.one(sql, [args.name])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    updateGenre: {
+      type: genreType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        name: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        const { id, ...rest } = args;
+        let updateValues = '';
+        let idx = 2;
+
+        for (const prop in rest) {
+            updateValues += \`\${prop} = $\${idx} \`
+            idx++;
+        }
+        const sql = \`UPDATE \\"genre\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    deleteGenre: {
+      type: genreType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'DELETE FROM \\"genre\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    addOrder: {
+      type: orderType,
+      args: {
+        created_at: { type: GraphQLDate },
+        user_id: { type: GraphQLID },
+        status_id: { type: GraphQLID },
+        shipping_id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'INSERT INTO \\"order\\" (created_at, user_id, status_id, shipping_id) VALUES ($1, $2, $3, $4) RETURNING *';
+        return connect.conn.one(sql, [args.created_at, args.user_id, args.status_id, args.shipping_id])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    updateOrder: {
+      type: orderType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        created_at: { type: GraphQLDate },
+        user_id: { type: GraphQLID },
+        status_id: { type: GraphQLID },
+        shipping_id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const { id, ...rest } = args;
+        let updateValues = '';
+        let idx = 2;
+
+        for (const prop in rest) {
+            updateValues += \`\${prop} = $\${idx} \`
+            idx++;
+        }
+        const sql = \`UPDATE \\"order\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    deleteOrder: {
+      type: orderType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'DELETE FROM \\"order\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    addShipping_method: {
+      type: shipping_methodType,
+      args: {
+        method: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        const sql = 'INSERT INTO \\"shipping_method\\" (method) VALUES ($1) RETURNING *';
+        return connect.conn.one(sql, [args.method])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    updateShipping_method: {
+      type: shipping_methodType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        method: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        const { id, ...rest } = args;
+        let updateValues = '';
+        let idx = 2;
+
+        for (const prop in rest) {
+            updateValues += \`\${prop} = $\${idx} \`
+            idx++;
+        }
+        const sql = \`UPDATE \\"shipping_method\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    deleteShipping_method: {
+      type: shipping_methodType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'DELETE FROM \\"shipping_method\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    addStatus: {
+      type: statusType,
+      args: {
+        code: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        const sql = 'INSERT INTO \\"status\\" (code) VALUES ($1) RETURNING *';
+        return connect.conn.one(sql, [args.code])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    updateStatus: {
+      type: statusType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        code: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        const { id, ...rest } = args;
+        let updateValues = '';
+        let idx = 2;
+
+        for (const prop in rest) {
+            updateValues += \`\${prop} = $\${idx} \`
+            idx++;
+        }
+        const sql = \`UPDATE \\"status\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    deleteStatus: {
+      type: statusType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'DELETE FROM \\"status\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    addUser: {
+      type: userType,
+      args: {
+        phone_number: { type: GraphQLString },
+        address: { type: GraphQLString },
+        name: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        const sql = 'INSERT INTO \\"user\\" (phone_number, address, name) VALUES ($1, $2, $3) RETURNING *';
+        return connect.conn.one(sql, [args.phone_number, args.address, args.name])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    updateUser: {
+      type: userType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLID) },
+        phone_number: { type: GraphQLString },
+        address: { type: GraphQLString },
+        name: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        const { id, ...rest } = args;
+        let updateValues = '';
+        let idx = 2;
+
+        for (const prop in rest) {
+            updateValues += \`\${prop} = $\${idx} \`
+            idx++;
+        }
+        const sql = \`UPDATE \\"user\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        return connect.conn.one(sql, [id, ...Object.values(rest)])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    },
+    deleteUser: {
+      type: userType,
+      args: {
+        id: { type: GraphQLID }
+      },
+      resolve(parent, args) {
+        const sql = 'DELETE FROM \\"user\\" WHERE \\"id\\" = $1';
+        return connect.conn.one(sql, args.id)
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })
+      }
+    }
+  }
+});
+
+module.exports = new GraphQLSchema({
+  query: RootQuery,
+  mutation: Mutation
+});"
+`;
