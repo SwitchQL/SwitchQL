@@ -11,7 +11,9 @@ jobs:
 
     - stage: build
       os: linux
-      script: npm run dist
+      script:
+        - npm run pack
+        - npm run dist
       deploy:
         provider: releases
         api_key: $GH_TOKEN
@@ -25,7 +27,9 @@ jobs:
 
     - stage: build
       os: osx
-      script: npm run dist
+      script:
+        - npm run pack
+        - npm run dist
       deploy:
         provider: releases
         api_key: $GH_TOKEN
@@ -38,7 +42,9 @@ jobs:
     - stage: build
       filter_secrets: false
       os: windows
-      script: npm run dist
+      script:
+        - npm run pack
+        - npm run dist
       deploy:
         provider: releases
         api_key: $GH_TOKEN
