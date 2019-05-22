@@ -1,5 +1,5 @@
-import processed from "./sampleFiles/processedMetadata";
-import retrieved from "./sampleFiles/retrievedMetadata";
+import processed from "../sampleFiles/processedMetadata";
+import retrieved from "../sampleFiles/retrievedMetadata";
 
 import processMetadata from "./pgMetadataProcessor";
 

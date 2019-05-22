@@ -1,7 +1,9 @@
 const electron = require("electron");
 const { ipcMain } = electron;
-const dbController = require("./DBMetadata/pgMetadataRetriever");
-const processMetaData = require("./DBMetadata/pgMetadataProcessor");
+const pgDBController = require("./DBMetadata/postgres/pgMetadataRetriever");
+const pgProcessMetaData = require("./DBMetadata/postgres/pgMetadataProcessor");
+const mysqlDBController = require("./DBMetadata/mysql/mysqlMetadataRetriever");
+const mysqlProcessMetaData = require("./DBMetadata/mysql/mysqlMetadataProcessor");
 const generateGraphQL = require("./Generators/graphQLGenerator");
 const fs = require("fs");
 const JSZip = require("jszip");
@@ -14,32 +16,61 @@ let mutationsMetaData;
 let queriesMetaData;
 
 ipcMain.on(events.URL, async (event, info) => {
-  try {
-    info = JSON.parse(info);
-    if (info.value.length === 0) {
-      info.value = dbController.buildConnectionString(info);
+  info = JSON.parse(info);
+  if (info.type == "MySQL") {
+    try {
+      if (info.value.length === 0) {
+        info.value = mysqlDBController.buildConnectionString(info);
+      }
+
+      const dbMetaData = await mysqlDBController.getSchemaInfoPG(info.value);
+      const formattedMetaData = mysqlProcessMetaData(dbMetaData);
+
+      ({
+        types: schemaMetaData,
+        mutations: mutationsMetaData,
+        queries: queriesMetaData
+      } = generateGraphQL(
+        formattedMetaData.tables,
+        new PgSqlProvider(info.value)
+      ));
+
+      const gqlData = {
+        schema: schemaMetaData,
+        mutations: mutationsMetaData,
+        queries: queriesMetaData
+      };
+      event.sender.send(events.DATA, JSON.stringify(gqlData));
+    } catch (err) {
+      event.sender.send(events.APP_ERROR, JSON.stringify(err));
     }
+  } else if (info.type == "PostgreSQL") {
+    try {
+      if (info.value.length === 0) {
+        info.value = pgDBController.buildConnectionString(info);
+      }
 
-    const dbMetaData = await dbController.getSchemaInfoPG(info.value);
-    const formattedMetaData = processMetaData(dbMetaData);
+      const dbMetaData = await pgDBController.getSchemaInfoPG(info.value);
+      const formattedMetaData = pgProcessMetaData(dbMetaData);
 
-    ({
-      types: schemaMetaData,
-      mutations: mutationsMetaData,
-      queries: queriesMetaData
-    } = generateGraphQL(
-      formattedMetaData.tables,
-      new PgSqlProvider(info.value)
-    ));
+      ({
+        types: schemaMetaData,
+        mutations: mutationsMetaData,
+        queries: queriesMetaData
+      } = generateGraphQL(
+        formattedMetaData.tables,
+        new PgSqlProvider(info.value)
+      ));
 
-    const gqlData = {
-      schema: schemaMetaData,
-      mutations: mutationsMetaData,
-      queries: queriesMetaData
-    };
-    event.sender.send(events.DATA, JSON.stringify(gqlData));
-  } catch (err) {
-    event.sender.send(events.APP_ERROR, JSON.stringify(err));
+      const gqlData = {
+        schema: schemaMetaData,
+        mutations: mutationsMetaData,
+        queries: queriesMetaData
+      };
+      event.sender.send(events.DATA, JSON.stringify(gqlData));
+    } catch (err) {
+      event.sender.send(events.APP_ERROR, JSON.stringify(err));
+    }
   }
 });
 

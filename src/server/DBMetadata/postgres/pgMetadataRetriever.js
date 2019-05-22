@@ -1,6 +1,6 @@
 const pgp = require("pg-promise")();
-const crypto = require('crypto');
-const utilty = require('../util');
+const crypto = require("crypto");
+const utilty = require("../../util");
 
 const poolCache = {};
 
@@ -27,23 +27,24 @@ AND t.table_schema = 'public'
 AND (constraint_type = 'FOREIGN KEY' or (constraint_type is null OR constraint_type <> 'FOREIGN KEY'))
 ORDER BY t.table_name`;
 
-
-
 async function getSchemaInfoPG(connString) {
   const db = getDbPool(connString);
   try {
-    return metadataInfo = await utilty.promiseTimeout(10000, db.any(metadataQuery));
+    return (metadataInfo = await utilty.promiseTimeout(
+      10000,
+      db.any(metadataQuery)
+    ));
   } catch (err) {
-    removeFromCache(connString)
+    removeFromCache(connString);
     throw err;
   }
 }
 
 function getDbPool(connString) {
-  const hash = crypto.createHash('sha256');
-  hash.update(connString)
+  const hash = crypto.createHash("sha256");
+  hash.update(connString);
 
-  const digest = hash.digest('base64')
+  const digest = hash.digest("base64");
 
   if (poolCache[digest]) {
     return poolCache[digest];
@@ -56,10 +57,10 @@ function getDbPool(connString) {
 }
 
 function removeFromCache(connString) {
-  const hash = crypto.createHash('sha256');
-  hash.update(connString)
+  const hash = crypto.createHash("sha256");
+  hash.update(connString);
 
-  delete poolCache[hash.digest('base64')]
+  delete poolCache[hash.digest("base64")];
 }
 
 function buildConnectionString(info) {
@@ -67,7 +68,7 @@ function buildConnectionString(info) {
   info.port = info.port || 5432;
   connectionString += `postgres://${info.user}:${info.password}@${info.host}:${
     info.port
-    }/${info.database}`;
+  }/${info.database}`;
   return connectionString;
 }
 

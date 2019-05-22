@@ -16,7 +16,7 @@ export default class Form extends Component {
       user: "",
       password: "",
       database: "",
-      type: "PostgreSQL",
+      type: "",
       formError: { twoConnect: false, incomplete: false, emptySubmit: false }
     };
 
@@ -42,7 +42,7 @@ export default class Form extends Component {
       user: "",
       password: "",
       database: "",
-      type: "PostgreSQL",
+      type: "",
       formError: { twoConnect: false, incomplete: false, emptySubmit: false }
     });
   }
@@ -134,7 +134,6 @@ export default class Form extends Component {
                       value={n}
                       checked={this.state.type === n}
                       onChange={this.valueChange}
-                      disabled
                     />
                     {n}
                   </label>
