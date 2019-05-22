@@ -28,8 +28,6 @@ Against these database providers
 - Postgres
 - MySQL (**Coming Soon!**)
 
-and there is an active community that writes and maintains custom plugins.
-
 ### Contributing
 
 Feel free to open issues and pull requests. We're always welcome support from the community.
