@@ -1,4 +1,7 @@
+//node libraries
 import React, { Component } from "react";
+
+//internal files
 import "./styles/zip.css";
 
 class ZipFolder extends Component {

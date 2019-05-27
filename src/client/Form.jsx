@@ -1,4 +1,7 @@
+//node libraries
 import React, { Component } from "react";
+
+//internal files
 import "./styles/form.css";
 import logo from "./img/logo.png";
 import icon from "./img/icon.png";
