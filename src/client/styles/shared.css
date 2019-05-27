@@ -3,12 +3,17 @@ html {
   width: 100%;
 }
 
+body {
+  height: 100%;
+  margin: 0;
+}
+
 .bottomButtons {
   position: relative;
   border-radius: 6px;
   float: left;
-  margin: 2% 1% auto 1%;
-  padding: 5px 10px;
+  margin: 2% 1% .5% 1%;
+  padding: 5px 10px 10px;
   left: 5vw;
   width: 42vw;
   font-family: "Raleway", sans-serif;
