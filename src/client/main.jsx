@@ -100,64 +100,64 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <div id="body" className="vis">
-          <ToastContainer />
+      <div id="body" className="vis">
+        <ToastContainer />
 
-          <div
-            className={
-              this.state.isLoading ? "loadWrapper" : "loadWrapperHidden"
-            }
-          >
-            <Loader
-              active={this.state.isLoading}
-              type="ball-scale-ripple-multiple"
-              className="loader"
-              color={"#ffc1df"}
+        <div
+          className={
+            this.state.isLoading ? "loadWrapper" : "loadWrapperHidden"
+          }
+        >
+          <Loader
+            active={this.state.isLoading}
+            type="ball-scale-ripple-multiple"
+            className="loader"
+            color={"#ffc1df"}
+          />
+        </div>
+
+        <div className="headerFont">
+          <img src={logo} className="logoMain" />
+          switch<b>QL</b>
+        </div>
+
+        <Tabs
+          selectedIndex={this.state.tabIndex}
+          onSelect={tabIndex => this.setState({ tabIndex })}
+          selectedTabClassName="active"
+        >
+          <TabList>
+            <div>
+              <Tab className="flexTabs">Type Definitions</Tab>
+              <Tab className="flexTabs">Client Mutations</Tab>
+              <Tab className="flexTabs">Client Queries</Tab>
+            </div>
+          </TabList>
+
+          <TabPanel>
+            <textarea
+              className="areaOne"
+              value={this.state.schema}
+              readOnly
             />
-          </div>
+          </TabPanel>
+          <TabPanel>
+            <textarea
+              className="areaOne"
+              value={this.state.mutations}
+              readOnly
+            />
+          </TabPanel>
+          <TabPanel>
+            <textarea
+              className="areaOne"
+              value={this.state.queries}
+              readOnly
+            />
+          </TabPanel>
+        </Tabs>
 
-          <div className="headerFont">
-            <img src={logo} className="logoMain" />
-            switch<b>QL</b>
-          </div>
-
-          <Tabs
-            selectedIndex={this.state.tabIndex}
-            onSelect={tabIndex => this.setState({ tabIndex })}
-            selectedTabClassName="active"
-          >
-            <TabList>
-              <div>
-                <Tab className="flexTabs">Type Definitions</Tab>
-                <Tab className="flexTabs">Client Mutations</Tab>
-                <Tab className="flexTabs">Client Queries</Tab>
-              </div>
-            </TabList>
-
-            <TabPanel>
-              <textarea
-                className="areaOne"
-                value={this.state.schema}
-                readOnly
-              />
-            </TabPanel>
-            <TabPanel>
-              <textarea
-                className="areaOne"
-                value={this.state.mutations}
-                readOnly
-              />
-            </TabPanel>
-            <TabPanel>
-              <textarea
-                className="areaOne"
-                value={this.state.queries}
-                readOnly
-              />
-            </TabPanel>
-          </Tabs>
-
+        <span className="buttonWrapper">
           <ZipFolder
             onExport={this.onExport}
             disabled={this.state.exportDisabled}
@@ -170,8 +170,8 @@ class App extends Component {
             disabled={this.state.formDisabled}
           >
             New Database
-          </button>
-        </div>
+            </button>
+        </span>
 
         <Form
           updateSchema={this.updateSchema}
@@ -181,7 +181,11 @@ class App extends Component {
           onSubmit={this.submitForm}
           isOpen={this.state.isFormOpen}
         />
+
       </div>
+
+
+
     );
   }
 }
