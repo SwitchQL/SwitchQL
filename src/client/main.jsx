@@ -1,16 +1,22 @@
+//node libraries
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import { ipcRenderer } from "electron";
 import React, { Component } from "react";
+import { Loader } from "react-loaders";
 import ReactDOM from "react-dom";
+
+//internal css files
+import * as events from "../server/events";
+import "react-toastify/dist/ReactToastify.css";
+import "./styles/main.css";
+import "loaders.css/src/animations/ball-scale-ripple-multiple.scss";
+import logo from "./img/logo.png";
+
+//jsx files
 import Form from "./Form.jsx";
 import ZipFolder from "./ZipFolder.jsx";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import "./styles/main.css";
-import { ipcRenderer } from "electron";
-import logo from "./img/logo.png";
-import { Loader } from "react-loaders";
-import "loaders.css/src/animations/ball-scale-ripple-multiple.scss";
-import * as events from "../server/events";
+
 
 class App extends Component {
   constructor(props) {
