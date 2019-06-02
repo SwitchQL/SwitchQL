@@ -5,22 +5,23 @@ function toTitleCase(str) {
 }
 
 function promiseTimeout(msDelay, promise) {
-
   //promise that rejects in <ms> milliseconds
   let timeout = new Promise((resolve, reject) => {
     let id = setTimeout(() => {
-      clearTimeout(id)
-      reject(`Timed out in ${msDelay} ms`)
-    }, msDelay)
-  })
+      clearTimeout(id);
+      reject(`Timed out in ${msDelay} ms`);
+    }, msDelay);
+  });
 
-  return Promise.race([
-    promise,
-    timeout
-  ])
+  return Promise.race([promise, timeout]);
+}
+
+function removeWhitespace(str) {
+  return str.replace(/\s+/g, "");
 }
 
 module.exports = {
   toTitleCase,
+  removeWhitespace,
   promiseTimeout
 };

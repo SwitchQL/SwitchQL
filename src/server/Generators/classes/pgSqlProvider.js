@@ -70,6 +70,23 @@ class PgSqlProvider {
 
     return query;
   }
+
+  parameterize() {
+    let query = `${tab.repeat(4)}let idx = 2;\n\n`;
+
+    query += `${tab.repeat(4)}for (const prop in rest) {\n`;
+
+    query += `${tab.repeat(6)}updateValues += \`\${prop} = \$\${idx} \`\n`;
+    query += `${tab.repeat(6)}idx++;\n`;
+
+    query += `${tab.repeat(4)}}\n`;
+
+    return query;
+  }
+
+  configureExport() {
+    return `module.exports = new GraphQLSchema({\n${tab}query: RootQuery,\n${tab}mutation: Mutation\n});`;
+  }
 }
 
 const addPromiseResolution = () => {

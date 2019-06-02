@@ -1,17 +1,18 @@
 import processed from "./sampleFiles/processedMetadata";
 import retrieved from "./sampleFiles/retrievedMetadata";
-
-import processMetadata from "./pgMetadataProcessor";
+import processMetadata from "./metadataProcessor";
+import * as translators from "./columnTypeTranslators";
 
 describe("Format Metadata Tests", () => {
-  it("Should return correctly formatted metadata given sample input", () => {
-    const result = processMetadata(retrieved);
-    expect(result).toEqual(processed);
+  let pm;
+
+  beforeAll(() => {
+    pm = processMetadata(translators.pgSQL);
   });
 
   it("Throws an error on null or empty data", () => {
     const metadataTest = () => {
-      processMetadata([]);
+      pm([]);
     };
 
     expect(metadataTest).toThrowError("Metadata is null or empty");
@@ -19,7 +20,7 @@ describe("Format Metadata Tests", () => {
 
   it("Throws an error on non array input", () => {
     const metadataTest = () => {
-      processMetadata({});
+      pm({});
     };
 
     expect(metadataTest).toThrowError(
@@ -28,7 +29,7 @@ describe("Format Metadata Tests", () => {
   });
 
   it("Should match the snapshot", () => {
-    const result = processMetadata(retrieved);
+    const result = pm(retrieved);
     expect(result).toMatchSnapshot();
   });
 });
