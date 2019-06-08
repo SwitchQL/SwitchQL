@@ -1,15 +1,15 @@
-const pgMetadataRetriever = require("./pgMetadataRetriever");
+const pgMetadataRetriever = require("./mysqlMetadataRetriever");
 
-test("takes in object with data returns properly formatted string", () => {
+test("takes in connection string returns properly formatted connection object", () => {
   expect(
-    pgMetadataRetriever.buildConnectionString({
-      user: "user",
-      password: "securePassword",
-      port: 5432,
-      host: "stampy.db.elephantsql.com",
-      database: "database"
-    })
-  ).toBe(
-    "postgres://user:securePassword@stampy.db.elephantsql.com:5432/database"
-  );
+    pgMetadataRetriever.buildMysqlParams(
+      "mysql://root:pass@cloud.com:3306/test-db"
+    )
+  ).toStrictEqual({
+    user: "root",
+    password: "pass",
+    host: "cloud.com",
+    database: "test-db",
+    port: 3306
+  });
 });

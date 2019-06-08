@@ -1,15 +1,5 @@
 const mysql = require("mysql");
-
-// var connection = mysql.createConnection({
-//   host: "localhost",
-//   user: "me",
-//   password: "secret",
-//   database: "my_db"
-// });
-
-//
-
-//
+const { URL } = require("url");
 
 const metadataQuery = `SELECT distinct
 t.table_name,
@@ -34,40 +24,52 @@ AND (constraint_type = 'FOREIGN KEY' OR (constraint_type is null OR constraint_t
 AND t.table_schema not in ('information_schema', 'mysql', 'performance_schema', 'phpmyadmin','sys', 'test')
 ORDER BY table_name;`;
 
-async function getSchemaInfoPG(connString) {
-  if (notRightFormat) {
-    var connection = mysql.createConnection({
-      host: "switchql-mysql.c9vnkgo31mgw.us-west-1.rds.amazonaws.com",
-      user: "admin",
-      password: "password",
-      database: "my_db"
-    });
-  }
+function getSchemaInfo(connString) {
+  const connection = mysql.createConnection(buildMysqlParams(connString));
 
-  connection.connect();
-
-  try {
-    return connection.query(metadataQuery, (error, results, fields) => {
-      console.log("The error: " + error);
-      console.log("The solution is: ", results[0].solution);
-      console.log("The fields: " + fields);
+  return new Promise((resolve, reject) => {
+    try {
+      connection.query(metadataQuery, (error, results) => {
+        if (error) reject(error);
+        resolve(results);
+      });
+    } finally {
       connection.end();
-    });
-  } catch (err) {
-    throw err;
-  }
+    }
+  });
 }
 
-function buildConnectionString(info) {
-  let connectionString = "";
-  info.port = info.port || 5432;
-  connectionString += `mysql://${info.user}:${info.password}@${info.host}:${
-    info.port
-  }/${info.database}`;
-  return connectionString;
+function parseUri(uri) {
+  const {
+    protocol = "",
+    username: user,
+    password,
+    port,
+    hostname: host,
+    pathname = ""
+  } = new URL(uri);
+  return {
+    scheme: protocol.replace(":", ""),
+    user,
+    password,
+    host,
+    port,
+    database: pathname.replace("/", "")
+  };
+}
+
+function buildMysqlParams(uri) {
+  const { user, password, host, port, database } = parseUri(uri);
+  return {
+    host: host,
+    user: user,
+    password: password,
+    database: database
+    // port: Number(port)
+  };
 }
 
 module.exports = {
-  getSchemaInfoPG,
-  buildConnectionString
+  getSchemaInfo,
+  buildMysqlParams
 };

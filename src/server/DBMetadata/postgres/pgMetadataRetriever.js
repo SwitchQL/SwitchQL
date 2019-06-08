@@ -27,7 +27,7 @@ AND t.table_schema = 'public'
 AND (constraint_type = 'FOREIGN KEY' or (constraint_type is null OR constraint_type <> 'FOREIGN KEY'))
 ORDER BY t.table_name`;
 
-async function getSchemaInfoPG(connString) {
+async function getSchemaInfo(connString) {
   const db = getDbPool(connString);
   try {
     return (metadataInfo = await utilty.promiseTimeout(
@@ -73,6 +73,6 @@ function buildConnectionString(info) {
 }
 
 module.exports = {
-  getSchemaInfoPG,
+  getSchemaInfo,
   buildConnectionString
 };
