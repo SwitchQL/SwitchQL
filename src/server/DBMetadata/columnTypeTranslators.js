@@ -64,7 +64,7 @@ function msSQL(type) {
       return "String";
 
     default:
-      return "String";
+      throw new Error(`Unsupported column type found: ${type}`);
   }
 }
 

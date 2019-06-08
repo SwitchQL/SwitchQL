@@ -1,4 +1,3 @@
-import processed from "./sampleFiles/processedMetadata";
 import retrieved from "./sampleFiles/retrievedMetadata";
 import processMetadata from "./metadataProcessor";
 import * as translators from "./columnTypeTranslators";

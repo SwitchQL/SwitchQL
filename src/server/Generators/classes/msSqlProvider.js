@@ -1,5 +1,10 @@
 const tab = `  `;
 
+/**
+ * Note: the queries are not paramaterized because the
+ * mssql library automatically parameterizes all queries when
+ * template literals are used.
+ */
 class MSSqlProvider {
   connection() {
     return "var pool\n";

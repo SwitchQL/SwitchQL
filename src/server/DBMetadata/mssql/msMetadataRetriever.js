@@ -47,6 +47,8 @@ async function getSchemaInfo(connString) {
 function buildConnectionString(info) {
   let connectionString = "";
   const port = info.port || 1433;
+
+  // Per documentation request timeout cannot be less than 1 second
   connectionString += `mssql://${info.user}:${info.password}@${
     info.host
   }:${port}/${info.database}?encrypt=true&request%20timeout=${30000}`;
@@ -59,9 +61,7 @@ async function getDbPool(connString) {
 
   const digest = hash.digest("base64");
 
-  if (poolCache[digest]) {
-    return poolCache[digest];
-  }
+  if (poolCache[digest]) return poolCache[digest];
 
   const pool = await new sql.ConnectionPool(connString).connect();
   poolCache[digest] = pool;
