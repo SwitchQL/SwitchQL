@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MSSqlProvider Should generate code for configureExport that matches the snapshot 1`] = `
+"module.exports = function(connection) { 
+              pool = connection;
+              return new GraphQLSchema({
+                query: RootQuery,
+                mutation: Mutation
+              });
+            }"
+`;
+
+exports[`MSSqlProvider Should generate code for delete that matches the snapshot 1`] = `
+"'DELETE FROM \\"testTable\\" WHERE \\"idCol\\" = args.idCol';
+        return pool.query\`\${sql}\`
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })"
+`;
+
+exports[`MSSqlProvider Should generate code for insert that matches the snapshot 1`] = `
+"\`INSERT INTO \\"testTable\\" (testCol) VALUES (blah = 5, test = 6) OUTPUT INSERTED.*\`;
+        return pool.query\`\${sql}\`
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })"
+`;
+
+exports[`MSSqlProvider Should generate code for paramaterize that matches the snapshot 1`] = `
+"        for (const prop in rest) {
+            updateValues += \`\${prop} = \${rest[prop]} \`
+        }
+"
+`;
+
+exports[`MSSqlProvider Should generate code for select that matches the snapshot 1`] = `
+"'SELECT * FROM \\"testTable\\"';
+        return pool.query\`\${sql}\`
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })"
+`;
+
+exports[`MSSqlProvider Should generate code for selectWithWhere that matches the snapshot 1`] = `
+"'SELECT * FROM \\"testTable\\" WHERE \\"testCol\\" = 12345'
+        return pool.query\`\${sql}\`
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })"
+`;
+
+exports[`MSSqlProvider Should generate code for update that matches the snapshot 1`] = `
+"\`UPDATE \\"testTable\\" SET \${updateValues} WHERE \\"idCol\\" = \${id} OUTPUT UPDATED.*\`;
+        return pool.query\`\${sql}\`
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })"
+`;

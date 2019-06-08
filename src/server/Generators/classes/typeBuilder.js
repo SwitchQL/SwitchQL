@@ -17,7 +17,7 @@ class TypeBuilder {
     this.graphqlCode +=
       this.typeSchemaCode + this.rootQueryCode + this.mutationCode;
 
-    this.graphqlCode += `module.exports = new GraphQLSchema({\n${tab}query: RootQuery,\n${tab}mutation: Mutation\n});`;
+    this.graphqlCode += this.provider.configureExport();
 
     return this.graphqlCode;
   }
@@ -58,9 +58,11 @@ class TypeBuilder {
   }
 
   createSubQuery(column, processedMetadata) {
-    let subQuery = "";
+    const subqueries = [];
 
     for (let relatedTableIndex in column.relation) {
+      let subQuery = "";
+
       let relatedTableLookup = relatedTableIndex.split(".");
 
       const relatedTableName = processedMetadata[relatedTableLookup[0]].name;
@@ -94,8 +96,11 @@ class TypeBuilder {
       subQuery += "\n";
       subQuery += `${tab.repeat(3)}}\n`;
       subQuery += `${tab.repeat(2)}}`;
+
+      subqueries.push(subQuery);
     }
-    return subQuery;
+
+    return subqueries.join(", ");
   }
 
   addGraphqlRootCode(table) {
@@ -229,16 +234,7 @@ class TypeBuilder {
 
     mutationQuery += `${tab.repeat(4)}const { id, ...rest } = args;\n`;
     mutationQuery += `${tab.repeat(4)}let updateValues = '';\n`;
-    mutationQuery += `${tab.repeat(4)}let idx = 2;\n\n`;
-
-    mutationQuery += `${tab.repeat(4)}for (const prop in rest) {\n`;
-
-    mutationQuery += `${tab.repeat(
-      6
-    )}updateValues += \`\${prop} = \$\${idx} \`\n`;
-    mutationQuery += `${tab.repeat(6)}idx++;\n`;
-
-    mutationQuery += `${tab.repeat(4)}}\n`;
+    mutationQuery += this.provider.parameterize();
 
     mutationQuery += `${tab.repeat(4)}const sql = ${this.provider.update(
       table.name,

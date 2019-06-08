@@ -1,9 +1,11 @@
+const util = require("../../util");
+
 class ProcessedField {
-  constructor(col, tblIdx, fieldIdx) {
+  constructor(col, tblIdx, fieldIdx, translateColumnType) {
     const isPrimaryKey = col.constraint_type === "PRIMARY KEY";
 
-    this.name = col.column_name;
-    this.type = isPrimaryKey ? "ID" : this.translateColumnType(col.data_type);
+    this.name = util.removeWhitespace(col.column_name);
+    this.type = isPrimaryKey ? "ID" : translateColumnType(col.data_type);
     this.primaryKey = isPrimaryKey;
     this.unique = col.constraint_type === "UNIQUE";
     this.required = col.is_nullable === "NO";
@@ -11,34 +13,6 @@ class ProcessedField {
     this.relation = {};
     this.tableNum = tblIdx;
     this.fieldNum = fieldIdx;
-  }
-
-  translateColumnType(type) {
-    switch (type) {
-      case "integer":
-        return "Integer";
-
-      case "double precision":
-        return "Float";
-
-      case "real":
-        return "Float";
-
-      case "boolean":
-        return "Boolean";
-
-      case "date":
-        return "Date";
-
-      case "time":
-        return "Time";
-
-      case "timestamp":
-        return "DateTime";
-
-      default:
-        return "String";
-    }
   }
 
   // Retroactive relationship assignment (foreign key table defined before primary key table)
@@ -86,12 +60,12 @@ class ProcessedField {
 
       const refIndex = `${lookup[foreign_table_name].INDEX}.${
         lookup[foreign_table_name][foreign_column_name]
-        }`;
+      }`;
       this.relation[refIndex] = relationship;
 
       const relatedTo =
         data.tables[lookup[foreign_table_name].INDEX].fields[
-        lookup[foreign_table_name][foreign_column_name]
+          lookup[foreign_table_name][foreign_column_name]
         ];
 
       const relToRefIndex = `${this.tableNum}.${this.fieldNum}`;
