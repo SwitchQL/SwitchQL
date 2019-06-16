@@ -8,13 +8,21 @@ describe("MSSqlProvider", () => {
   });
 
   it("Should generate code for selectWithWhere that matches the snapshot", () => {
-    const result = provider.selectWithWhere("testTable", "testCol", "12345");
+    const result = provider.selectWithWhere(
+      "testTable",
+      "testCol",
+      "parent.id"
+    );
     expect(result).toMatchSnapshot();
   });
 
   it("Should generate correct sql for selectWithWhere", () => {
-    const expected = `'SELECT * FROM "testTable" WHERE "testCol" = 12345'`;
-    const result = provider.selectWithWhere("testTable", "testCol", "12345");
+    const expected = `SELECT * FROM "testTable" WHERE "testCol" = \${parent.id}`;
+    const result = provider.selectWithWhere(
+      "testTable",
+      "testCol",
+      "parent.id"
+    );
 
     expect(result).toContain(expected);
   });
@@ -35,17 +43,17 @@ describe("MSSqlProvider", () => {
     const result = provider.insert(
       "testTable",
       "testCol",
-      "blah = 5, test = 6"
+      "blah = ${parent.blah}, test = ${parent.test}"
     );
     expect(result).toMatchSnapshot();
   });
 
   it("Should generate correct sql for insert", () => {
-    const expected = `\`INSERT INTO "testTable" (col1, col2) VALUES (arg1 = test1, arg2 = test2) OUTPUT INSERTED.*\`;`;
+    const expected = `INSERT INTO "testTable" (col1, col2) OUTPUT INSERTED.* VALUES (blah = \${parent.blah}, test = \${parent.test})`;
     const result = provider.insert(
       "testTable",
       "col1, col2",
-      "arg1 = test1, arg2 = test2"
+      "blah = ${parent.blah}, test = ${parent.test}"
     );
 
     expect(result).toContain(expected);
@@ -57,7 +65,7 @@ describe("MSSqlProvider", () => {
   });
 
   it("Should generate correct sql for update", () => {
-    const expected = `\`UPDATE "testTable" SET \${updateValues} WHERE "idCol" = \${id} OUTPUT UPDATED.*\`;`;
+    const expected = `UPDATE "testTable" SET \${parameterized} OUTPUT INSERTED.* WHERE "idCol" = @idCol`;
     const result = provider.update("testTable", "idCol");
 
     expect(result).toContain(expected);
@@ -69,7 +77,7 @@ describe("MSSqlProvider", () => {
   });
 
   it("Should generate correct sql for delete", () => {
-    const expected = `'DELETE FROM "testTable" WHERE "idCol" = args.idCol';`;
+    const expected = `DELETE FROM "testTable" WHERE "idCol" = \${args.idCol}`;
     const result = provider.delete("testTable", "idCol");
 
     expect(result).toContain(expected);

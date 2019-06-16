@@ -15,7 +15,7 @@ class PgSqlProvider {
   }
 
   selectWithWhere(table, col, val, returnsMany) {
-    let query = `'SELECT * FROM "${table}" WHERE "${col}" = $1';\n`;
+    let query = `const sql = 'SELECT * FROM "${table}" WHERE "${col}" = $1';\n`;
 
     returnsMany
       ? (query += `${tab.repeat(4)}return connect.conn.many(sql, ${val})\n`)
@@ -27,7 +27,7 @@ class PgSqlProvider {
   }
 
   select(table) {
-    let query = `'SELECT * FROM "${table}"';\n`;
+    let query = `const sql = 'SELECT * FROM "${table}"';\n`;
     query += `${tab.repeat(4)}return connect.conn.many(sql)\n`;
 
     query += addPromiseResolution();
@@ -42,7 +42,7 @@ class PgSqlProvider {
 
     const params = normalized.map((val, idx) => `$${idx + 1}`).join(", ");
 
-    let query = `'INSERT INTO "${table}" (${cols}) VALUES (${params}) RETURNING *';\n`;
+    let query = `const sql = 'INSERT INTO "${table}" (${cols}) VALUES (${params}) RETURNING *';\n`;
     query += `${tab.repeat(4)}return connect.conn.one(sql, [${normalized.join(
       ", "
     )}])\n`;
@@ -53,17 +53,17 @@ class PgSqlProvider {
   }
 
   update(table, idColumnName) {
-    let query = `\`UPDATE "${table}" SET \${updateValues} WHERE "${idColumnName}" = $1 RETURNING *\`;\n`;
+    let query = `const sql = \`UPDATE "${table}" SET \${parameterized} WHERE "${idColumnName}" = $1 RETURNING *\`;\n`;
     query += `${tab.repeat(
       4
-    )}return connect.conn.one(sql, [id, ...Object.values(rest)])\n`;
+    )}return connect.conn.one(sql, [${idColumnName}, ...Object.values(rest)])\n`;
 
     query += addPromiseResolution();
     return query;
   }
 
   delete(table, column) {
-    let query = `'DELETE FROM "${table}" WHERE "${column}" = $1';\n`;
+    let query = `const sql = 'DELETE FROM "${table}" WHERE "${column}" = $1';\n`;
     query += `${tab.repeat(4)}return connect.conn.one(sql, args.${column})\n`;
 
     query += addPromiseResolution();
@@ -72,14 +72,16 @@ class PgSqlProvider {
   }
 
   parameterize() {
-    let query = `${tab.repeat(4)}let idx = 2;\n\n`;
+    let query = `${tab.repeat(4)}let updateValues = [];\n`;
+    query += `${tab.repeat(4)}let idx = 2;\n\n`;
 
     query += `${tab.repeat(4)}for (const prop in rest) {\n`;
 
-    query += `${tab.repeat(6)}updateValues += \`\${prop} = \$\${idx} \`\n`;
+    query += `${tab.repeat(6)}updateValues.push(\`\${prop} = \$\${idx}\`);\n`;
     query += `${tab.repeat(6)}idx++;\n`;
-
     query += `${tab.repeat(4)}}\n`;
+
+    query += `${tab.repeat(4)}const parameterized = updateValues.join(", ");\n`;
 
     return query;
   }

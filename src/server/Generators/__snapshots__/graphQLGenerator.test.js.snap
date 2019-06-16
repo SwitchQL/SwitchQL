@@ -1011,14 +1011,15 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         const { id, ...rest } = args;
-        let updateValues = '';
+        let updateValues = [];
         let idx = 2;
 
         for (const prop in rest) {
-            updateValues += \`\${prop} = $\${idx} \`
+            updateValues.push(\`\${prop} = $\${idx}\`);
             idx++;
         }
-        const sql = \`UPDATE \\"author\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        const parameterized = updateValues.join(\\", \\");
+        const sql = \`UPDATE \\"author\\" SET \${parameterized} WHERE \\"id\\" = $1 RETURNING *\`;
         return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
@@ -1070,14 +1071,15 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         const { id, ...rest } = args;
-        let updateValues = '';
+        let updateValues = [];
         let idx = 2;
 
         for (const prop in rest) {
-            updateValues += \`\${prop} = $\${idx} \`
+            updateValues.push(\`\${prop} = $\${idx}\`);
             idx++;
         }
-        const sql = \`UPDATE \\"book_order\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        const parameterized = updateValues.join(\\", \\");
+        const sql = \`UPDATE \\"book_order\\" SET \${parameterized} WHERE \\"id\\" = $1 RETURNING *\`;
         return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
@@ -1135,14 +1137,15 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         const { id, ...rest } = args;
-        let updateValues = '';
+        let updateValues = [];
         let idx = 2;
 
         for (const prop in rest) {
-            updateValues += \`\${prop} = $\${idx} \`
+            updateValues.push(\`\${prop} = $\${idx}\`);
             idx++;
         }
-        const sql = \`UPDATE \\"books\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        const parameterized = updateValues.join(\\", \\");
+        const sql = \`UPDATE \\"books\\" SET \${parameterized} WHERE \\"id\\" = $1 RETURNING *\`;
         return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
@@ -1192,14 +1195,15 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         const { id, ...rest } = args;
-        let updateValues = '';
+        let updateValues = [];
         let idx = 2;
 
         for (const prop in rest) {
-            updateValues += \`\${prop} = $\${idx} \`
+            updateValues.push(\`\${prop} = $\${idx}\`);
             idx++;
         }
-        const sql = \`UPDATE \\"genre\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        const parameterized = updateValues.join(\\", \\");
+        const sql = \`UPDATE \\"genre\\" SET \${parameterized} WHERE \\"id\\" = $1 RETURNING *\`;
         return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
@@ -1255,14 +1259,15 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         const { id, ...rest } = args;
-        let updateValues = '';
+        let updateValues = [];
         let idx = 2;
 
         for (const prop in rest) {
-            updateValues += \`\${prop} = $\${idx} \`
+            updateValues.push(\`\${prop} = $\${idx}\`);
             idx++;
         }
-        const sql = \`UPDATE \\"order\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        const parameterized = updateValues.join(\\", \\");
+        const sql = \`UPDATE \\"order\\" SET \${parameterized} WHERE \\"id\\" = $1 RETURNING *\`;
         return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
@@ -1312,14 +1317,15 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         const { id, ...rest } = args;
-        let updateValues = '';
+        let updateValues = [];
         let idx = 2;
 
         for (const prop in rest) {
-            updateValues += \`\${prop} = $\${idx} \`
+            updateValues.push(\`\${prop} = $\${idx}\`);
             idx++;
         }
-        const sql = \`UPDATE \\"shipping_method\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        const parameterized = updateValues.join(\\", \\");
+        const sql = \`UPDATE \\"shipping_method\\" SET \${parameterized} WHERE \\"id\\" = $1 RETURNING *\`;
         return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
@@ -1369,14 +1375,15 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         const { id, ...rest } = args;
-        let updateValues = '';
+        let updateValues = [];
         let idx = 2;
 
         for (const prop in rest) {
-            updateValues += \`\${prop} = $\${idx} \`
+            updateValues.push(\`\${prop} = $\${idx}\`);
             idx++;
         }
-        const sql = \`UPDATE \\"status\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        const parameterized = updateValues.join(\\", \\");
+        const sql = \`UPDATE \\"status\\" SET \${parameterized} WHERE \\"id\\" = $1 RETURNING *\`;
         return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;
@@ -1430,14 +1437,15 @@ const Mutation = new GraphQLObjectType({
       },
       resolve(parent, args) {
         const { id, ...rest } = args;
-        let updateValues = '';
+        let updateValues = [];
         let idx = 2;
 
         for (const prop in rest) {
-            updateValues += \`\${prop} = $\${idx} \`
+            updateValues.push(\`\${prop} = $\${idx}\`);
             idx++;
         }
-        const sql = \`UPDATE \\"user\\" SET \${updateValues} WHERE \\"id\\" = $1 RETURNING *\`;
+        const parameterized = updateValues.join(\\", \\");
+        const sql = \`UPDATE \\"user\\" SET \${parameterized} WHERE \\"id\\" = $1 RETURNING *\`;
         return connect.conn.one(sql, [id, ...Object.values(rest)])
           .then(data => {
             return data;

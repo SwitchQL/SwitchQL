@@ -86,12 +86,12 @@ class TypeBuilder {
       }
       subQuery += `\n${tab.repeat(3)}resolve(parent, args) {\n${tab.repeat(4)}`;
 
-      subQuery += `const sql = ${this.provider.selectWithWhere(
+      subQuery += this.provider.selectWithWhere(
         relatedTableName,
         relatedFieldName,
         `parent.${column.name}`,
         relatedTableRelationType === "one to many"
-      )}`;
+      );
 
       subQuery += "\n";
       subQuery += `${tab.repeat(3)}}\n`;
@@ -126,7 +126,7 @@ class TypeBuilder {
       table.name
     }Type),\n${tab.repeat(3)}resolve() {\n${tab.repeat(4)}`;
 
-    rootQuery += `const sql = ${this.provider.select(table.name)}`;
+    rootQuery += this.provider.select(table.name);
 
     return (rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
   }
@@ -142,12 +142,12 @@ class TypeBuilder {
       3
     )}},\n${tab.repeat(3)}resolve(parent, args) {\n${tab.repeat(4)}`;
 
-    rootQuery += `const sql = ${this.provider.selectWithWhere(
+    rootQuery += this.provider.selectWithWhere(
       table.name,
       idColumn.name,
       `args.${idColumn.name}`,
       false
-    )}`;
+    );
 
     return (rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
   }
@@ -184,7 +184,7 @@ class TypeBuilder {
           field
         )}`;
         fieldNames += field.name + ", ";
-        argNames += "'${args." + field.name + "}', ";
+        argNames += "${args." + field.name + "}, ";
       } else {
         firstLoop = true;
       }
@@ -196,11 +196,7 @@ class TypeBuilder {
       3
     )}resolve(parent, args) {\n${tab.repeat(4)}`;
 
-    mutationQuery += `const sql = ${this.provider.insert(
-      table.name,
-      fieldNames,
-      argNames
-    )}`;
+    mutationQuery += this.provider.insert(table.name, fieldNames, argNames);
 
     return (mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
   }
@@ -232,11 +228,12 @@ class TypeBuilder {
       3
     )}resolve(parent, args) {\n`;
 
-    mutationQuery += `${tab.repeat(4)}const { id, ...rest } = args;\n`;
-    mutationQuery += `${tab.repeat(4)}let updateValues = '';\n`;
+    mutationQuery += `${tab.repeat(
+      4
+    )}const { ${idColumnName}, ...rest } = args;\n`;
     mutationQuery += this.provider.parameterize();
 
-    mutationQuery += `${tab.repeat(4)}const sql = ${this.provider.update(
+    mutationQuery += `${tab.repeat(4)}${this.provider.update(
       table.name,
       idColumnName
     )}`;
@@ -263,7 +260,7 @@ class TypeBuilder {
       3
     )}},\n${tab.repeat(3)}resolve(parent, args) {\n`;
 
-    mutationQuery += `${tab.repeat(4)}const sql = ${this.provider.delete(
+    mutationQuery += `${tab.repeat(4)}${this.provider.delete(
       table.name,
       idColumn.name
     )}`;

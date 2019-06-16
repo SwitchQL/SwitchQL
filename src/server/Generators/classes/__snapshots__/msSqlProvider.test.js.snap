@@ -11,10 +11,9 @@ exports[`MSSqlProvider Should generate code for configureExport that matches the
 `;
 
 exports[`MSSqlProvider Should generate code for delete that matches the snapshot 1`] = `
-"'DELETE FROM \\"testTable\\" WHERE \\"idCol\\" = args.idCol';
-        return pool.query\`\${sql}\`
+"return pool.query\`DELETE FROM \\"testTable\\" WHERE \\"idCol\\" = \${args.idCol}\`
           .then(data => {
-            return data;
+            return data.recordset[0];
           })
           .catch(err => {
             return ('The error is', err);
@@ -22,10 +21,9 @@ exports[`MSSqlProvider Should generate code for delete that matches the snapshot
 `;
 
 exports[`MSSqlProvider Should generate code for insert that matches the snapshot 1`] = `
-"\`INSERT INTO \\"testTable\\" (testCol) VALUES (blah = 5, test = 6) OUTPUT INSERTED.*\`;
-        return pool.query\`\${sql}\`
+"return pool.query\`INSERT INTO \\"testTable\\" (testCol) OUTPUT INSERTED.* VALUES (blah = \${parent.blah}, test = \${parent.test})\`
           .then(data => {
-            return data;
+            return data.recordset[0];
           })
           .catch(err => {
             return ('The error is', err);
@@ -33,17 +31,21 @@ exports[`MSSqlProvider Should generate code for insert that matches the snapshot
 `;
 
 exports[`MSSqlProvider Should generate code for paramaterize that matches the snapshot 1`] = `
-"        for (const prop in rest) {
-            updateValues += \`\${prop} = \${rest[prop]} \`
+"        let updateValues = [];
+        const req = pool.request();
+        for (const prop in rest) {
+            req.input(\`\${prop}\`, rest[prop]);
+            updateValues.push(\`\${prop} = @\${prop}\`);
         }
+
+        const parameterized = updateValues.join(\\", \\");
 "
 `;
 
 exports[`MSSqlProvider Should generate code for select that matches the snapshot 1`] = `
-"'SELECT * FROM \\"testTable\\"';
-        return pool.query\`\${sql}\`
+"return pool.query('SELECT * FROM \\"testTable\\"')
           .then(data => {
-            return data;
+            return data.recordset;
           })
           .catch(err => {
             return ('The error is', err);
@@ -51,10 +53,9 @@ exports[`MSSqlProvider Should generate code for select that matches the snapshot
 `;
 
 exports[`MSSqlProvider Should generate code for selectWithWhere that matches the snapshot 1`] = `
-"'SELECT * FROM \\"testTable\\" WHERE \\"testCol\\" = 12345'
-        return pool.query\`\${sql}\`
+"return pool.query\`SELECT * FROM \\"testTable\\" WHERE \\"testCol\\" = \${parent.id}\`
           .then(data => {
-            return data;
+            return data.recordset[0];
           })
           .catch(err => {
             return ('The error is', err);
@@ -62,10 +63,10 @@ exports[`MSSqlProvider Should generate code for selectWithWhere that matches the
 `;
 
 exports[`MSSqlProvider Should generate code for update that matches the snapshot 1`] = `
-"\`UPDATE \\"testTable\\" SET \${updateValues} WHERE \\"idCol\\" = \${id} OUTPUT UPDATED.*\`;
-        return pool.query\`\${sql}\`
+"        req.input('idCol', idCol);
+return req.query(\`UPDATE \\"testTable\\" SET \${parameterized} OUTPUT INSERTED.* WHERE \\"idCol\\" = @idCol\`)
           .then(data => {
-            return data;
+            return data.recordset[0];
           })
           .catch(err => {
             return ('The error is', err);
