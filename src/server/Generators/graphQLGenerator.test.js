@@ -1,6 +1,4 @@
 import generateGraphQL from "./graphQLGenerator";
-import mutationOutput from "./sampleFiles/mutationOutput";
-import queryOutput from "./sampleFiles/queryOutput";
 import input from "../DBMetadata/sampleFiles/processedMetadata";
 import PgSqlProvider from "./classes/pgSqlProvider";
 
@@ -23,14 +21,6 @@ describe("Mutation Generation Tests", () => {
 });
 
 describe("Query Generation Tests", () => {
-  it("Should correctly generate queries given input file", () => {
-    const { queries: result } = generateGraphQL(
-      input.tables,
-      new PgSqlProvider("postgres://test@test.com:5432/test")
-    );
-    expect(result).toBe(queryOutput);
-  });
-
   it("Should return an empty string on empty input", () => {
     const { queries: result } = generateGraphQL(
       {},

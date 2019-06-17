@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MSSqlProvider Should generate code for configureExport that matches the snapshot 1`] = `
+"module.exports = function(connection) { 
+              pool = connection;
+              return new GraphQLSchema({
+                query: RootQuery,
+                mutation: Mutation
+              });
+            }"
+`;
+
+exports[`MSSqlProvider Should generate code for delete that matches the snapshot 1`] = `
+"return pool.query\`DELETE FROM \\"testTable\\" WHERE \\"idCol\\" = \${args.idCol}\`
+          .then(data => {
+            return data.recordset[0];
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })"
+`;
+
+exports[`MSSqlProvider Should generate code for insert that matches the snapshot 1`] = `
+"return pool.query\`INSERT INTO \\"testTable\\" (testCol) OUTPUT INSERTED.* VALUES (blah = \${parent.blah}, test = \${parent.test})\`
+          .then(data => {
+            return data.recordset[0];
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })"
+`;
+
+exports[`MSSqlProvider Should generate code for paramaterize that matches the snapshot 1`] = `
+"        let updateValues = [];
+        const req = pool.request();
+        for (const prop in rest) {
+            req.input(\`\${prop}\`, rest[prop]);
+            updateValues.push(\`\${prop} = @\${prop}\`);
+        }
+
+        const parameterized = updateValues.join(\\", \\");
+"
+`;
+
+exports[`MSSqlProvider Should generate code for select that matches the snapshot 1`] = `
+"return pool.query('SELECT * FROM \\"testTable\\"')
+          .then(data => {
+            return data.recordset;
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })"
+`;
+
+exports[`MSSqlProvider Should generate code for selectWithWhere that matches the snapshot 1`] = `
+"return pool.query\`SELECT * FROM \\"testTable\\" WHERE \\"testCol\\" = \${parent.id}\`
+          .then(data => {
+            return data.recordset[0];
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })"
+`;
+
+exports[`MSSqlProvider Should generate code for update that matches the snapshot 1`] = `
+"        req.input('idCol', idCol);
+return req.query(\`UPDATE \\"testTable\\" SET \${parameterized} OUTPUT INSERTED.* WHERE \\"idCol\\" = @idCol\`)
+          .then(data => {
+            return data.recordset[0];
+          })
+          .catch(err => {
+            return ('The error is', err);
+          })"
+`;

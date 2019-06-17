@@ -137,7 +137,6 @@ export default class Form extends Component {
                       value={n}
                       checked={this.state.type === n}
                       onChange={this.valueChange}
-                      disabled
                     />
                     {n}
                   </label>

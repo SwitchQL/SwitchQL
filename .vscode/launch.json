@@ -18,7 +18,7 @@
       "name": "Webpack: Server",
       "protocol": "inspector",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start:webpack"]
+      "runtimeArgs": ["run", "start"]
     }
   ],
   "compounds": [

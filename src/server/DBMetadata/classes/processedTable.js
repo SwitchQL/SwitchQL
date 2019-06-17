@@ -1,6 +1,8 @@
+const util = require("../../util");
+
 class ProcessedTable {
   constructor(name, fields) {
-    this.name = name;
+    this.name = util.removeWhitespace(name);
     this.fields = fields;
   }
 
