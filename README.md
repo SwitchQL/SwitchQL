@@ -21,7 +21,7 @@ SwitchQL is a tool that generates code out of your database schema. Whether you 
 
 We currently support and maintain plugins for generated GraphQL code for these languages
 
-- Javascript
+- JavaScript
 
 Against these database providers
 
