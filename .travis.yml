@@ -1,55 +1,53 @@
 language: node_js
-
 node_js:
-  - "node"
-
+- node
 jobs:
   include:
-    - stage: test
-      os: linux
-      script: npm run test:ci
-
-    - stage: build
-      os: linux
-      script:
-        - npm run pack
-        - npm run dist
-      deploy:
-        provider: releases
-        api_key: $GH_TOKEN
-        file:
-          - dist/switchql.snap
-          - dist/switchql.AppImage
-        skip_cleanup: true
-        on:
-          branch: master
-          tags: true
-
-    - stage: build
-      os: osx
-      script:
-        - npm run pack
-        - npm run dist
-      deploy:
-        provider: releases
-        api_key: $GH_TOKEN
-        file: dist/switchql.dmg
-        skip_cleanup: true
-        on:
-          branch: master
-          tags: true
-
-    - stage: build
-      filter_secrets: false
-      os: windows
-      script:
-        - npm run pack
-        - npm run dist
-      deploy:
-        provider: releases
-        api_key: $GH_TOKEN
-        file: dist\switchql.exe
-        skip_cleanup: true
-        on:
-          branch: master
-          tags: true
+  - stage: test
+    os: linux
+    script: npm run test:ci
+  - stage: build
+    os: linux
+    script:
+    - npm run pack
+    - npm run dist
+    deploy:
+      provider: releases
+      api_key: "$GH_TOKEN"
+      file:
+      - dist/switchql.snap
+      - dist/switchql.AppImage
+      skip_cleanup: true
+      on:
+        branch: master
+        tags: true
+  - stage: build
+    os: osx
+    script:
+    - npm run pack
+    - npm run dist
+    deploy:
+      provider: releases
+      api_key: "$GH_TOKEN"
+      file: dist/switchql.dmg
+      skip_cleanup: true
+      on:
+        branch: master
+        tags: true
+  - stage: build
+    filter_secrets: false
+    os: windows
+    script:
+    - npm run pack
+    - npm run dist
+    deploy:
+      provider: releases
+      api_key: "$GH_TOKEN"
+      file: dist\switchql.exe
+      skip_cleanup: true
+      on:
+        branch: master
+        tags: true
+notifications:
+  slack:
+    secure: sZ4hCNgQMads+AThpwRhioT4LThGGWDhNNxCMFv0s+EkdejgAEAIwEYKcQZqBfTS6Cjv58p1qEi8jIzLgXO1Xb59IHvsyju16fDuQRpWCBrOcADpx8s9+8PdcAmmKVhRTbEGNAfMWyvBVMaAWJFQNaRLwWqvRG8aXTcwQY2jGbTp/5fiEoR8nIqhfU6fHpOfQQOBQle5p7ECxhmwt9nCTJEg4zl8FQYAlSgjieI8VD/KGnAuSDWrYf9iyNKR+SZUNjyVEBREqN0v4FUv+etis/KCYiyMk1YExUwsc6cSh+/vIjalFj5wxvtc9cfz07bZjfmF0jHYLZMF+Rl2SbySJ2PsWLvKYvRK4kOZv05ALOPd4Ret7Ei5kCTf+yx0Ko25qbWvPX1tlJFCScJoVoW5YY/ylcMbidtyi24YnX0DaOtosK8uaaH3V1DtjFT3EUI4MmLyHMXF0spGyZyfbfVli9Wk7nsjJHIw1CcKJBv1r/QfQuCrte4HyVQBPLEiG4CYWFwj3c349FuccL86Bz94kCmVDj9gRPvKBWm1KOT7A3nBusU5Bb8LV0dFeb0g3RqlKCpm/1oVhmNI9vGwBpUyqDx8mTFWhcqgelJkQrCRFXAYdHPGhFpCtM+/swxBzaIlnbp5sGK599JkFqkMobD6sAsIGfQ4yB8QjNRcHqPPuyM=
