@@ -34,7 +34,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    ipcRenderer.on(events.APP_ERROR, () => {
+    ipcRenderer.on(events.APP_ERROR, (event, args) => {
+      console.log(event)
+      console.log(args)
       this.setState(prev => ({
         isLoading: false,
         formDisabled: false,

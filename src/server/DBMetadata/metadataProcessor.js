@@ -1,7 +1,8 @@
 const ProcessedField = require("./classes/processedField");
 const ProcessedTable = require("./classes/processedTable");
 
-function processMetadata(columnData) {
+function processMetadata(columnData, translateColumnType) {
+  console.log("CDATA", columnData)
   if (!columnData || columnData.length === 0)
     throw new Error("Metadata is null or empty");
 
@@ -40,7 +41,7 @@ function processMetadata(columnData) {
       data.tables[tblIdx] = new ProcessedTable(prevTable, props);
     }
 
-    const processed = new ProcessedField(tblCol, tblIdx, fieldIdx);
+    const processed = new ProcessedField(tblCol, tblIdx, fieldIdx, translateColumnType);
 
     if (tableInToRef(toRef, tblCol)) {
       processed.addRetroRelationship(toRef, tblCol, data);

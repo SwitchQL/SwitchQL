@@ -4,6 +4,7 @@ class ProcessedField {
   constructor(col, tblIdx, fieldIdx, translateColumnType) {
     const isPrimaryKey = col.constraint_type === "PRIMARY KEY";
 
+    console.log("COL", col)
     this.name = util.removeWhitespace(col.column_name);
     this.type = isPrimaryKey ? "ID" : translateColumnType(col.data_type);
     this.primaryKey = isPrimaryKey;
@@ -23,6 +24,7 @@ class ProcessedField {
 
     // iterate through each relationship (one or more) and assign a relatedTo
     for (const refIndex in toRef[tblCol.table_name][tblCol.column_name]) {
+      try {
       const refLookup = refIndex.split(".");
       const relatedTo = data.tables[refLookup[0]].fields[refLookup[1]];
       const relToRefIndex = `${this.tableNum}.${this.fieldNum}`;
@@ -35,6 +37,10 @@ class ProcessedField {
 
       relatedTo.inRelationship = true;
       relatedTo.type = "ID";
+      }
+      catch (err) {
+        console.log("Cannot find foreign key for,", tblCol.table_name, tblCol.column_name)
+      }
     }
   }
 

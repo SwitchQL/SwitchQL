@@ -1,6 +1,5 @@
 const electron = require("electron");
 const { ipcMain } = electron;
-const dbController = require("./DBMetadata/pgsql/pgMetadataRetriever");
 const processMetaData = require("./DBMetadata/metadataProcessor");
 const generateGraphQL = require("./Generators/graphQLGenerator");
 const dbFactory = require("./dbFactory");
@@ -17,13 +16,19 @@ let queriesMetaData;
 ipcMain.on(events.URL, async (event, connData) => {
   try {
     const cd = JSON.parse(connData);
-    const { retriever, processMetaData, provider } = dbFactory(cd);
+    console.log(cd)
+    const { retriever, translator, provider } = dbFactory(cd);
+    console.log("TRANSLATOR", translator)
 
     const connString =
       cd.value.length === 0 ? retriever.buildConnectionString(cd) : cd.value;
 
+    console.log("GETTING METADATA")
     const dbMetaData = await retriever.getSchemaInfo(connString);
-    const formattedMetaData = processMetaData(dbMetaData);
+
+    console.log(dbMetaData)
+    console.log("GETTING FORMATTED METADATA")
+    const formattedMetaData = processMetaData(dbMetaData, translator);
 
     ({
       types: schemaMetaData,
@@ -36,9 +41,15 @@ ipcMain.on(events.URL, async (event, connData) => {
       mutations: mutationsMetaData,
       queries: queriesMetaData
     };
+    fs.writeFile("output.txt", JSON.stringify(gqlData), function(err) {
+        if (err) {
+            console.log(err);
+        }
+    });
 
     event.sender.send(events.DATA, JSON.stringify(gqlData));
   } catch (err) {
+    console.log(err)
     event.sender.send(events.APP_ERROR, JSON.stringify(err));
   }
 });

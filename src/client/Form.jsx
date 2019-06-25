@@ -10,13 +10,13 @@ export default class Form extends Component {
     super(props);
 
     this.state = {
-      value: "",
+      value: ""
       host: "",
       port: "",
       user: "",
       password: "",
       database: "",
-      type: "",
+      type: "MySQL",
       formError: { twoConnect: false, incomplete: false, emptySubmit: false }
     };
 

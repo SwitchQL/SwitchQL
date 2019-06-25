@@ -1,3 +1,29 @@
+function mySQL(type) {
+  switch (type) {
+    case "integer":
+      return "Integer";
+
+    case "double precision":
+    case "real":
+      return "Float";
+
+    case "boolean":
+      return "Boolean";
+
+    case "date":
+      return "Date";
+
+    case "time":
+      return "Time";
+
+    case "timestamp":
+      return "DateTime";
+
+    default:
+      return "String";
+  }
+}
+
 function pgSQL(type) {
   switch (type) {
     case "integer":
@@ -68,4 +94,4 @@ function msSQL(type) {
   }
 }
 
-module.exports = { pgSQL, msSQL };
+module.exports = { pgSQL, msSQL, mySQL};

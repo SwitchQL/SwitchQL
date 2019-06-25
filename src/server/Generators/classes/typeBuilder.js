@@ -247,6 +247,7 @@ class TypeBuilder {
   deleteMutation(table) {
     let idColumn;
 
+    try {
     for (const field of table.fields) {
       if (field.primaryKey) {
         idColumn = field;
@@ -269,6 +270,10 @@ class TypeBuilder {
     )}`;
 
     return (mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
+    } catch {
+      console.log("No idColumn for ", table);
+      return("");
+    }
   }
 
   addNewLine(codeSegment) {
