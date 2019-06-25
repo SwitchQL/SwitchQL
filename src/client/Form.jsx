@@ -10,7 +10,7 @@ export default class Form extends Component {
     super(props);
 
     this.state = {
-      value: ""
+      value: "",
       host: "",
       port: "",
       user: "",
