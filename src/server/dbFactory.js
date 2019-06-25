@@ -11,8 +11,7 @@ const MySqlProvider = require("./Generators/classes/mysqlProvider");
 const mySqlRetriever = require("./DBMetadata/mysql/mysqlMetadataRetriever");
 
 function dbFactory(connData) {
-  console.log(connData.type);
-  switch (connData.type) {
+    switch (connData.type) {
     case "PostgreSQL":
       const connString =
         connData.value.length === 0
@@ -39,8 +38,7 @@ function dbFactory(connData) {
         translator: translators.mySQL,
         provider: new MySqlProvider(connData.value)
       };
-      console.log(ret)
-      return(ret);
+            return(ret);
 
     default:
       throw new Error(`Provider for ${connData.type} has not been implemented`);

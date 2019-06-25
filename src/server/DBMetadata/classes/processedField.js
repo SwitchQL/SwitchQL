@@ -4,8 +4,7 @@ class ProcessedField {
   constructor(col, tblIdx, fieldIdx, translateColumnType) {
     const isPrimaryKey = col.constraint_type === "PRIMARY KEY";
 
-    console.log("COL", col)
-    this.name = util.removeWhitespace(col.column_name);
+        this.name = util.removeWhitespace(col.column_name);
     this.type = isPrimaryKey ? "ID" : translateColumnType(col.data_type);
     this.primaryKey = isPrimaryKey;
     this.unique = col.constraint_type === "UNIQUE";

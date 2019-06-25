@@ -16,19 +16,14 @@ let queriesMetaData;
 ipcMain.on(events.URL, async (event, connData) => {
   try {
     const cd = JSON.parse(connData);
-    console.log(cd)
-    const { retriever, translator, provider } = dbFactory(cd);
-    console.log("TRANSLATOR", translator)
-
+        const { retriever, translator, provider } = dbFactory(cd);
+    
     const connString =
       cd.value.length === 0 ? retriever.buildConnectionString(cd) : cd.value;
 
-    console.log("GETTING METADATA")
-    const dbMetaData = await retriever.getSchemaInfo(connString);
+        const dbMetaData = await retriever.getSchemaInfo(connString);
 
-    console.log(dbMetaData)
-    console.log("GETTING FORMATTED METADATA")
-    const formattedMetaData = processMetaData(dbMetaData, translator);
+            const formattedMetaData = processMetaData(dbMetaData, translator);
 
     ({
       types: schemaMetaData,
@@ -44,8 +39,8 @@ ipcMain.on(events.URL, async (event, connData) => {
 
     event.sender.send(events.DATA, JSON.stringify(gqlData));
   } catch (err) {
-    console.log(err)
-    event.sender.send(events.APP_ERROR, JSON.stringify(err));
+      console.log(err)
+        event.sender.send(events.APP_ERROR, JSON.stringify(err));
   }
 });
 

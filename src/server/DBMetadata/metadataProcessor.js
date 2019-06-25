@@ -2,8 +2,7 @@ const ProcessedField = require("./classes/processedField");
 const ProcessedTable = require("./classes/processedTable");
 
 function processMetadata(columnData, translateColumnType) {
-  console.log("CDATA", columnData)
-  if (!columnData || columnData.length === 0)
+    if (!columnData || columnData.length === 0)
     throw new Error("Metadata is null or empty");
 
   if (!Array.isArray(columnData))

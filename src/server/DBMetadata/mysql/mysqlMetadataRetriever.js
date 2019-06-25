@@ -27,8 +27,7 @@ ORDER BY table_name;`;
 function getSchemaInfo(connString) {
   console.log("CONNECTING", connString)
   const connection = mysql.createConnection(buildMysqlParams(connString));
-  console.log("CONNECTION")
-
+  
   return new Promise((resolve, reject) => {
     try {
       connection.query(metadataQuery, (error, results) => {
