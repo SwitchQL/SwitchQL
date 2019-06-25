@@ -41,11 +41,6 @@ ipcMain.on(events.URL, async (event, connData) => {
       mutations: mutationsMetaData,
       queries: queriesMetaData
     };
-    fs.writeFile("output.txt", JSON.stringify(gqlData), function(err) {
-        if (err) {
-            console.log(err);
-        }
-    });
 
     event.sender.send(events.DATA, JSON.stringify(gqlData));
   } catch (err) {
