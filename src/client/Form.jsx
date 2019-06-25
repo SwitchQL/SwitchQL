@@ -16,7 +16,7 @@ export default class Form extends Component {
       user: "",
       password: "",
       database: "",
-      type: "MySQL",
+      type: "",
       formError: { twoConnect: false, incomplete: false, emptySubmit: false }
     };
 
