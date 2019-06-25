@@ -24,7 +24,7 @@ app.on("ready", function() {
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
   //create new window
   mainWindow = new BrowserWindow({
-    width: width ,
+    width: width / 2,
     height: height
   });
 
