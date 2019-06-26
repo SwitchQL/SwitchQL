@@ -1,3 +1,5 @@
+const mysqlMetadataRetriever = require('../../DBMetadata/mysql/mysqlMetadataRetriever')
+
 const tab = `  `;
 
 class MySqlProvider {
@@ -6,11 +8,11 @@ class MySqlProvider {
   }
 
   connection() {
-    let conn = `const mysql = require("mysql");\n`;
+    let conn = `const connection = require("mysql-promise");\n`;
     conn += `// WARNING - Properly secure the connection string\n`;
-    conn += `const connection = mysql.createConnection(buildMysqlParams(${
+    conn += `connection.configure(${JSON.stringify(mysqlMetadataRetriever.buildMysqlParams(
       this.connString
-    }));\n`;
+    ))});\n`;
 
     return conn;
   }

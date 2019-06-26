@@ -69,7 +69,8 @@ function buildMysqlParams(uri) {
     user: user,
     password: password,
     database: database,
-    port: Number(port)
+    port: Number(port),
+    connectTimeout: 30
   };
 }
 
