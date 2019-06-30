@@ -63,7 +63,7 @@ class PgSqlProvider {
   }
 
   delete(table, column) {
-    let query = `const sql = 'DELETE FROM "${table}" WHERE "${column}" = $1';\n`;
+    let query = `const sql = 'DELETE FROM "${table}" WHERE "${column}" = $1 RETURNING *';\n`;
     query += `${tab.repeat(4)}return connect.conn.one(sql, args.${column})\n`;
 
     query += addPromiseResolution();
