@@ -45,7 +45,7 @@ class MSSqlProvider {
   }
 
   delete(table, column) {
-    let query = `return pool.query\`DELETE FROM "${table}" WHERE "${column}" = \${args.${column}}\`\n`;
+    let query = `return pool.query\`DELETE FROM "${table}" OUTPUT DELETED.* WHERE "${column}" = \${args.${column}}\`\n`;
 
     query += addPromiseResolution();
 
