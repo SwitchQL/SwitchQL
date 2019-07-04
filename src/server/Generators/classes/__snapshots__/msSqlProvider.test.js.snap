@@ -11,7 +11,7 @@ exports[`MSSqlProvider Should generate code for configureExport that matches the
 `;
 
 exports[`MSSqlProvider Should generate code for delete that matches the snapshot 1`] = `
-"return pool.query\`DELETE FROM \\"testTable\\" WHERE \\"idCol\\" = \${args.idCol}\`
+"return pool.query\`DELETE FROM \\"testTable\\" OUTPUT DELETED.* WHERE \\"idCol\\" = \${args.idCol}\`
           .then(data => {
             return data.recordset[0];
           })

@@ -77,7 +77,7 @@ describe("MSSqlProvider", () => {
   });
 
   it("Should generate correct sql for delete", () => {
-    const expected = `DELETE FROM "testTable" WHERE "idCol" = \${args.idCol}`;
+    const expected = `DELETE FROM "testTable" OUTPUT DELETED.* WHERE "idCol" = \${args.idCol}`;
     const result = provider.delete("testTable", "idCol");
 
     expect(result).toContain(expected);
