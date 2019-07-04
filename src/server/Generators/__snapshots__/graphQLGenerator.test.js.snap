@@ -1035,7 +1035,7 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = 'DELETE FROM \\"author\\" WHERE \\"id\\" = $1';
+        const sql = 'DELETE FROM \\"author\\" WHERE \\"id\\" = $1 RETURNING *';
         return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
@@ -1095,7 +1095,7 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = 'DELETE FROM \\"book_order\\" WHERE \\"id\\" = $1';
+        const sql = 'DELETE FROM \\"book_order\\" WHERE \\"id\\" = $1 RETURNING *';
         return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
@@ -1161,7 +1161,7 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = 'DELETE FROM \\"books\\" WHERE \\"id\\" = $1';
+        const sql = 'DELETE FROM \\"books\\" WHERE \\"id\\" = $1 RETURNING *';
         return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
@@ -1219,7 +1219,7 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = 'DELETE FROM \\"genre\\" WHERE \\"id\\" = $1';
+        const sql = 'DELETE FROM \\"genre\\" WHERE \\"id\\" = $1 RETURNING *';
         return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
@@ -1283,7 +1283,7 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = 'DELETE FROM \\"order\\" WHERE \\"id\\" = $1';
+        const sql = 'DELETE FROM \\"order\\" WHERE \\"id\\" = $1 RETURNING *';
         return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
@@ -1341,7 +1341,7 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = 'DELETE FROM \\"shipping_method\\" WHERE \\"id\\" = $1';
+        const sql = 'DELETE FROM \\"shipping_method\\" WHERE \\"id\\" = $1 RETURNING *';
         return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
@@ -1399,7 +1399,7 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = 'DELETE FROM \\"status\\" WHERE \\"id\\" = $1';
+        const sql = 'DELETE FROM \\"status\\" WHERE \\"id\\" = $1 RETURNING *';
         return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
@@ -1461,7 +1461,7 @@ const Mutation = new GraphQLObjectType({
         id: { type: GraphQLID }
       },
       resolve(parent, args) {
-        const sql = 'DELETE FROM \\"user\\" WHERE \\"id\\" = $1';
+        const sql = 'DELETE FROM \\"user\\" WHERE \\"id\\" = $1 RETURNING *';
         return connect.conn.one(sql, args.id)
           .then(data => {
             return data;
