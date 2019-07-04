@@ -27,6 +27,7 @@ Against these database providers
 
 - Postgres
 - MySQL (**Coming Soon!**)
+- MSSQL (**Coming Soon!**)
 
 ### Contributing
 
