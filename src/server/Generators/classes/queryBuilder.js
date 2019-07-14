@@ -10,12 +10,14 @@ class QueryBuilder {
 
 	addQuery (table) {
 		this.query += buildAllQuery(table);
-		this.exportNames.push(`queryEvery${util.toTitleCase(table.name)}`);
+		this.exportNames.push(`queryEvery${util.toTitleCase(table.displayName)}`);
 
 		for (const field of table.fields) {
 			if (field.primaryKey) {
 				this.query += buildQueryById(table, field);
-				this.exportNames.push(`query${util.toTitleCase(table.name)}ById `);
+				this.exportNames.push(
+					`query${util.toTitleCase(table.displayName)}ById `
+				);
 			}
 		}
 
@@ -33,9 +35,11 @@ class QueryBuilder {
 }
 
 function buildAllQuery (table) {
-	let string = `const queryEvery${util.toTitleCase(table.name)} = gql\`\n`;
+	let string = `const queryEvery${util.toTitleCase(
+		table.displayName
+	)} = gql\`\n`;
 	string += `${tab}{\n`;
-	string += `${tab.repeat(2)}every${util.toTitleCase(table.name)} {\n`;
+	string += `${tab.repeat(2)}every${util.toTitleCase(table.displayName)} {\n`;
 
 	for (const field of table.fields) {
 		string += `${tab.repeat(3)}${field.name}\n`;
@@ -45,9 +49,11 @@ function buildAllQuery (table) {
 }
 
 function buildQueryById (table, idField) {
-	let query = `const query${util.toTitleCase(table.name)}ById = gql\`\n`;
-	query += `${tab}query($${table.name}: ${idField.type}!) {\n`;
-	query += `${tab.repeat(2)}${table.name}(${idField.name}: $${table.name}) {\n`;
+	let query = `const query${util.toTitleCase(table.displayName)}ById = gql\`\n`;
+	query += `${tab}query($${table.displayName}: ${idField.type}!) {\n`;
+	query += `${tab.repeat(2)}${table.displayName}(${idField.name}: $${
+		table.displayName
+	}) {\n`;
 
 	for (const field of table.fields) {
 		query += `${tab.repeat(3)}${field.name}\n`;
