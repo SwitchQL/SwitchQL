@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest --watch",
     "test:ci": "jest",
+    "lint": "./node_modules/.bin/eslint src/server/* --fix",
     "electron": "electron .",
     "start": "webpack-dev-server --hot --mode development --inline --host 0.0.0.0 --port 3000",
     "build": "webpack --mode production",
@@ -47,6 +48,9 @@
     "electron": "^3.1.8",
     "electron-builder": "^20.39.0",
     "electron-devtools-installer": "^2.2.4",
+    "eslint": "^6.0.1",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
     "file-loader": "^2.0.0",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.5.0",

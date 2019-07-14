@@ -32,51 +32,51 @@ const query = `select
                                     where t.TABLE_TYPE = 'BASE TABLE' and t.TABLE_NAME = c.TABLE_NAME )
                 order by c.TABLE_NAME`;
 
-async function getSchemaInfo(connString) {
-  try {
-    const pool = await getDbPool(connString);
-    const metadata = await pool.query(query);
+async function getSchemaInfo (connString) {
+	try {
+		const pool = await getDbPool(connString);
+		const metadata = await pool.query(query);
 
-    return metadata.recordset;
-  } catch (err) {
-    removeFromCache(connString);
-    throw err;
-  }
+		return metadata.recordset;
+	} catch (err) {
+		removeFromCache(connString);
+		throw err;
+	}
 }
 
-function buildConnectionString(info) {
-  let connectionString = "";
-  const port = info.port || 1433;
+function buildConnectionString (info) {
+	let connectionString = "";
+	const port = info.port || 1433;
 
-  // Per documentation request timeout cannot be less than 1 second
-  connectionString += `mssql://${info.user}:${info.password}@${
-    info.host
-  }:${port}/${info.database}?encrypt=true&request%20timeout=${30000}`;
-  return connectionString;
+	// Per documentation request timeout cannot be less than 1 second
+	connectionString += `mssql://${info.user}:${info.password}@${
+		info.host
+	}:${port}/${info.database}?encrypt=true&request%20timeout=${30000}`;
+	return connectionString;
 }
 
-async function getDbPool(connString) {
-  const hash = crypto.createHash("sha256");
-  hash.update(connString);
+async function getDbPool (connString) {
+	const hash = crypto.createHash("sha256");
+	hash.update(connString);
 
-  const digest = hash.digest("base64");
+	const digest = hash.digest("base64");
 
-  if (poolCache[digest]) return poolCache[digest];
+	if (poolCache[digest]) return poolCache[digest];
 
-  const pool = await new sql.ConnectionPool(connString).connect();
-  poolCache[digest] = pool;
+	const pool = await new sql.ConnectionPool(connString).connect();
+	poolCache[digest] = pool;
 
-  return pool;
+	return pool;
 }
 
-function removeFromCache(connString) {
-  const hash = crypto.createHash("sha256");
-  hash.update(connString);
+function removeFromCache (connString) {
+	const hash = crypto.createHash("sha256");
+	hash.update(connString);
 
-  delete poolCache[hash.digest("base64")];
+	delete poolCache[hash.digest("base64")];
 }
 
 module.exports = {
-  getSchemaInfo,
-  buildConnectionString
+	getSchemaInfo,
+	buildConnectionString,
 };
