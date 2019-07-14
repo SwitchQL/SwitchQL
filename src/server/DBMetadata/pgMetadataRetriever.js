@@ -1,6 +1,6 @@
 const pgp = require("pg-promise")();
-const crypto = require('crypto');
-const utilty = require('../util');
+const crypto = require("crypto");
+const utilty = require("../util");
 
 const poolCache = {};
 
@@ -28,50 +28,49 @@ AND (constraint_type = 'FOREIGN KEY' or (constraint_type is null OR constraint_t
 ORDER BY t.table_name`;
 
 
-
-async function getSchemaInfoPG(connString) {
-  const db = getDbPool(connString);
-  try {
-    return metadataInfo = await utilty.promiseTimeout(10000, db.any(metadataQuery));
-  } catch (err) {
-    removeFromCache(connString)
-    throw err;
-  }
+async function getSchemaInfoPG (connString) {
+	const db = getDbPool(connString);
+	try {
+		return metadataInfo = await utilty.promiseTimeout(10000, db.any(metadataQuery));
+	} catch (err) {
+		removeFromCache(connString);
+		throw err;
+	}
 }
 
-function getDbPool(connString) {
-  const hash = crypto.createHash('sha256');
-  hash.update(connString)
+function getDbPool (connString) {
+	const hash = crypto.createHash("sha256");
+	hash.update(connString);
 
-  const digest = hash.digest('base64')
+	const digest = hash.digest("base64");
 
-  if (poolCache[digest]) {
-    return poolCache[digest];
-  }
+	if (poolCache[digest]) {
+		return poolCache[digest];
+	}
 
-  let db = pgp(connString);
-  poolCache[digest] = db;
+	const db = pgp(connString);
+	poolCache[digest] = db;
 
-  return db;
+	return db;
 }
 
-function removeFromCache(connString) {
-  const hash = crypto.createHash('sha256');
-  hash.update(connString)
+function removeFromCache (connString) {
+	const hash = crypto.createHash("sha256");
+	hash.update(connString);
 
-  delete poolCache[hash.digest('base64')]
+	delete poolCache[hash.digest("base64")];
 }
 
-function buildConnectionString(info) {
-  let connectionString = "";
-  info.port = info.port || 5432;
-  connectionString += `postgres://${info.user}:${info.password}@${info.host}:${
-    info.port
-    }/${info.database}`;
-  return connectionString;
+function buildConnectionString (info) {
+	let connectionString = "";
+	info.port = info.port || 5432;
+	connectionString += `postgres://${info.user}:${info.password}@${info.host}:${
+		info.port
+	}/${info.database}`;
+	return connectionString;
 }
 
 module.exports = {
-  getSchemaInfoPG,
-  buildConnectionString
+	getSchemaInfoPG,
+	buildConnectionString,
 };

@@ -5,9 +5,9 @@ const DIRECTORY = "directory";
 const EXPORT_SUCCESS = "exportSuccess";
 
 module.exports = {
-  APP_ERROR,
-  DATA,
-  URL,
-  DIRECTORY,
-  EXPORT_SUCCESS
+	APP_ERROR,
+	DATA,
+	URL,
+	DIRECTORY,
+	EXPORT_SUCCESS,
 };
