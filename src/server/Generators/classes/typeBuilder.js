@@ -26,9 +26,9 @@ class TypeBuilder {
 		let subQuery = "";
 
 		let typeQuery = `const ${
-			table.name
+			table.displayName
 		}Type = new GraphQLObjectType({\n${tab}name: '${
-			table.name
+			table.displayName
 		}',\n${tab}fields: () => ({`;
 
 		let firstLoop = true;
@@ -61,11 +61,14 @@ class TypeBuilder {
 		const subqueries = [];
 
 		for (const relatedTableIndex in column.relation) {
+			// TODO create table collection and move logic for lookup there
 			let subQuery = "";
 
 			const relatedTableLookup = relatedTableIndex.split(".");
 
-			const relatedTableName = processedMetadata[relatedTableLookup[0]].name;
+			const { displayName: rtDisplayName, name: rtName } = processedMetadata[
+				relatedTableLookup[0]
+			];
 
 			const relatedFieldName =
         processedMetadata[relatedTableLookup[0]].fields[relatedTableLookup[1]]
@@ -76,18 +79,18 @@ class TypeBuilder {
 
 			subQuery += `\n${tab.repeat(2)}${createSubQueryName(
 				relatedTableRelationType,
-				relatedTableName
+				rtDisplayName
 			)}: {\n${tab.repeat(3)}type: `;
 
 			if (relatedTableRelationType === "one to many") {
-				subQuery += `new GraphQLList(${relatedTableName}Type),`;
+				subQuery += `new GraphQLList(${rtDisplayName}Type),`;
 			} else {
-				subQuery += `${relatedTableName}Type,`;
+				subQuery += `${rtDisplayName}Type,`;
 			}
 			subQuery += `\n${tab.repeat(3)}resolve(parent, args) {\n${tab.repeat(4)}`;
 
 			subQuery += this.provider.selectWithWhere(
-				relatedTableName,
+				rtName,
 				relatedFieldName,
 				`parent.${column.name}`,
 				relatedTableRelationType === "one to many"
@@ -121,9 +124,9 @@ class TypeBuilder {
 
 	createFindAllRootQuery (table) {
 		let rootQuery = `${tab.repeat(2)}every${util.toTitleCase(
-			table.name
+			table.displayName
 		)}: {\n${tab.repeat(3)}type: new GraphQLList(${
-			table.name
+			table.displayName
 		}Type),\n${tab.repeat(3)}resolve() {\n${tab.repeat(4)}`;
 
 		rootQuery += this.provider.select(table.name);
@@ -134,8 +137,8 @@ class TypeBuilder {
 	createFindByIdQuery (table, idColumn) {
 		let rootQuery = `,\n${tab.repeat(
 			2
-		)}${table.name.toLowerCase()}: {\n${tab.repeat(3)}type: ${
-			table.name
+		)}${table.displayName.toLowerCase()}: {\n${tab.repeat(3)}type: ${
+			table.displayName
 		}Type,\n${tab.repeat(3)}args: {\n${tab.repeat(4)}${
 			idColumn.name
 		}: { type: ${tableDataTypeToGraphqlType(idColumn.type)} }\n${tab.repeat(
@@ -166,8 +169,10 @@ class TypeBuilder {
 
 	addMutation (table) {
 		let mutationQuery = `${tab.repeat(2)}add${util.toTitleCase(
-			table.name
-		)}: {\n${tab.repeat(3)}type: ${table.name}Type,\n${tab.repeat(3)}args: {\n`;
+			table.displayName
+		)}: {\n${tab.repeat(3)}type: ${table.displayName}Type,\n${tab.repeat(
+			3
+		)}args: {\n`;
 
 		let fieldNames = "";
 		let argNames = "";
@@ -211,8 +216,10 @@ class TypeBuilder {
 		}
 
 		let mutationQuery = `${tab.repeat(2)}update${util.toTitleCase(
-			table.name
-		)}: {\n${tab.repeat(3)}type: ${table.name}Type,\n${tab.repeat(3)}args: {\n`;
+			table.displayName
+		)}: {\n${tab.repeat(3)}type: ${table.displayName}Type,\n${tab.repeat(
+			3
+		)}args: {\n`;
 
 		let firstLoop = true;
 		for (const field of table.fields) {
@@ -251,8 +258,8 @@ class TypeBuilder {
 		}
 
 		let mutationQuery = `${tab.repeat(2)}delete${util.toTitleCase(
-			table.name
-		)}: {\n${tab.repeat(3)}type: ${table.name}Type,\n${tab.repeat(
+			table.displayName
+		)}: {\n${tab.repeat(3)}type: ${table.displayName}Type,\n${tab.repeat(
 			3
 		)}args: {\n${tab.repeat(4)}${
 			idColumn.name

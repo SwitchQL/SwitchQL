@@ -2,7 +2,13 @@ const util = require("../../util");
 
 class ProcessedTable {
 	constructor (name, fields) {
-		this.name = util.removeWhitespace(name);
+		/**
+     * displayName is used for all graph ql code as the name is normalized
+     * to remove spaces, while name is used for database queries to preserve
+     * the original table name
+     */
+		this.displayName = util.removeWhitespace(name);
+		this.name = name;
 		this.fields = fields;
 	}
 

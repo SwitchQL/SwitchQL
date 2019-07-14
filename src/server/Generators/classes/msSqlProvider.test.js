@@ -17,7 +17,7 @@ describe("MSSqlProvider", () => {
 	});
 
 	it("Should generate correct sql for selectWithWhere", () => {
-		const expected = `SELECT * FROM "testTable" WHERE "testCol" = \${parent.id}`;
+		const expected = `SELECT * FROM [testTable] WHERE "testCol" = \${parent.id}`;
 		const result = provider.selectWithWhere(
 			"testTable",
 			"testCol",
@@ -33,7 +33,7 @@ describe("MSSqlProvider", () => {
 	});
 
 	it("Should generate correct sql for select", () => {
-		const expected = `'SELECT * FROM "testTable"'`;
+		const expected = `'SELECT * FROM [testTable]'`;
 		const result = provider.select("testTable");
 
 		expect(result).toContain(expected);
@@ -49,7 +49,7 @@ describe("MSSqlProvider", () => {
 	});
 
 	it("Should generate correct sql for insert", () => {
-		const expected = `INSERT INTO "testTable" (col1, col2) OUTPUT INSERTED.* VALUES (blah = \${parent.blah}, test = \${parent.test})`;
+		const expected = `INSERT INTO [testTable] (col1, col2) OUTPUT INSERTED.* VALUES (blah = \${parent.blah}, test = \${parent.test})`;
 		const result = provider.insert(
 			"testTable",
 			"col1, col2",
@@ -65,7 +65,7 @@ describe("MSSqlProvider", () => {
 	});
 
 	it("Should generate correct sql for update", () => {
-		const expected = `UPDATE "testTable" SET \${parameterized} OUTPUT INSERTED.* WHERE "idCol" = @idCol`;
+		const expected = `UPDATE [testTable] SET \${parameterized} OUTPUT INSERTED.* WHERE "idCol" = @idCol`;
 		const result = provider.update("testTable", "idCol");
 
 		expect(result).toContain(expected);
@@ -77,7 +77,7 @@ describe("MSSqlProvider", () => {
 	});
 
 	it("Should generate correct sql for delete", () => {
-		const expected = `DELETE FROM "testTable" OUTPUT DELETED.* WHERE "idCol" = \${args.idCol}`;
+		const expected = `DELETE FROM [testTable] OUTPUT DELETED.* WHERE "idCol" = \${args.idCol}`;
 		const result = provider.delete("testTable", "idCol");
 
 		expect(result).toContain(expected);

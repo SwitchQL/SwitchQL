@@ -11,19 +11,23 @@ class MutationBuilder {
 		this.mutation += buildMutationSignature(table, null, "add");
 		this.mutation += buildTypeParams(table, null, "add");
 		this.mutation += buildReturnValues(table);
-		this.exportNames.push(`add${util.toTitleCase(table.name)}Mutation`);
+		this.exportNames.push(`add${util.toTitleCase(table.displayName)}Mutation`);
 
 		for (const field of table.fields) {
 			if (field.primaryKey) {
 				this.mutation += buildMutationSignature(table, field, "update");
 				this.mutation += buildTypeParams(table, field, "update");
 				this.mutation += buildReturnValues(table);
-				this.exportNames.push(`update${util.toTitleCase(table.name)}Mutation`);
+				this.exportNames.push(
+					`update${util.toTitleCase(table.displayName)}Mutation`
+				);
 
 				this.mutation += buildMutationSignature(table, field, "delete");
 				this.mutation += buildTypeParams(table, field, "delete");
 				this.mutation += buildReturnValues(table);
-				this.exportNames.push(`delete${util.toTitleCase(table.name)}Mutation`);
+				this.exportNames.push(
+					`delete${util.toTitleCase(table.displayName)}Mutation`
+				);
 			}
 		}
 
@@ -42,7 +46,7 @@ class MutationBuilder {
 
 function buildMutationSignature (table, idField, mutationType) {
 	let mut = `const ${mutationType}${util.toTitleCase(
-		table.name
+		table.displayName
 	)}Mutation = gql\`\n${tab}mutation(`;
 
 	if (mutationType === "delete") {
@@ -85,7 +89,7 @@ function checkRequired (required) {
 }
 
 function buildTypeParams (table, idField, mutationType) {
-	let mut = `${tab}${mutationType}${util.toTitleCase(table.name)}(`;
+	let mut = `${tab}${mutationType}${util.toTitleCase(table.displayName)}(`;
 
 	if (mutationType === "delete") {
 		mut += `${idField.name}: $${idField.name}) {\n`;
