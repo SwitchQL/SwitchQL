@@ -1,6 +1,7 @@
 export default {
 	tables: {
 		0: {
+			displayName: "author",
 			name: "author",
 			fields: [
 				{
@@ -30,6 +31,7 @@ export default {
 			],
 		},
 		1: {
+			displayName: "book_order",
 			name: "book_order",
 			fields: [
 				{
@@ -72,6 +74,7 @@ export default {
 			],
 		},
 		2: {
+			displayName: "books",
 			name: "books",
 			fields: [
 				{
@@ -149,6 +152,7 @@ export default {
 			],
 		},
 		3: {
+			displayName: "genre",
 			name: "genre",
 			fields: [
 				{
@@ -178,6 +182,7 @@ export default {
 			],
 		},
 		4: {
+			displayName: "order",
 			name: "order",
 			fields: [
 				{
@@ -246,6 +251,7 @@ export default {
 			],
 		},
 		5: {
+			displayName: "shipping_method",
 			name: "shipping_method",
 			fields: [
 				{
@@ -275,6 +281,7 @@ export default {
 			],
 		},
 		6: {
+			displayName: "status",
 			name: "status",
 			fields: [
 				{
@@ -304,6 +311,7 @@ export default {
 			],
 		},
 		7: {
+			displayName: "user",
 			name: "user",
 			fields: [
 				{
