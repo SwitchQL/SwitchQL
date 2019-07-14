@@ -11,14 +11,14 @@ class MSSqlProvider {
 	}
 
 	selectWithWhere (table, col, val, returnsMany) {
-		let query = `return pool.query\`SELECT * FROM "${table}" WHERE "${col}" = \${${val}}\`\n`;
+		let query = `return pool.query\`SELECT * FROM [${table}] WHERE "${col}" = \${${val}}\`\n`;
 		query += addPromiseResolution(returnsMany);
 
 		return query;
 	}
 
 	select (table) {
-		let query = `return pool.query('SELECT * FROM "${table}"')\n`;
+		let query = `return pool.query('SELECT * FROM [${table}]')\n`;
 
 		query += addPromiseResolution(true);
 
@@ -26,7 +26,7 @@ class MSSqlProvider {
 	}
 
 	insert (table, cols, args) {
-		let query = `return pool.query\`INSERT INTO "${table}" (${cols}) OUTPUT INSERTED.* VALUES (${args})\`\n`;
+		let query = `return pool.query\`INSERT INTO [${table}] (${cols}) OUTPUT INSERTED.* VALUES (${args})\`\n`;
 
 		query += addPromiseResolution();
 
@@ -38,14 +38,14 @@ class MSSqlProvider {
 			4
 		)}req.input('${idColumnName}', ${idColumnName});\n`;
 
-		query += `return req.query(\`UPDATE "${table}" SET \${parameterized} OUTPUT INSERTED.* WHERE "${idColumnName}" = @${idColumnName}\`)\n`;
+		query += `return req.query(\`UPDATE [${table}] SET \${parameterized} OUTPUT INSERTED.* WHERE "${idColumnName}" = @${idColumnName}\`)\n`;
 
 		query += addPromiseResolution();
 		return query;
 	}
 
 	delete (table, column) {
-		let query = `return pool.query\`DELETE FROM "${table}" OUTPUT DELETED.* WHERE "${column}" = \${args.${column}}\`\n`;
+		let query = `return pool.query\`DELETE FROM [${table}] OUTPUT DELETED.* WHERE "${column}" = \${args.${column}}\`\n`;
 
 		query += addPromiseResolution();
 

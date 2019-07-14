@@ -4,6 +4,7 @@ exports[`Format Metadata Tests Should match the snapshot 1`] = `
 Object {
   "tables": Object {
     "0": ProcessedTable {
+      "displayName": "author",
       "fields": Array [
         ProcessedField {
           "fieldNum": 0,
@@ -37,6 +38,7 @@ Object {
       "name": "author",
     },
     "1": ProcessedTable {
+      "displayName": "book_order",
       "fields": Array [
         ProcessedField {
           "fieldNum": 0,
@@ -87,6 +89,7 @@ Object {
       "name": "book_order",
     },
     "2": ProcessedTable {
+      "displayName": "books",
       "fields": Array [
         ProcessedField {
           "fieldNum": 0,
@@ -176,6 +179,7 @@ Object {
       "name": "books",
     },
     "3": ProcessedTable {
+      "displayName": "genre",
       "fields": Array [
         ProcessedField {
           "fieldNum": 0,
@@ -209,6 +213,7 @@ Object {
       "name": "genre",
     },
     "4": ProcessedTable {
+      "displayName": "order",
       "fields": Array [
         ProcessedField {
           "fieldNum": 0,
@@ -293,6 +298,7 @@ Object {
       "name": "order",
     },
     "5": ProcessedTable {
+      "displayName": "shipping_method",
       "fields": Array [
         ProcessedField {
           "fieldNum": 0,
@@ -326,6 +332,7 @@ Object {
       "name": "shipping_method",
     },
     "6": ProcessedTable {
+      "displayName": "status",
       "fields": Array [
         ProcessedField {
           "fieldNum": 0,
@@ -359,6 +366,7 @@ Object {
       "name": "status",
     },
     "7": ProcessedTable {
+      "displayName": "user",
       "fields": Array [
         ProcessedField {
           "fieldNum": 0,
