@@ -8,12 +8,10 @@ const MSSqlProvider = require("./Generators/classes/msSqlProvider");
 const msSqlRetriever = require("./DBMetadata/mssql/msMetadataRetriever");
 
 function dbFactory (connData) {
+	let connString = "";
 	switch (connData.type) {
 		case "PostgreSQL":
-			const connString =
-        connData.value.length === 0 ?
-        	pgSqlRetriever.buildConnectionString(info) :
-        	connData.value;
+			connString = connData.value.length === 0 ? pgSqlRetriever.buildConnectionString(connData.info) : connData.value;
 
 			return {
 				retriever: pgSqlRetriever,

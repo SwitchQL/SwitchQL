@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 const util = require("../../util");
 
 class ProcessedField {
@@ -64,8 +65,7 @@ class ProcessedField {
 			this.relation[refIndex] = relationship;
 
 			const relatedTo =
-        data.tables[lookup[foreign_table_name].INDEX].fields[
-        	lookup[foreign_table_name][foreign_column_name]
+        data.tables[lookup[foreign_table_name].INDEX].fields[lookup[foreign_table_name][foreign_column_name]
         ];
 
 			const relToRefIndex = `${this.tableNum}.${this.fieldNum}`;
@@ -87,11 +87,7 @@ class ProcessedField {
 				return;
 			}
 
-			if (
-				!toRef[tblCol.foreign_table_name].hasOwnProperty(
-					tblCol.foreign_column_name
-				)
-			) {
+			if (!toRef[tblCol.foreign_table_name].hasOwnProperty(tblCol.foreign_column_name)) {
 				toRef[tblCol.foreign_table_name][tblCol.foreign_column_name] = currRef;
 				return;
 			}

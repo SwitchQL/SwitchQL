@@ -1,14 +1,11 @@
 const electron = require("electron");
 const { ipcMain } = electron;
-const dbController = require("./DBMetadata/pgsql/pgMetadataRetriever");
-const processMetaData = require("./DBMetadata/metadataProcessor");
 const generateGraphQL = require("./Generators/graphQLGenerator");
 const dbFactory = require("./dbFactory");
 const fs = require("fs");
 const JSZip = require("jszip");
 const path = require("path");
 const events = require("./events");
-const PgSqlProvider = require("./Generators/classes/pgSqlProvider");
 
 let schemaMetaData;
 let mutationsMetaData;

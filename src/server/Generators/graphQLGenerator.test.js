@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import generateGraphQL from "./graphQLGenerator";
 import input from "../DBMetadata/sampleFiles/processedMetadata";
 import PgSqlProvider from "./classes/pgSqlProvider";

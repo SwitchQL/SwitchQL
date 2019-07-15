@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 const util = require("../../util");
 const tab = `  `;
 
@@ -68,8 +69,7 @@ class TypeBuilder {
 			const relatedTableName = processedMetadata[relatedTableLookup[0]].name;
 
 			const relatedFieldName =
-        processedMetadata[relatedTableLookup[0]].fields[relatedTableLookup[1]]
-        	.name;
+        processedMetadata[relatedTableLookup[0]].fields[relatedTableLookup[1]].name;
 
 			const relatedTableRelationType =
         column.relation[relatedTableIndex].refType;

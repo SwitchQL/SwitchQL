@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import MSSqlProvider from "./msSqlProvider";
 
 describe("MSSqlProvider", () => {

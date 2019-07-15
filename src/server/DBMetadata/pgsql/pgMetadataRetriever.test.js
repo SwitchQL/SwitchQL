@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const pgMetadataRetriever = require("./pgMetadataRetriever");
 
 test("takes in object with data returns properly formatted string", () => {

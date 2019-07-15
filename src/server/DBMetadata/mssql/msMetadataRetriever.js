@@ -64,6 +64,7 @@ async function getDbPool (connString) {
 	if (poolCache[digest]) return poolCache[digest];
 
 	const pool = await new sql.ConnectionPool(connString).connect();
+	// eslint-disable-next-line require-atomic-updates
 	poolCache[digest] = pool;
 
 	return pool;

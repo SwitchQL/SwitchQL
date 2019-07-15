@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 const ProcessedField = require("./classes/processedField");
 const ProcessedTable = require("./classes/processedTable");
 
@@ -66,10 +67,7 @@ function processMetadata (translateColumnType) {
 }
 
 function tableInToRef (toRef, tblCol) {
-	return (
-		toRef.hasOwnProperty(tblCol.table_name) &&
-    toRef[tblCol.table_name].hasOwnProperty(tblCol.column_name)
-	);
+	return toRef.hasOwnProperty(tblCol.table_name) && toRef[tblCol.table_name].hasOwnProperty(tblCol.column_name);
 }
 
 module.exports = processMetadata;

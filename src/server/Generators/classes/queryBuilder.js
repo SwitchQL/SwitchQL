@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 const util = require("../../util");
 const tab = `  `;
 
