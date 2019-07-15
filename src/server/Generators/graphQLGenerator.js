@@ -3,7 +3,7 @@ const MutationBuilder = require("./classes/mutationBuilder");
 const QueryBuilder = require("./classes/queryBuilder");
 
 function generateGraphQL (tables, dbProvider) {
-	if (Object.keys(tables).length == 0) { return { types: "", mutations: "", queries: "" }; }
+	if (Object.keys(tables).length === 0) { return { types: "", mutations: "", queries: "" }; }
 
 	const queryBuilder = new QueryBuilder();
 	const typeBuilder = new TypeBuilder(dbProvider);

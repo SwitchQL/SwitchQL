@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-unused-expressions */
 const tab = `  `;
 
 class PgSqlProvider {
