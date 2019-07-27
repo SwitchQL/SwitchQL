@@ -1,3 +1,5 @@
+import ConnData from "../models/connData";
+
 const PgSqlProvider = require("./Generators/classes/pgSqlProvider");
 const pgSqlRetriever = require("./DBMetadata/pgsql/pgMetadataRetriever");
 
@@ -7,11 +9,11 @@ const translators = require("./DBMetadata/columnTypeTranslators");
 const MSSqlProvider = require("./Generators/classes/msSqlProvider");
 const msSqlRetriever = require("./DBMetadata/mssql/msMetadataRetriever");
 
-function dbFactory (connData) {
+function dbFactory (connData: ConnData) {
 	let connString = "";
 	switch (connData.type) {
-		case "PostgreSQL":
-			connString = connData.value.length === 0 ? pgSqlRetriever.buildConnectionString(connData.info) : connData.value;
+		case DBType.PostgreSQL:
+			connString = connData.value.length === 0 ? pgSqlRetriever.buildConnectionString(connData) : connData.value;
 
 			return {
 				retriever: pgSqlRetriever,
@@ -19,7 +21,7 @@ function dbFactory (connData) {
 				provider: new PgSqlProvider(connString),
 			};
 
-		case "SQLServer":
+		case DBType.SQLServer:
 			return {
 				retriever: msSqlRetriever,
 				processMetaData: processMetaData(translators.msSQL),
@@ -31,4 +33,4 @@ function dbFactory (connData) {
 	}
 }
 
-module.exports = dbFactory;
+export default dbFactory;

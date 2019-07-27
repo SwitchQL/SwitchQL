@@ -62,7 +62,6 @@ class TypeBuilder {
 		const subqueries = [];
 
 		for (const relatedTableIndex in column.relation) {
-			// TODO create table collection and move logic for lookup there
 			let subQuery = "";
 
 			const relatedTableLookup = relatedTableIndex.split(".");

@@ -1,19 +1,20 @@
-const electron = require("electron");
-const { ipcMain } = electron;
+import { ipcMain } from 'electron';
 const generateGraphQL = require("./Generators/graphQLGenerator");
-const dbFactory = require("./dbFactory");
-const fs = require("fs");
-const JSZip = require("jszip");
-const path = require("path");
-const events = require("./events");
+import dbFactory from "./dbFactory";
+import { createWriteStream } from 'fs'
+import * as JSZip from "jszip";
+import { join } from 'path'
+import * as events from "./events";
+import ConnData from '../models/connData';
 
-let schemaMetaData;
-let mutationsMetaData;
-let queriesMetaData;
+let schemaMetaData: string;
+let mutationsMetaData: string;
+let queriesMetaData: string;
 
-ipcMain.on(events.URL, async (event, connData) => {
+//TODO strong typings for event and connData
+ipcMain.on(events.URL, async (event: any, connData: any) => {
 	try {
-		const cd = JSON.parse(connData);
+		const cd: ConnData = JSON.parse(connData);
 		const { retriever, processMetaData, provider } = dbFactory(cd);
 
 		const connString =
@@ -40,7 +41,8 @@ ipcMain.on(events.URL, async (event, connData) => {
 	}
 });
 
-ipcMain.on(events.DIRECTORY, async (event, directory) => {
+//TODO strong typings for event and connData
+ipcMain.on(events.DIRECTORY, async (event: any, directory: any) => {
 	try {
 		const zip = new JSZip();
 
@@ -50,7 +52,7 @@ ipcMain.on(events.DIRECTORY, async (event, directory) => {
 
 		zip
 			.generateNodeStream({ type: "nodebuffer", streamFiles: true })
-			.pipe(fs.createWriteStream(path.join(directory, "SwitchQL.zip")))
+			.pipe(createWriteStream(join(directory, "SwitchQL.zip")))
 			.on("finish", () => {
 				// JSZip generates a readable stream with a "end" event,
 				// but is piped here in a writable stream which emits a "finish" event.
