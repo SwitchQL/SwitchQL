@@ -9,7 +9,7 @@
     "lint": "./node_modules/.bin/eslint src/server/* --fix",
     "electron": "electron .",
     "start": "webpack-dev-server --hot --mode development --inline --host 0.0.0.0 --port 3000",
-    "build": "webpack --mode production",
+    "build": "webpack --mode production && tsc",
     "prepack": "npm run build",
     "pack": "electron-builder --dir",
     "dist": "electron-builder -p never"

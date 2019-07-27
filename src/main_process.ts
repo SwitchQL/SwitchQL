@@ -1,27 +1,26 @@
-const electron = require("electron");
-const url = require("url");
-const path = require("path");
-const { app, BrowserWindow, Menu } = electron;
-const isDev = require("electron-is-dev");
 
+import { app, BrowserWindow, Menu, MenuItemConstructorOptions } from "electron";
+import { format } from 'url';
+import { join } from 'path';
+import * as isDev from 'electron-is-dev';
 require("./server/server");
 
 let mainWindow;
 
 const uri = isDev
-  ? url.format({
+  ? format({
       pathname: "localhost:3000",
       protocol: "http:",
       slashes: true
     })
-  : url.format({
-      pathname: path.join(__dirname, "../build/index.html"),
+  : format({
+      pathname: join(__dirname, "../build/index.html"),
       protocol: "file:",
       slashes: true
     });
 
 app.on("ready", function() {
-  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+  const { width, height } = Electron.screen.getPrimaryDisplay().workAreaSize;
   //create new window
   mainWindow = new BrowserWindow({
     width: width / 2,
@@ -41,7 +40,7 @@ app.on("ready", function() {
   Menu.setApplicationMenu(mainMenu);
 });
 
-const mainMenuTemplate = [
+const mainMenuTemplate: MenuItemConstructorOptions[] = [
   {
     label: "File",
     submenu: [
@@ -63,16 +62,16 @@ const mainMenuTemplate = [
   {
     label: "Options",
     submenu: [
-      { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-      { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+      { label: "Undo", accelerator: "CmdOrCtrl+Z", role: "undo" },
+      { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", role: "redo" },
       { type: "separator" },
-      { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-      { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-      { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+      { label: "Cut", accelerator: "CmdOrCtrl+X", role: "cut" },
+      { label: "Copy", accelerator: "CmdOrCtrl+C", role: "copy" },
+      { label: "Paste", accelerator: "CmdOrCtrl+V", role: "paste" },
       {
         label: "Select All",
         accelerator: "CmdOrCtrl+A",
-        selector: "selectAll:"
+        role: "selectall"
       }
     ]
   }
@@ -92,7 +91,7 @@ if (process.env.NODE_ENV !== "production") {
         label: "Toggle DevTools",
         accelerator: process.platform == "darwin" ? "Command+I" : "Ctrl+I",
         click(item, focusedWindow) {
-          focusedWindow.toggleDevTools();
+          focusedWindow.webContents.toggleDevTools();
         }
       },
       {
