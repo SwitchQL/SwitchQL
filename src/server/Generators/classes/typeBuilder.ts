@@ -1,10 +1,17 @@
+import IDBProvider from "./dbProvider";
+
 /* eslint-disable no-return-assign */
 const util = require("../../util");
 const tab = `  `;
 
+// TODO pull in private classes
 class TypeBuilder {
-	constructor (dbProvider) {
-		this.provider = dbProvider;
+	private graphqlCode: string
+	private typeSchemaCode: string
+	private rootQueryCode: string
+	private mutationCode: string
+
+	constructor (private provider: IDBProvider) {
 		this.graphqlCode = init(this.provider);
 		this.typeSchemaCode = "";
 		this.rootQueryCode = `const RootQuery = new GraphQLObjectType({\n${tab}name: 'RootQueryType',\n${tab}fields: {\n`;
@@ -23,7 +30,8 @@ class TypeBuilder {
 		return this.graphqlCode;
 	}
 
-	addGraphqlTypeSchema (table, processedMetadata) {
+	// TODO add strong typing
+	addGraphqlTypeSchema (table: any, processedMetadata: any) {
 		let subQuery = "";
 
 		let typeQuery = `const ${
@@ -58,7 +66,8 @@ class TypeBuilder {
 		return this;
 	}
 
-	createSubQuery (column, processedMetadata) {
+	// TODO add strong typing
+	createSubQuery (column: any, processedMetadata: any) {
 		const subqueries = [];
 
 		for (const relatedTableIndex in column.relation) {
@@ -105,7 +114,8 @@ class TypeBuilder {
 		return subqueries.join(", ");
 	}
 
-	addGraphqlRootCode (table) {
+	// TODO add strong typing
+	addGraphqlRootCode (table: any) {
 		let rootQuery = "";
 
 		rootQuery += this.createFindAllRootQuery(table);
@@ -121,7 +131,8 @@ class TypeBuilder {
 		return this;
 	}
 
-	createFindAllRootQuery (table) {
+	// TODO add strong typing
+	createFindAllRootQuery (table: any) {
 		let rootQuery = `${tab.repeat(2)}every${util.toTitleCase(
 			table.displayName
 		)}: {\n${tab.repeat(3)}type: new GraphQLList(${
@@ -133,7 +144,8 @@ class TypeBuilder {
 		return rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
 	}
 
-	createFindByIdQuery (table, idColumn) {
+	// TODO add strong typing
+	createFindByIdQuery (table: any, idColumn: any) {
 		let rootQuery = `,\n${tab.repeat(
 			2
 		)}${table.displayName.toLowerCase()}: {\n${tab.repeat(3)}type: ${
@@ -154,7 +166,8 @@ class TypeBuilder {
 		return rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
 	}
 
-	addGraphqlMutationCode (table) {
+	// TODO add strong typing
+	addGraphqlMutationCode (table: any) {
 		let mutationQuery = ``;
 		mutationQuery += `${this.addMutation(table)}`;
 		if (table.fields[0]) {
@@ -166,7 +179,8 @@ class TypeBuilder {
 		return this;
 	}
 
-	addMutation (table) {
+	// TODO add strong typing
+	addMutation (table: any) {
 		let mutationQuery = `${tab.repeat(2)}add${util.toTitleCase(
 			table.displayName
 		)}: {\n${tab.repeat(3)}type: ${table.displayName}Type,\n${tab.repeat(
@@ -205,7 +219,8 @@ class TypeBuilder {
 		return mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
 	}
 
-	updateMutation (table) {
+	// TODO add strong typing
+	updateMutation (table: any) {
 		let idColumnName;
 
 		for (const field of table.fields) {
@@ -247,7 +262,8 @@ class TypeBuilder {
 		return mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
 	}
 
-	deleteMutation (table) {
+	// TODO add strong typing
+	deleteMutation (table: any) {
 		let idColumn;
 
 		for (const field of table.fields) {
@@ -274,12 +290,14 @@ class TypeBuilder {
 		return mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
 	}
 
-	addNewLine (codeSegment) {
-		this[codeSegment] += ",\n";
+	// TODO add strong typing
+	addNewLine (codeSegment: string) {
+		(<any>this)[codeSegment] += ",\n";
 	}
 }
 
-function createSubQueryName (relationType, relatedTable) {
+// TODO add strong typing
+function createSubQueryName (relationType: any, relatedTable: any) {
 	switch (relationType) {
 		case "one to one":
 			return `related${util.toTitleCase(relatedTable)}`;
@@ -295,7 +313,7 @@ function createSubQueryName (relationType, relatedTable) {
 	}
 }
 
-function init (dbProvider) {
+function init (dbProvider: IDBProvider) {
 	let str = `const graphql = require('graphql');\nconst graphql_iso_date = require('graphql-iso-date');\n`;
 	str += dbProvider.connection();
 
@@ -322,7 +340,7 @@ function init (dbProvider) {
 	return str;
 }
 
-function tableDataTypeToGraphqlType (type) {
+function tableDataTypeToGraphqlType (type: string) {
 	switch (type) {
 		case "ID":
 			return "GraphQLID";
@@ -345,7 +363,8 @@ function tableDataTypeToGraphqlType (type) {
 	}
 }
 
-function buildMutationArgType (column) {
+// TODO add strong typing
+function buildMutationArgType (column: any) {
 	const mutationQuery = `{ type: ${checkifColumnRequired(
 		column.required,
 		"front"
@@ -356,7 +375,7 @@ function buildMutationArgType (column) {
 	return mutationQuery;
 }
 
-function checkifColumnRequired (required, position) {
+function checkifColumnRequired (required: boolean, position: string) {
 	if (required) {
 		if (position === "front") {
 			return "new GraphQLNonNull(";
@@ -366,4 +385,4 @@ function checkifColumnRequired (required, position) {
 	return "";
 }
 
-module.exports = TypeBuilder;
+export default TypeBuilder;

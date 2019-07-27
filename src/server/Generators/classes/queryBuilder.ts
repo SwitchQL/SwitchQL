@@ -2,13 +2,13 @@
 const util = require("../../util");
 const tab = `  `;
 
+// TODO pull in private methods
 class QueryBuilder {
-	constructor () {
-		this.query = `import { gql } from 'apollo-boost';\n\n`;
-		this.exportNames = [];
-	}
+	private query = "import { gql } from 'apollo-boost';\n\n";
+	private exportNames: string[] = []
 
-	addQuery (table) {
+	// TODO add strong typing
+	addQuery (table: any) {
 		this.query += buildAllQuery(table);
 		this.exportNames.push(`queryEvery${util.toTitleCase(table.displayName)}`);
 
@@ -34,7 +34,8 @@ class QueryBuilder {
 	}
 }
 
-function buildAllQuery (table) {
+// TODO add strong typing
+function buildAllQuery (table: any) {
 	let string = `const queryEvery${util.toTitleCase(
 		table.displayName
 	)} = gql\`\n`;
@@ -48,7 +49,8 @@ function buildAllQuery (table) {
 	return string += `${tab.repeat(2)}}\n${tab}}\n\`\n\n`;
 }
 
-function buildQueryById (table, idField) {
+// TODO add strong typing
+function buildQueryById (table: any, idField: any) {
 	let query = `const query${util.toTitleCase(table.displayName)}ById = gql\`\n`;
 	query += `${tab}query($${table.displayName}: ${idField.type}!) {\n`;
 	query += `${tab.repeat(2)}${table.displayName}(${idField.name}: $${
@@ -63,4 +65,4 @@ function buildQueryById (table, idField) {
 	return query;
 }
 
-module.exports = QueryBuilder;
+export default QueryBuilder;

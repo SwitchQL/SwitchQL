@@ -2,13 +2,13 @@
 const util = require("../../util");
 const tab = `  `;
 
+// TODO pull in private functions
 class MutationBuilder {
-	constructor () {
-		this.mutation = `import { gql } from 'apollo-boost';\n\n`;
-		this.exportNames = [];
-	}
+	private mutation = "import { gql } from 'apollo-boost';\n\n"
+	private exportNames: string[] = []
 
-	addMutation (table) {
+	// TODO add strong typing
+	addMutation (table: any) {
 		this.mutation += buildMutationSignature(table, null, "add");
 		this.mutation += buildTypeParams(table, null, "add");
 		this.mutation += buildReturnValues(table);
@@ -45,7 +45,8 @@ class MutationBuilder {
 	}
 }
 
-function buildMutationSignature (table, idField, mutationType) {
+//TODO add strong typing
+function buildMutationSignature (table: any, idField: any, mutationType: string) {
 	let mut = `const ${mutationType}${util.toTitleCase(
 		table.displayName
 	)}Mutation = gql\`\n${tab}mutation(`;
@@ -79,17 +80,18 @@ function buildMutationSignature (table, idField, mutationType) {
 	return mut;
 }
 
-function checkType (fieldType) {
+function checkType (fieldType: string) {
 	if (fieldType === "Number") return "Int";
 	else return fieldType;
 }
 
-function checkRequired (required) {
+function checkRequired (required: boolean) {
 	if (required) return "!";
 	return "";
 }
 
-function buildTypeParams (table, idField, mutationType) {
+//TODO add strong typing
+function buildTypeParams (table: any, idField: any, mutationType: string) {
 	let mut = `${tab}${mutationType}${util.toTitleCase(table.displayName)}(`;
 
 	if (mutationType === "delete") {
@@ -116,7 +118,8 @@ function buildTypeParams (table, idField, mutationType) {
 	return mut;
 }
 
-function buildReturnValues (table) {
+//TODO add strong typing
+function buildReturnValues (table: any) {
 	let mut = "";
 
 	for (const field of table.fields) {
@@ -127,4 +130,4 @@ function buildReturnValues (table) {
 	return mut;
 }
 
-module.exports = MutationBuilder;
+export default MutationBuilder;
