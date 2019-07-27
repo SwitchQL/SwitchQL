@@ -104,4 +104,4 @@ const addPromiseResolution = () => {
 	return str;
 };
 
-module.exports = PgSqlProvider;
+export default PgSqlProvider;

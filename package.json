@@ -43,6 +43,7 @@
     "@babel/preset-env": "^7.4.2",
     "@babel/preset-react": "^7.0.0",
     "@types/jszip": "^3.1.6",
+    "@types/mssql": "^4.0.16",
     "babel-loader": "^8.0.5",
     "concurrently": "^4.1.1",
     "css-loader": "^1.0.1",

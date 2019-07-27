@@ -1,8 +1,11 @@
-const pgp = require("pg-promise")();
-const crypto = require("crypto");
+import ConnData from "../../../models/connData";
+import * as pgInit from 'pg-promise'
+import { createHash } from 'crypto'
 const utilty = require("../../util");
 
-const poolCache = {};
+
+const pgp = pgInit();
+const poolCache: { [key: string]: pgInit.IDatabase<{}> } = {};
 
 const metadataQuery = `SELECT
                           t.table_name,
@@ -27,7 +30,7 @@ const metadataQuery = `SELECT
                           AND (constraint_type = 'FOREIGN KEY' or (constraint_type is null OR constraint_type <> 'FOREIGN KEY'))
                         ORDER BY t.table_name`;
 
-async function getSchemaInfo (connString) {
+async function getSchemaInfo (connString: string) {
 	const db = getDbPool(connString);
 	try {
 		const metadataInfo = await utilty.promiseTimeout(
@@ -42,8 +45,8 @@ async function getSchemaInfo (connString) {
 	}
 }
 
-function getDbPool (connString) {
-	const hash = crypto.createHash("sha256");
+function getDbPool (connString: string) {
+	const hash = createHash("sha256");
 	hash.update(connString);
 
 	const digest = hash.digest("base64");
@@ -58,14 +61,14 @@ function getDbPool (connString) {
 	return db;
 }
 
-function removeFromCache (connString) {
-	const hash = crypto.createHash("sha256");
+function removeFromCache (connString: string) {
+	const hash = createHash("sha256");
 	hash.update(connString);
 
 	delete poolCache[hash.digest("base64")];
 }
 
-function buildConnectionString (info) {
+function buildConnectionString (info: ConnData) {
 	let connectionString = "";
 	const port = info.port || 5432;
 	connectionString += `postgres://${info.user}:${info.password}@${
@@ -74,7 +77,7 @@ function buildConnectionString (info) {
 	return connectionString;
 }
 
-module.exports = {
+export default {
 	getSchemaInfo: getSchemaInfo,
 	buildConnectionString,
 };

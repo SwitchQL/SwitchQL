@@ -93,4 +93,4 @@ const addPromiseResolution = (returnsMany = false) => {
 	return str;
 };
 
-module.exports = MSSqlProvider;
+export default MSSqlProvider;

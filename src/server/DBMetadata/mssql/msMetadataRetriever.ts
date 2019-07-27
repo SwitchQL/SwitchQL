@@ -1,7 +1,8 @@
-const sql = require("mssql");
-const crypto = require("crypto");
+import { ConnectionPool } from 'mssql'
+import { createHash } from "crypto";
+import ConnData from "../../../models/connData";
 
-const poolCache = {};
+const poolCache: { [ key: string]: ConnectionPool } = {};
 
 const query = `select 
                     c.table_name, 
@@ -32,10 +33,11 @@ const query = `select
                                     where t.TABLE_TYPE = 'BASE TABLE' and t.TABLE_NAME = c.TABLE_NAME )
                 order by c.TABLE_NAME`;
 
-async function getSchemaInfo (connString) {
+async function getSchemaInfo (connString: string) {
 	try {
 		const pool = await getDbPool(connString);
-		const metadata = await pool.query(query);
+		//TODO strongly type query
+		const metadata = await pool.query(<any>query);
 
 		return metadata.recordset;
 	} catch (err) {
@@ -44,7 +46,7 @@ async function getSchemaInfo (connString) {
 	}
 }
 
-function buildConnectionString (info) {
+function buildConnectionString (info: ConnData) {
 	let connectionString = "";
 	const port = info.port || 1433;
 
@@ -55,29 +57,29 @@ function buildConnectionString (info) {
 	return connectionString;
 }
 
-async function getDbPool (connString) {
-	const hash = crypto.createHash("sha256");
+async function getDbPool (connString: string) {
+	const hash = createHash("sha256");
 	hash.update(connString);
 
 	const digest = hash.digest("base64");
 
 	if (poolCache[digest]) return poolCache[digest];
 
-	const pool = await new sql.ConnectionPool(connString).connect();
+	const pool = await new ConnectionPool(connString).connect();
 	// eslint-disable-next-line require-atomic-updates
 	poolCache[digest] = pool;
 
 	return pool;
 }
 
-function removeFromCache (connString) {
-	const hash = crypto.createHash("sha256");
+function removeFromCache (connString: string) {
+	const hash = createHash("sha256");
 	hash.update(connString);
 
 	delete poolCache[hash.digest("base64")];
 }
 
-module.exports = {
+export default{
 	getSchemaInfo,
 	buildConnectionString,
 };
