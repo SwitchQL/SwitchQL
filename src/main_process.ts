@@ -1,9 +1,9 @@
 
-import { app, BrowserWindow, Menu, MenuItemConstructorOptions } from "electron";
+import { app, BrowserWindow, Menu, MenuItemConstructorOptions, screen } from "electron";
 import { format } from 'url';
 import { join } from 'path';
 import * as isDev from 'electron-is-dev';
-require("./server/server");
+import './server/server';
 
 let mainWindow;
 
@@ -20,7 +20,7 @@ const uri = isDev
     });
 
 app.on("ready", function() {
-  const { width, height } = Electron.screen.getPrimaryDisplay().workAreaSize;
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   //create new window
   mainWindow = new BrowserWindow({
     width: width / 2,
