@@ -1,10 +1,10 @@
 interface IDBProvider {
     connection(): void
-    selectWithWhere(): void
-    select(): void
-    insert(): void
-    update(): void
-    delete(): void
+    selectWithWhere(table: string, col: string, val: string, returnsMany: boolean): void
+    select(table: string): void
+    insert(table: string, cols: string, args: string): void
+    update(table: string, idColumnName: string): void
+    delete(table: string, column: string): void
     parameterize(): void
     configureExport(): void
 }

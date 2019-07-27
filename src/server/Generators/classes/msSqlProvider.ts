@@ -1,3 +1,5 @@
+import IDBProvider from "./dbProvider";
+
 const tab = `  `;
 
 /**
@@ -5,19 +7,19 @@ const tab = `  `;
  * mssql library automatically parameterizes all queries when
  * template literals are used.
  */
-class MSSqlProvider {
+class MSSqlProvider implements IDBProvider {
 	connection () {
 		return "var pool\n";
 	}
 
-	selectWithWhere (table, col, val, returnsMany) {
+	selectWithWhere (table: string, col: string, val: string, returnsMany: boolean) {
 		let query = `return pool.query\`SELECT * FROM [${table}] WHERE "${col}" = \${${val}}\`\n`;
 		query += addPromiseResolution(returnsMany);
 
 		return query;
 	}
 
-	select (table) {
+	select (table: string) {
 		let query = `return pool.query('SELECT * FROM [${table}]')\n`;
 
 		query += addPromiseResolution(true);
@@ -25,7 +27,7 @@ class MSSqlProvider {
 		return query;
 	}
 
-	insert (table, cols, args) {
+	insert (table: string, cols: string, args: string) {
 		let query = `return pool.query\`INSERT INTO [${table}] (${cols}) OUTPUT INSERTED.* VALUES (${args})\`\n`;
 
 		query += addPromiseResolution();
@@ -33,7 +35,7 @@ class MSSqlProvider {
 		return query;
 	}
 
-	update (table, idColumnName) {
+	update (table: string, idColumnName: string) {
 		let query = `${tab.repeat(
 			4
 		)}req.input('${idColumnName}', ${idColumnName});\n`;
@@ -44,7 +46,7 @@ class MSSqlProvider {
 		return query;
 	}
 
-	delete (table, column) {
+	delete (table: string, column: string) {
 		let query = `return pool.query\`DELETE FROM [${table}] OUTPUT DELETED.* WHERE "${column}" = \${args.${column}}\`\n`;
 
 		query += addPromiseResolution();

@@ -1,11 +1,11 @@
+import IDBProvider from "./dbProvider";
+
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-unused-expressions */
 const tab = `  `;
 
-class PgSqlProvider {
-	constructor (connString) {
-		this.connString = connString;
-	}
+class PgSqlProvider implements IDBProvider {
+	constructor (private connString: string) {}
 
 	connection () {
 		let conn = `const pgp = require('pg-promise')();\n`;
@@ -16,7 +16,7 @@ class PgSqlProvider {
 		return conn;
 	}
 
-	selectWithWhere (table, col, val, returnsMany) {
+	selectWithWhere (table: string, col: string, val: string, returnsMany: boolean) {
 		let query = `const sql = 'SELECT * FROM "${table}" WHERE "${col}" = $1';\n`;
 
 		returnsMany ?
@@ -28,7 +28,7 @@ class PgSqlProvider {
 		return query;
 	}
 
-	select (table) {
+	select (table: string) {
 		let query = `const sql = 'SELECT * FROM "${table}"';\n`;
 		query += `${tab.repeat(4)}return connect.conn.many(sql)\n`;
 
@@ -37,7 +37,7 @@ class PgSqlProvider {
 		return query;
 	}
 
-	insert (table, cols, args) {
+	insert (table: string, cols: string, args: string) {
 		const normalized = args
 			.split(",")
 			.map(a => a.replace(/[' | { | } | \$]/g, ""));
@@ -54,7 +54,7 @@ class PgSqlProvider {
 		return query;
 	}
 
-	update (table, idColumnName) {
+	update (table: string, idColumnName: string) {
 		let query = `const sql = \`UPDATE "${table}" SET \${parameterized} WHERE "${idColumnName}" = $1 RETURNING *\`;\n`;
 		query += `${tab.repeat(
 			4
@@ -64,7 +64,7 @@ class PgSqlProvider {
 		return query;
 	}
 
-	delete (table, column) {
+	delete (table: string, column: string) {
 		let query = `const sql = 'DELETE FROM "${table}" WHERE "${column}" = $1 RETURNING *';\n`;
 		query += `${tab.repeat(4)}return connect.conn.one(sql, args.${column})\n`;
 
