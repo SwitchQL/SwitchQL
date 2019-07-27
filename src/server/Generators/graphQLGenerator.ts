@@ -2,9 +2,9 @@ const TypeBuilder = require("./classes/typeBuilder");
 const MutationBuilder = require("./classes/mutationBuilder");
 const QueryBuilder = require("./classes/queryBuilder");
 import IDBProvider from './classes/dbProvider'
+import ProcessedTable from '../DBMetadata/classes/processedTable';
 
-// TODO strongly type tables
-function generateGraphQL (tables: { [ key: string]: any }, dbProvider: IDBProvider) {
+function generateGraphQL (tables: { [ key: string]: ProcessedTable }, dbProvider: IDBProvider) {
 	if (Object.keys(tables).length === 0) { return { types: "", mutations: "", queries: "" }; }
 
 	const queryBuilder = new QueryBuilder();

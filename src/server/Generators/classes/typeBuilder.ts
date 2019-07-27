@@ -1,7 +1,10 @@
-import IDBProvider from "./dbProvider";
-
 /* eslint-disable no-return-assign */
 import { toTitleCase } from "../../util";
+import ProcessedTable from "../../DBMetadata/classes/processedTable";
+import ProcessedField from "../../DBMetadata/classes/processedField";
+import IDBProvider from "./dbProvider";
+
+
 const tab = `  `;
 
 // TODO pull in private classes
@@ -30,8 +33,7 @@ class TypeBuilder {
 		return this.graphqlCode;
 	}
 
-	// TODO add strong typing
-	addGraphqlTypeSchema (table: any, processedMetadata: any) {
+	addGraphqlTypeSchema (table: ProcessedTable, processedMetadata: { [key: string ]: ProcessedTable }) {
 		let subQuery = "";
 
 		let typeQuery = `const ${
@@ -66,24 +68,19 @@ class TypeBuilder {
 		return this;
 	}
 
-	// TODO add strong typing
-	createSubQuery (column: any, processedMetadata: any) {
+	createSubQuery (column: ProcessedField, processedMetadata: { [key: string ]: ProcessedTable }) {
 		const subqueries = [];
 
-		for (const relatedTableIndex in column.relation) {
+		for (const rel in column.relation) {
 			let subQuery = "";
 
-			const relatedTableLookup = relatedTableIndex.split(".");
+			const [relatedTableIdx, relatedColIdx] = rel.split(".");
 
-			const { displayName: rtDisplayName, name: rtName } = processedMetadata[
-				relatedTableLookup[0]
-			];
+			const { displayName: rtDisplayName, name: rtName } = processedMetadata[relatedTableIdx];
 
-			const relatedFieldName =
-        processedMetadata[relatedTableLookup[0]].fields[relatedTableLookup[1]].name;
+			const relatedFieldName = processedMetadata[relatedTableIdx].fields[parseInt(relatedColIdx)].name;
 
-			const relatedTableRelationType =
-        column.relation[relatedTableIndex].refType;
+			const relatedTableRelationType = column.relation[rel].refType;
 
 			subQuery += `\n${tab.repeat(2)}${createSubQueryName(
 				relatedTableRelationType,
@@ -114,8 +111,7 @@ class TypeBuilder {
 		return subqueries.join(", ");
 	}
 
-	// TODO add strong typing
-	addGraphqlRootCode (table: any) {
+	addGraphqlRootCode (table: ProcessedTable) {
 		let rootQuery = "";
 
 		rootQuery += this.createFindAllRootQuery(table);
@@ -131,8 +127,7 @@ class TypeBuilder {
 		return this;
 	}
 
-	// TODO add strong typing
-	createFindAllRootQuery (table: any) {
+	createFindAllRootQuery (table: ProcessedTable) {
 		let rootQuery = `${tab.repeat(2)}every${toTitleCase(
 			table.displayName
 		)}: {\n${tab.repeat(3)}type: new GraphQLList(${
@@ -144,8 +139,7 @@ class TypeBuilder {
 		return rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
 	}
 
-	// TODO add strong typing
-	createFindByIdQuery (table: any, idColumn: any) {
+	createFindByIdQuery (table: ProcessedTable, idColumn: ProcessedField) {
 		let rootQuery = `,\n${tab.repeat(
 			2
 		)}${table.displayName.toLowerCase()}: {\n${tab.repeat(3)}type: ${
@@ -166,8 +160,7 @@ class TypeBuilder {
 		return rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
 	}
 
-	// TODO add strong typing
-	addGraphqlMutationCode (table: any) {
+	addGraphqlMutationCode (table: ProcessedTable) {
 		let mutationQuery = ``;
 		mutationQuery += `${this.addMutation(table)}`;
 		if (table.fields[0]) {
@@ -179,8 +172,7 @@ class TypeBuilder {
 		return this;
 	}
 
-	// TODO add strong typing
-	addMutation (table: any) {
+	addMutation (table: ProcessedTable) {
 		let mutationQuery = `${tab.repeat(2)}add${toTitleCase(
 			table.displayName
 		)}: {\n${tab.repeat(3)}type: ${table.displayName}Type,\n${tab.repeat(
@@ -219,8 +211,7 @@ class TypeBuilder {
 		return mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
 	}
 
-	// TODO add strong typing
-	updateMutation (table: any) {
+	updateMutation (table: ProcessedTable) {
 		let idColumnName;
 
 		for (const field of table.fields) {
@@ -262,8 +253,7 @@ class TypeBuilder {
 		return mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
 	}
 
-	// TODO add strong typing
-	deleteMutation (table: any) {
+	deleteMutation (table: ProcessedTable) {
 		let idColumn;
 
 		for (const field of table.fields) {
@@ -296,8 +286,7 @@ class TypeBuilder {
 	}
 }
 
-// TODO add strong typing
-function createSubQueryName (relationType: any, relatedTable: any) {
+function createSubQueryName (relationType: string, relatedTable: string) {
 	switch (relationType) {
 		case "one to one":
 			return `related${toTitleCase(relatedTable)}`;
@@ -363,8 +352,7 @@ function tableDataTypeToGraphqlType (type: string) {
 	}
 }
 
-// TODO add strong typing
-function buildMutationArgType (column: any) {
+function buildMutationArgType (column: ProcessedField) {
 	const mutationQuery = `{ type: ${checkifColumnRequired(
 		column.required,
 		"front"

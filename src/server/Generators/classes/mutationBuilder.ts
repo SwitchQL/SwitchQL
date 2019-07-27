@@ -1,5 +1,7 @@
 /* eslint-disable no-return-assign */
 import { toTitleCase } from "../../util";
+import ProcessedTable from "../../DBMetadata/classes/processedTable";
+import ProcessedField from "../../DBMetadata/classes/processedField";
 const tab = `  `;
 
 // TODO pull in private functions
@@ -7,8 +9,7 @@ class MutationBuilder {
 	private mutation = "import { gql } from 'apollo-boost';\n\n"
 	private exportNames: string[] = []
 
-	// TODO add strong typing
-	addMutation (table: any) {
+	addMutation (table: ProcessedTable) {
 		this.mutation += buildMutationSignature(table, null, "add");
 		this.mutation += buildTypeParams(table, null, "add");
 		this.mutation += buildReturnValues(table);
@@ -45,8 +46,7 @@ class MutationBuilder {
 	}
 }
 
-//TODO add strong typing
-function buildMutationSignature (table: any, idField: any, mutationType: string) {
+function buildMutationSignature (table: ProcessedTable, idField: ProcessedField, mutationType: string) {
 	let mut = `const ${mutationType}${toTitleCase(
 		table.displayName
 	)}Mutation = gql\`\n${tab}mutation(`;
@@ -90,8 +90,7 @@ function checkRequired (required: boolean) {
 	return "";
 }
 
-//TODO add strong typing
-function buildTypeParams (table: any, idField: any, mutationType: string) {
+function buildTypeParams (table: ProcessedTable, idField: ProcessedField, mutationType: string) {
 	let mut = `${tab}${mutationType}${toTitleCase(table.displayName)}(`;
 
 	if (mutationType === "delete") {
@@ -118,8 +117,7 @@ function buildTypeParams (table: any, idField: any, mutationType: string) {
 	return mut;
 }
 
-//TODO add strong typing
-function buildReturnValues (table: any) {
+function buildReturnValues (table: ProcessedTable) {
 	let mut = "";
 
 	for (const field of table.fields) {

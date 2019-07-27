@@ -4,7 +4,7 @@ import PgSqlProvider from "./Generators/classes/pgSqlProvider";
 import pgSqlRetriever from "./DBMetadata/pgsql/pgMetadataRetriever";
 
 const processMetaData = require("./DBMetadata/metadataProcessor");
-const translators = require("./DBMetadata/columnTypeTranslators");
+import { pgSQL, msSQL} from "./DBMetadata/columnTypeTranslators";
 
 import MSSqlProvider from "./Generators/classes/msSqlProvider";
 import msSqlRetriever from "./DBMetadata/mssql/msMetadataRetriever";
@@ -17,14 +17,14 @@ function dbFactory (connData: ConnData) {
 
 			return {
 				retriever: pgSqlRetriever,
-				processMetaData: processMetaData(translators.pgSQL),
+				processMetaData: processMetaData(pgSQL),
 				provider: new PgSqlProvider(connString),
 			};
 
 		case DBType.SQLServer:
 			return {
 				retriever: msSqlRetriever,
-				processMetaData: processMetaData(translators.msSQL),
+				processMetaData: processMetaData(msSQL),
 				provider: new MSSqlProvider(),
 			};
 

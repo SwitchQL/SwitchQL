@@ -1,8 +1,24 @@
+import ColumnTypeTranslator from "../columnTypeTranslators";
+
 /* eslint-disable no-prototype-builtins */
 const { removeWhitespace } = require("../../util");
 
+// TODO make better typings
 class ProcessedField {
-	constructor (col, tblIdx, fieldIdx, translateColumnType) {
+	name: string;
+	type: string;
+	primaryKey: boolean;
+	unique: boolean
+	required: boolean
+	inRelationship: boolean
+	relation: { [key: string]: any }
+	tableNum: number
+	fieldNum: number
+
+	constructor (col: { [key: string]: any }, 
+				 tblIdx: number, 
+				 fieldIdx: number, 
+				 translateColumnType: ColumnTypeTranslator) {
 		const isPrimaryKey = col.constraint_type === "PRIMARY KEY";
 
 		this.name = removeWhitespace(col.column_name);
@@ -17,7 +33,9 @@ class ProcessedField {
 	}
 
 	// Retroactive relationship assignment (foreign key table defined before primary key table)
-	addRetroRelationship (toRef, tblCol, data) {
+	addRetroRelationship (toRef: { [key: string]: any }, 
+						  tblCol: { [key: string]: any }, 
+						  data:  { [key: string]: any }) {
 		this.inRelationship = true;
 		this.type = "ID";
 		this.relation = toRef[tblCol.table_name][tblCol.column_name];
@@ -39,7 +57,10 @@ class ProcessedField {
 		}
 	}
 
-	addForeignKeyRef (lookup, tblCol, toRef, data) {
+	addForeignKeyRef (lookup: { [key: string]: any }, 
+					  tblCol: { [key: string]: any }, 
+					  toRef: { [key: string]: any }, 
+					  data: { [key: string]: any }) {
 		this.inRelationship = true;
 		this.type = "ID";
 
@@ -62,7 +83,8 @@ class ProcessedField {
 			const refIndex = `${lookup[foreign_table_name].INDEX}.${
 				lookup[foreign_table_name][foreign_column_name]
 			}`;
-			this.relation[refIndex] = relationship;
+			
+			(<any>this.relation)[refIndex] = relationship;
 
 			const relatedTo =
         data.tables[lookup[foreign_table_name].INDEX].fields[lookup[foreign_table_name][foreign_column_name]
@@ -99,4 +121,4 @@ class ProcessedField {
 	}
 }
 
-module.exports = ProcessedField;
+export default ProcessedField;

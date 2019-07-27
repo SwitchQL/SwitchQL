@@ -1,9 +1,11 @@
 /* eslint-disable no-prototype-builtins */
-const ProcessedField = require("./classes/processedField");
-const ProcessedTable = require("./classes/processedTable");
+import ProcessedField from "./classes/processedField"
+import ProcessedTable from "./classes/processedTable"
+import ColumnTypeTranslator from "./columnTypeTranslators";
 
-function processMetadata (translateColumnType) {
-	return columnData => {
+// TODO do better typings
+function processMetadata (translateColumnType: ColumnTypeTranslator) {
+	return (columnData: { [key: string]: any}[]) => {
 		if (!columnData || columnData.length === 0) { throw new Error("Metadata is null or empty"); }
 
 		if (!Array.isArray(columnData)) { throw new Error("Invalid data format. Column Data must be an array"); }
@@ -11,14 +13,14 @@ function processMetadata (translateColumnType) {
 		let tblIdx = 0;
 		let fieldIdx = 0;
 		let prevTable = columnData[0].table_name;
-		let props = [];
+		let props: ProcessedField[] = [];
 
-		let lookupFields = {};
+		let lookupFields: { [key: string]: any }  = {};
 
-		const lookup = {};
-		const toRef = {};
+		const lookup: { [key: string]: any } = {};
+		const toRef: { [key: string]: any } = {};
 
-		const data = {
+		const data: { tables: { [key: string]: ProcessedTable }} = {
 			tables: {},
 		};
 
@@ -66,8 +68,8 @@ function processMetadata (translateColumnType) {
 	};
 }
 
-function tableInToRef (toRef, tblCol) {
+function tableInToRef (toRef: { [key: string]: any}, tblCol: { [key: string]: any}) {
 	return toRef.hasOwnProperty(tblCol.table_name) && toRef[tblCol.table_name].hasOwnProperty(tblCol.column_name);
 }
 
-module.exports = processMetadata;
+export default processMetadata;

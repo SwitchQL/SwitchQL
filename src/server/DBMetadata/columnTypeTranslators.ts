@@ -1,4 +1,4 @@
-function pgSQL (type) {
+export function pgSQL (type: string) {
 	switch (type) {
 		case "integer":
 			return "Integer";
@@ -24,7 +24,7 @@ function pgSQL (type) {
 	}
 }
 
-function msSQL (type) {
+export function msSQL (type: string) {
 	switch (type) {
 		case "bigint":
 		case "bit":
@@ -68,4 +68,5 @@ function msSQL (type) {
 	}
 }
 
-module.exports = { pgSQL, msSQL };
+type ColumnTypeTranslator = (type: string) => string
+export default ColumnTypeTranslator

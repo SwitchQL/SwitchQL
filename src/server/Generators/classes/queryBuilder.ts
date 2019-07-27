@@ -1,5 +1,7 @@
 /* eslint-disable no-return-assign */
 import { toTitleCase } from '../../util'
+import ProcessedTable from '../../DBMetadata/classes/processedTable';
+import ProcessedField from '../../DBMetadata/classes/processedField';
 const tab = `  `;
 
 // TODO pull in private methods
@@ -7,8 +9,7 @@ class QueryBuilder {
 	private query = "import { gql } from 'apollo-boost';\n\n";
 	private exportNames: string[] = []
 
-	// TODO add strong typing
-	addQuery (table: any) {
+	addQuery (table: ProcessedTable) {
 		this.query += buildAllQuery(table);
 		this.exportNames.push(`queryEvery${toTitleCase(table.displayName)}`);
 
@@ -34,8 +35,7 @@ class QueryBuilder {
 	}
 }
 
-// TODO add strong typing
-function buildAllQuery (table: any) {
+function buildAllQuery (table: ProcessedTable) {
 	let string = `const queryEvery${toTitleCase(
 		table.displayName
 	)} = gql\`\n`;
@@ -49,8 +49,7 @@ function buildAllQuery (table: any) {
 	return string += `${tab.repeat(2)}}\n${tab}}\n\`\n\n`;
 }
 
-// TODO add strong typing
-function buildQueryById (table: any, idField: any) {
+function buildQueryById (table: ProcessedTable, idField: ProcessedField) {
 	let query = `const query${toTitleCase(table.displayName)}ById = gql\`\n`;
 	query += `${tab}query($${table.displayName}: ${idField.type}!) {\n`;
 	query += `${tab.repeat(2)}${table.displayName}(${idField.name}: $${
