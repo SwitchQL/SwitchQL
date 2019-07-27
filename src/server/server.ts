@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-const generateGraphQL = require("./Generators/graphQLGenerator");
+import generateGraphQL from "./Generators/graphQLGenerator";
 import dbFactory from "./dbFactory";
 import { createWriteStream } from 'fs'
 import * as JSZip from "jszip";
