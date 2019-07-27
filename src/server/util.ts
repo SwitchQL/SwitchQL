@@ -1,10 +1,10 @@
-function toTitleCase (str) {
+export function toTitleCase (str: string) {
 	let transformed = str[0].toUpperCase();
 	transformed += str.slice(1).toLowerCase();
 	return transformed;
 }
 
-function promiseTimeout (msDelay, promise) {
+export function promiseTimeout<T> (msDelay: number, promise: Promise<T>) {
 	// promise that rejects in <ms> milliseconds
 	const timeout = new Promise((resolve, reject) => {
 		const id = setTimeout(() => {
@@ -16,12 +16,6 @@ function promiseTimeout (msDelay, promise) {
 	return Promise.race([promise, timeout]);
 }
 
-function removeWhitespace (str) {
+export function removeWhitespace (str: string) {
 	return str.replace(/\s+/g, "");
 }
-
-module.exports = {
-	toTitleCase,
-	removeWhitespace,
-	promiseTimeout,
-};

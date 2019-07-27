@@ -1,7 +1,7 @@
 import IDBProvider from "./dbProvider";
 
 /* eslint-disable no-return-assign */
-const util = require("../../util");
+import { toTitleCase } from "../../util";
 const tab = `  `;
 
 // TODO pull in private classes
@@ -133,7 +133,7 @@ class TypeBuilder {
 
 	// TODO add strong typing
 	createFindAllRootQuery (table: any) {
-		let rootQuery = `${tab.repeat(2)}every${util.toTitleCase(
+		let rootQuery = `${tab.repeat(2)}every${toTitleCase(
 			table.displayName
 		)}: {\n${tab.repeat(3)}type: new GraphQLList(${
 			table.displayName
@@ -181,7 +181,7 @@ class TypeBuilder {
 
 	// TODO add strong typing
 	addMutation (table: any) {
-		let mutationQuery = `${tab.repeat(2)}add${util.toTitleCase(
+		let mutationQuery = `${tab.repeat(2)}add${toTitleCase(
 			table.displayName
 		)}: {\n${tab.repeat(3)}type: ${table.displayName}Type,\n${tab.repeat(
 			3
@@ -229,7 +229,7 @@ class TypeBuilder {
 			}
 		}
 
-		let mutationQuery = `${tab.repeat(2)}update${util.toTitleCase(
+		let mutationQuery = `${tab.repeat(2)}update${toTitleCase(
 			table.displayName
 		)}: {\n${tab.repeat(3)}type: ${table.displayName}Type,\n${tab.repeat(
 			3
@@ -272,7 +272,7 @@ class TypeBuilder {
 			}
 		}
 
-		let mutationQuery = `${tab.repeat(2)}delete${util.toTitleCase(
+		let mutationQuery = `${tab.repeat(2)}delete${toTitleCase(
 			table.displayName
 		)}: {\n${tab.repeat(3)}type: ${table.displayName}Type,\n${tab.repeat(
 			3
@@ -300,16 +300,16 @@ class TypeBuilder {
 function createSubQueryName (relationType: any, relatedTable: any) {
 	switch (relationType) {
 		case "one to one":
-			return `related${util.toTitleCase(relatedTable)}`;
+			return `related${toTitleCase(relatedTable)}`;
 
 		case "one to many":
-			return `everyRelated${util.toTitleCase(relatedTable)}`;
+			return `everyRelated${toTitleCase(relatedTable)}`;
 
 		case "many to one":
-			return `related${util.toTitleCase(relatedTable)}`;
+			return `related${toTitleCase(relatedTable)}`;
 
 		default:
-			return `everyRelated${util.toTitleCase(relatedTable)}`;
+			return `everyRelated${toTitleCase(relatedTable)}`;
 	}
 }
 

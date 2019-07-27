@@ -1,11 +1,11 @@
 /* eslint-disable no-prototype-builtins */
-const util = require("../../util");
+const { removeWhitespace } = require("../../util");
 
 class ProcessedField {
 	constructor (col, tblIdx, fieldIdx, translateColumnType) {
 		const isPrimaryKey = col.constraint_type === "PRIMARY KEY";
 
-		this.name = util.removeWhitespace(col.column_name);
+		this.name = removeWhitespace(col.column_name);
 		this.type = isPrimaryKey ? "ID" : translateColumnType(col.data_type);
 		this.primaryKey = isPrimaryKey;
 		this.unique = col.constraint_type === "UNIQUE";

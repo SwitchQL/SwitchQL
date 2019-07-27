@@ -1,7 +1,8 @@
 import ConnData from "../../../models/connData";
 import * as pgInit from 'pg-promise'
 import { createHash } from 'crypto'
-const utilty = require("../../util");
+import { promiseTimeout } from '../../util'
+
 
 
 const pgp = pgInit();
@@ -33,7 +34,7 @@ const metadataQuery = `SELECT
 async function getSchemaInfo (connString: string) {
 	const db = getDbPool(connString);
 	try {
-		const metadataInfo = await utilty.promiseTimeout(
+		const metadataInfo = await promiseTimeout(
 			10000,
 			db.any(metadataQuery)
 		);

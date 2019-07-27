@@ -1,4 +1,4 @@
-const util = require("../../util");
+const { removeWhitespace } = require("../../util");
 
 class ProcessedTable {
 	constructor (name, fields) {
@@ -7,7 +7,7 @@ class ProcessedTable {
      * to remove spaces, while name is used for database queries to preserve
      * the original table name
      */
-		this.displayName = util.removeWhitespace(name);
+		this.displayName = removeWhitespace(name);
 		this.name = name;
 		this.fields = fields;
 	}

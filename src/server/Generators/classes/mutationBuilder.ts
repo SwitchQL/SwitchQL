@@ -1,5 +1,5 @@
 /* eslint-disable no-return-assign */
-const util = require("../../util");
+import { toTitleCase } from "../../util";
 const tab = `  `;
 
 // TODO pull in private functions
@@ -12,7 +12,7 @@ class MutationBuilder {
 		this.mutation += buildMutationSignature(table, null, "add");
 		this.mutation += buildTypeParams(table, null, "add");
 		this.mutation += buildReturnValues(table);
-		this.exportNames.push(`add${util.toTitleCase(table.displayName)}Mutation`);
+		this.exportNames.push(`add${toTitleCase(table.displayName)}Mutation`);
 
 		for (const field of table.fields) {
 			if (field.primaryKey) {
@@ -20,14 +20,14 @@ class MutationBuilder {
 				this.mutation += buildTypeParams(table, field, "update");
 				this.mutation += buildReturnValues(table);
 				this.exportNames.push(
-					`update${util.toTitleCase(table.displayName)}Mutation`
+					`update${toTitleCase(table.displayName)}Mutation`
 				);
 
 				this.mutation += buildMutationSignature(table, field, "delete");
 				this.mutation += buildTypeParams(table, field, "delete");
 				this.mutation += buildReturnValues(table);
 				this.exportNames.push(
-					`delete${util.toTitleCase(table.displayName)}Mutation`
+					`delete${toTitleCase(table.displayName)}Mutation`
 				);
 			}
 		}
@@ -47,7 +47,7 @@ class MutationBuilder {
 
 //TODO add strong typing
 function buildMutationSignature (table: any, idField: any, mutationType: string) {
-	let mut = `const ${mutationType}${util.toTitleCase(
+	let mut = `const ${mutationType}${toTitleCase(
 		table.displayName
 	)}Mutation = gql\`\n${tab}mutation(`;
 
@@ -92,7 +92,7 @@ function checkRequired (required: boolean) {
 
 //TODO add strong typing
 function buildTypeParams (table: any, idField: any, mutationType: string) {
-	let mut = `${tab}${mutationType}${util.toTitleCase(table.displayName)}(`;
+	let mut = `${tab}${mutationType}${toTitleCase(table.displayName)}(`;
 
 	if (mutationType === "delete") {
 		mut += `${idField.name}: $${idField.name}) {\n`;

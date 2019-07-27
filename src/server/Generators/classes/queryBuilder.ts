@@ -1,5 +1,5 @@
 /* eslint-disable no-return-assign */
-const util = require("../../util");
+import { toTitleCase } from '../../util'
 const tab = `  `;
 
 // TODO pull in private methods
@@ -10,13 +10,13 @@ class QueryBuilder {
 	// TODO add strong typing
 	addQuery (table: any) {
 		this.query += buildAllQuery(table);
-		this.exportNames.push(`queryEvery${util.toTitleCase(table.displayName)}`);
+		this.exportNames.push(`queryEvery${toTitleCase(table.displayName)}`);
 
 		for (const field of table.fields) {
 			if (field.primaryKey) {
 				this.query += buildQueryById(table, field);
 				this.exportNames.push(
-					`query${util.toTitleCase(table.displayName)}ById `
+					`query${toTitleCase(table.displayName)}ById `
 				);
 			}
 		}
@@ -36,11 +36,11 @@ class QueryBuilder {
 
 // TODO add strong typing
 function buildAllQuery (table: any) {
-	let string = `const queryEvery${util.toTitleCase(
+	let string = `const queryEvery${toTitleCase(
 		table.displayName
 	)} = gql\`\n`;
 	string += `${tab}{\n`;
-	string += `${tab.repeat(2)}every${util.toTitleCase(table.displayName)} {\n`;
+	string += `${tab.repeat(2)}every${toTitleCase(table.displayName)} {\n`;
 
 	for (const field of table.fields) {
 		string += `${tab.repeat(3)}${field.name}\n`;
@@ -51,7 +51,7 @@ function buildAllQuery (table: any) {
 
 // TODO add strong typing
 function buildQueryById (table: any, idField: any) {
-	let query = `const query${util.toTitleCase(table.displayName)}ById = gql\`\n`;
+	let query = `const query${toTitleCase(table.displayName)}ById = gql\`\n`;
 	query += `${tab}query($${table.displayName}: ${idField.type}!) {\n`;
 	query += `${tab.repeat(2)}${table.displayName}(${idField.name}: $${
 		table.displayName
