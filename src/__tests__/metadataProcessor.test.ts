@@ -1,10 +1,10 @@
 /* eslint-disable no-undef */
 import retrieved from "./sampleFiles/retrievedMetadata";
-import processMetadata from "./metadataProcessor";
-import * as translators from "./columnTypeTranslators";
+import processMetadata from "../server/DBMetadata/metadataProcessor";
+import * as translators from "../server/DBMetadata/columnTypeTranslators";
 
 describe("Format Metadata Tests", () => {
-	let pm;
+	let pm: Function
 
 	beforeAll(() => {
 		pm = processMetadata(translators.pgSQL);

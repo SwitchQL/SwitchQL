@@ -260,3 +260,4 @@ export default [
 		foreign_column_name: null,
 	},
 ];
+

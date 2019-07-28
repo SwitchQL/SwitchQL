@@ -1,8 +1,9 @@
 /* eslint-disable no-undef */
-import MSSqlProvider from "./msSqlProvider";
+import MSSqlProvider from "../server/Generators/classes/msSqlProvider";
+import IDBProvider from "../server/Generators/classes/dbProvider";
 
 describe("MSSqlProvider", () => {
-	let provider;
+	let provider: IDBProvider;
 
 	beforeAll(() => {
 		provider = new MSSqlProvider();
@@ -12,7 +13,8 @@ describe("MSSqlProvider", () => {
 		const result = provider.selectWithWhere(
 			"testTable",
 			"testCol",
-			"parent.id"
+			"parent.id",
+			false
 		);
 		expect(result).toMatchSnapshot();
 	});
@@ -22,7 +24,8 @@ describe("MSSqlProvider", () => {
 		const result = provider.selectWithWhere(
 			"testTable",
 			"testCol",
-			"parent.id"
+			"parent.id",
+			false
 		);
 
 		expect(result).toContain(expected);

@@ -20,7 +20,7 @@ function processMetadata (translateColumnType: ColumnTypeTranslator) {
 		const lookup: { [key: string]: any } = {};
 		const toRef: { [key: string]: any } = {};
 
-		const data: { tables: { [key: string]: ProcessedTable }} = {
+		const data: { tables: { [key: number]: ProcessedTable }} = {
 			tables: {},
 		};
 

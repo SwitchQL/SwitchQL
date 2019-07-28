@@ -33,7 +33,7 @@ class TypeBuilder {
 		return this.graphqlCode;
 	}
 
-	addGraphqlTypeSchema (table: ProcessedTable, processedMetadata: { [key: string ]: ProcessedTable }) {
+	addGraphqlTypeSchema (table: ProcessedTable, processedMetadata: { [ key: number ]: ProcessedTable }) {
 		let subQuery = "";
 
 		let typeQuery = `const ${
@@ -68,17 +68,17 @@ class TypeBuilder {
 		return this;
 	}
 
-	createSubQuery (column: ProcessedField, processedMetadata: { [key: string ]: ProcessedTable }) {
+	createSubQuery (column: ProcessedField, processedMetadata: { [key: number ]: ProcessedTable }) {
 		const subqueries = [];
 
 		for (const rel in column.relation) {
 			let subQuery = "";
 
-			const [relatedTableIdx, relatedColIdx] = rel.split(".");
+			const [relatedTableIdx, relatedColIdx] = rel.split(".").map(i => parseInt(i));
 
 			const { displayName: rtDisplayName, name: rtName } = processedMetadata[relatedTableIdx];
 
-			const relatedFieldName = processedMetadata[relatedTableIdx].fields[parseInt(relatedColIdx)].name;
+			const relatedFieldName = processedMetadata[relatedTableIdx].fields[relatedColIdx].name;
 
 			const relatedTableRelationType = column.relation[rel].refType;
 

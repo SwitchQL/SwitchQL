@@ -4,7 +4,7 @@ const QueryBuilder = require("./classes/queryBuilder");
 import IDBProvider from './classes/dbProvider'
 import ProcessedTable from '../DBMetadata/classes/processedTable';
 
-function generateGraphQL (tables: { [ key: string]: ProcessedTable }, dbProvider: IDBProvider) {
+function generateGraphQL (tables: { [ key: number]: ProcessedTable }, dbProvider: IDBProvider) {
 	if (Object.keys(tables).length === 0) { return { types: "", mutations: "", queries: "" }; }
 
 	const queryBuilder = new QueryBuilder();

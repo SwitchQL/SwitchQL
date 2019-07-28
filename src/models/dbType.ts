@@ -3,3 +3,5 @@ enum DBType {
     MySQL = "MySQL",
     SQLServer = "SQLServer"
 }
+
+export default DBType

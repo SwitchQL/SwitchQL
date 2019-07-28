@@ -1,19 +1,22 @@
 /* eslint-disable no-undef */
-import { buildConnectionString } from "./msMetadataRetriever";
+import retriever from "../server/DBMetadata/msMetadataRetriever";
+import DBType from '../models/dbType'
 
 describe("msMetadataRetriever", () => {
 	it("Should properly format the connection string", () => {
 		const formData = {
 			user: "user",
 			password: "securePassword",
-			port: 12345,
+			port: "12345",
 			host: "testing.com",
 			database: "database",
+			value: "",
+			type: DBType.SQLServer
 		};
 		const connString =
       "mssql://user:securePassword@testing.com:12345/database?encrypt=true&request%20timeout=30000";
 
-		const result = buildConnectionString(formData);
+		const result = retriever.buildConnectionString(formData);
 
 		expect(result).toBe(connString);
 	});
@@ -22,20 +25,23 @@ describe("msMetadataRetriever", () => {
 		const formData = {
 			user: "user",
 			password: "securePassword",
+			port: "",
 			host: "testing.com",
 			database: "database",
+			value: "",
+			type: DBType.SQLServer
 		};
 		const connString =
       "mssql://user:securePassword@testing.com:1433/database?encrypt=true&request%20timeout=30000";
 
-		const result = buildConnectionString(formData);
+		const result = retriever.buildConnectionString(formData);
 
 		expect(result).toBe(connString);
 	});
 
 	it("Should throw an error on blank form data", () => {
 		expect(() => {
-			buildConnectionString(null);
+			retriever.buildConnectionString(null);
 		}).toThrowError();
 	});
 });

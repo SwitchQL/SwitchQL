@@ -1,6 +1,6 @@
 import { ConnectionPool } from 'mssql'
 import { createHash } from "crypto";
-import ConnData from "../../../models/connData";
+import ConnData from "../../models/connData";
 
 const poolCache: { [ key: string]: ConnectionPool } = {};
 
@@ -79,7 +79,7 @@ function removeFromCache (connString: string) {
 	delete poolCache[hash.digest("base64")];
 }
 
-export default{
+export default {
 	getSchemaInfo,
-	buildConnectionString,
+	buildConnectionString
 };

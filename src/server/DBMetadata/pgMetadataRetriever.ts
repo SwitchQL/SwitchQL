@@ -1,7 +1,7 @@
-import ConnData from "../../../models/connData";
+import ConnData from "../../models/connData";
 import * as pgInit from 'pg-promise'
 import { createHash } from 'crypto'
-import { promiseTimeout } from '../../util'
+import { promiseTimeout } from '../util'
 
 
 

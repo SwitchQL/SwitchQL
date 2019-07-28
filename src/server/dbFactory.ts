@@ -1,13 +1,14 @@
 import ConnData from "../models/connData";
 
 import PgSqlProvider from "./Generators/classes/pgSqlProvider";
-import pgSqlRetriever from "./DBMetadata/pgsql/pgMetadataRetriever";
+import pgSqlRetriever from "./DBMetadata/pgMetadataRetriever";
 
 const processMetaData = require("./DBMetadata/metadataProcessor");
 import { pgSQL, msSQL} from "./DBMetadata/columnTypeTranslators";
 
 import MSSqlProvider from "./Generators/classes/msSqlProvider";
-import msSqlRetriever from "./DBMetadata/mssql/msMetadataRetriever";
+import msSqlRetriever from "./DBMetadata/msMetadataRetriever";
+import DBType from "../models/dbType";
 
 function dbFactory (connData: ConnData) {
 	let connString = "";
