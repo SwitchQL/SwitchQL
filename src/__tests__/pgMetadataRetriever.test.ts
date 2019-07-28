@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import pgMetadataRetriever from "../server/DBMetadata/pgMetadataRetriever";
+import pgMetadataRetriever from "../DBMetadata/pgMetadataRetriever";
 import DBType from "../models/dbType";
 
 test("takes in object with data returns properly formatted string", () => {

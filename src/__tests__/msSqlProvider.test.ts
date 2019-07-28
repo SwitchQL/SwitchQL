@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-import MSSqlProvider from "../server/Generators/provider/msSqlProvider";
-import IDBProvider from "../server/Generators/provider/dbProvider";
+import MSSqlProvider from "../Generators/provider/msSqlProvider";
+import IDBProvider from "../Generators/provider/dbProvider";
 
 describe("MSSqlProvider", () => {
 	let provider: IDBProvider;

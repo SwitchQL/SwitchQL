@@ -7,7 +7,7 @@ import { Loader } from "react-loaders";
 import ReactDOM from "react-dom";
 
 //internal css files
-import * as events from "../server/events";
+import * as events from "../../events";
 import "react-toastify/dist/ReactToastify.css";
 import "./styles/main.css";
 import "loaders.css/src/animations/ball-scale-ripple-multiple.scss";

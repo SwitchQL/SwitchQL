@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
-import ProcessedTable from "../../models/processedTable"
+import ProcessedTable from "../models/processedTable"
 import ColumnTypeTranslator from "./columnTypeTranslators";
-import ProcessedField from "../../models/processedField";
+import ProcessedField from "../models/processedField";
 
 // TODO do better typings
 function processMetadata (translateColumnType: ColumnTypeTranslator) {

@@ -1,10 +1,10 @@
 import { ipcMain } from 'electron';
-import generateGraphQL from "./Generators/graphQLGenerator";
-import dbFactory from "./dbFactory";
+import generateGraphQL from "../Generators/graphQLGenerator";
+import dbFactory from "../dbFactory";
 import { createWriteStream } from 'fs'
 import * as JSZip from "jszip";
 import { join } from 'path'
-import * as events from "./events";
+import * as events from "../events";
 import ConnData from '../models/connData';
 
 let schemaMetaData: string;

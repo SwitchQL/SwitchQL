@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
-import generateGraphQL from "../server/Generators/graphQLGenerator";
+import generateGraphQL from "../Generators/graphQLGenerator";
 import input from "./sampleFiles/processedMetadata";
-import PgSqlProvider from "../server/Generators/provider/pgSqlProvider";
+import PgSqlProvider from "../Generators/provider/pgSqlProvider";
 
 describe("Mutation Generation Tests", () => {
 	it("Should return an empty string on empty input", () => {

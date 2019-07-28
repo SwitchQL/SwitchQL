@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "noImplicitAny": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "outDir": "build",
     "baseUrl": ".",
     "paths": {
@@ -10,6 +10,6 @@
     },
     "allowJs": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/client", "**/*.test.js"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "**/__tests__/*"]
 }

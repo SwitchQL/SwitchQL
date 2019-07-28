@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import retriever from "../server/DBMetadata/msMetadataRetriever";
+import retriever from "../DBMetadata/msMetadataRetriever";
 import DBType from '../models/dbType'
 
 describe("msMetadataRetriever", () => {

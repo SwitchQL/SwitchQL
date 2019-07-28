@@ -1,5 +1,5 @@
 import ProcessedField from "./processedField";
-import { removeWhitespace } from "../server/util";
+import { removeWhitespace } from "../util";
 
 class ProcessedTable {
 	displayName: string

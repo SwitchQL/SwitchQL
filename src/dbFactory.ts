@@ -1,4 +1,4 @@
-import ConnData from "../models/connData";
+import ConnData from "./models/connData";
 
 import PgSqlProvider from "./Generators/provider/pgSqlProvider";
 import pgSqlRetriever from "./DBMetadata/pgMetadataRetriever";
@@ -8,7 +8,7 @@ import { pgSQL, msSQL} from "./DBMetadata/columnTypeTranslators";
 
 import MSSqlProvider from "./Generators/provider/msSqlProvider";
 import msSqlRetriever from "./DBMetadata/msMetadataRetriever";
-import DBType from "../models/dbType";
+import DBType from "./models/dbType";
 
 function dbFactory (connData: ConnData) {
 	let connString = "";

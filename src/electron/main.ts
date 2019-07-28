@@ -3,7 +3,7 @@ import { app, BrowserWindow, Menu, MenuItemConstructorOptions, screen } from "el
 import { format } from 'url';
 import { join } from 'path';
 import * as isDev from 'electron-is-dev';
-import './server/server';
+import './ipcHandlers';
 
 let mainWindow;
 
@@ -14,7 +14,7 @@ const uri = isDev
       slashes: true
     })
   : format({
-      pathname: join(__dirname, "../build/index.html"),
+      pathname: join(__dirname, "../index.html"),
       protocol: "file:",
       slashes: true
     });

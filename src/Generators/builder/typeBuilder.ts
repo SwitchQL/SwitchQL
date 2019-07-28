@@ -1,8 +1,8 @@
 /* eslint-disable no-return-assign */
 import { toTitleCase } from "../../util";
-import ProcessedTable from "../../../models/processedTable";
+import ProcessedTable from "../../models/processedTable";
 import IDBProvider from "../provider/dbProvider";
-import ProcessedField from "../../../models/processedField";
+import ProcessedField from "../../models/processedField";
 
 const tab = `  `;
 

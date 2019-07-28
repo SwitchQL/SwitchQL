@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import retrieved from "./sampleFiles/retrievedMetadata";
-import processMetadata from "../server/DBMetadata/metadataProcessor";
-import * as translators from "../server/DBMetadata/columnTypeTranslators";
+import processMetadata from "../DBMetadata/metadataProcessor";
+import * as translators from "../DBMetadata/columnTypeTranslators";
 
 describe("Format Metadata Tests", () => {
 	let pm: Function

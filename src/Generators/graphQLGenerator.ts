@@ -1,6 +1,6 @@
 import MutationBuilder from "./builder/mutationBuilder";
 import IDBProvider from './provider/dbProvider'
-import ProcessedTable from '../../models/processedTable';
+import ProcessedTable from '../models/processedTable';
 import QueryBuilder from "./builder/queryBuilder";
 import TypeBuilder from "./builder/typeBuilder";
 

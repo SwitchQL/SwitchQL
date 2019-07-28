@@ -3,14 +3,14 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { spawn } = require("child_process");
 
-const SRC_DIR = path.resolve(__dirname, "src");
+const SRC_DIR = path.resolve(__dirname, "src/electron/client");
 
 const OUTPUT_DIR = path.resolve(__dirname, "build");
 
 module.exports = {
 	target: "electron-renderer",
 
-	entry: path.join(SRC_DIR, "/client/main.jsx"),
+	entry: path.join(SRC_DIR, "main.jsx"),
 
 	output: {
 		path: OUTPUT_DIR,
@@ -25,7 +25,7 @@ module.exports = {
 			children: false,
 		},
 		before () {
-			spawn("electron", [path.join("build", "main_process.js")], {
+			spawn("electron", [path.join("build/electron", "main.js")], {
 				shell: true,
 				env: process.env,
 				stdio: "inherit",
@@ -37,7 +37,7 @@ module.exports = {
 
 	plugins: [
 		new HtmlWebpackPlugin({
-			template: "./src/index.html",
+			template: path.join(SRC_DIR, "index.html"),
 			inject: "body",
 		}),
 	],

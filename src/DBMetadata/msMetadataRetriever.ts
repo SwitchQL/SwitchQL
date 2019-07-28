@@ -1,6 +1,6 @@
 import { ConnectionPool } from 'mssql'
 import { createHash } from "crypto";
-import ConnData from "../../models/connData";
+import ConnData from "../models/connData";
 
 const poolCache: { [ key: string]: ConnectionPool } = {};
 

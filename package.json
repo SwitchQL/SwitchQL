@@ -2,7 +2,7 @@
   "name": "switchql",
   "version": "1.0.0",
   "description": "Automated Transcription of DB scripts into GraphQL schemas and resolvers",
-  "main": "build/main_process.js",
+  "main": "build/electron/main.js",
   "scripts": {
     "test": "jest --watch",
     "test:ci": "jest",
