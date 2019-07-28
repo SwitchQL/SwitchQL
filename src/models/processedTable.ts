@@ -1,6 +1,5 @@
 import ProcessedField from "./processedField";
-
-const { removeWhitespace } = require("../../util");
+import { removeWhitespace } from "../server/util";
 
 class ProcessedTable {
 	displayName: string

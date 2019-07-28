@@ -1,7 +1,7 @@
-import ColumnTypeTranslator from "../columnTypeTranslators";
+import ColumnTypeTranslator from "../server/DBMetadata/columnTypeTranslators";
 
 /* eslint-disable no-prototype-builtins */
-const { removeWhitespace } = require("../../util");
+import { removeWhitespace } from "../server/util";
 
 // TODO make better typings
 class ProcessedField {

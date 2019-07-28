@@ -1,12 +1,12 @@
 import ConnData from "../models/connData";
 
-import PgSqlProvider from "./Generators/classes/pgSqlProvider";
+import PgSqlProvider from "./Generators/provider/pgSqlProvider";
 import pgSqlRetriever from "./DBMetadata/pgMetadataRetriever";
 
 import processMetaData from "./DBMetadata/metadataProcessor";
 import { pgSQL, msSQL} from "./DBMetadata/columnTypeTranslators";
 
-import MSSqlProvider from "./Generators/classes/msSqlProvider";
+import MSSqlProvider from "./Generators/provider/msSqlProvider";
 import msSqlRetriever from "./DBMetadata/msMetadataRetriever";
 import DBType from "../models/dbType";
 

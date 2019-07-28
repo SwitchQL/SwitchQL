@@ -1,8 +1,8 @@
-import TypeBuilder from "./classes/typeBuilder";
-import MutationBuilder from "./classes/mutationBuilder";
-import QueryBuilder from "./classes/queryBuilder";
-import IDBProvider from './classes/dbProvider'
-import ProcessedTable from '../DBMetadata/classes/processedTable';
+import MutationBuilder from "./builder/mutationBuilder";
+import IDBProvider from './provider/dbProvider'
+import ProcessedTable from '../../models/processedTable';
+import QueryBuilder from "./builder/queryBuilder";
+import TypeBuilder from "./builder/typeBuilder";
 
 function generateGraphQL (tables: { [ key: number]: ProcessedTable }, dbProvider: IDBProvider) {
 	if (Object.keys(tables).length === 0) { return { types: "", mutations: "", queries: "" }; }

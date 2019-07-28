@@ -1,7 +1,8 @@
 /* eslint-disable no-return-assign */
 import { toTitleCase } from '../../util'
-import ProcessedTable from '../../DBMetadata/classes/processedTable';
-import ProcessedField from '../../DBMetadata/classes/processedField';
+import ProcessedTable from '../../../models/processedTable';
+import ProcessedField from '../../../models/processedField';
+
 const tab = `  `;
 
 // TODO pull in private methods
