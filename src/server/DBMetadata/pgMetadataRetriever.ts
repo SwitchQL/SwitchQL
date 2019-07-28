@@ -31,7 +31,8 @@ const metadataQuery = `SELECT
                           AND (constraint_type = 'FOREIGN KEY' or (constraint_type is null OR constraint_type <> 'FOREIGN KEY'))
                         ORDER BY t.table_name`;
 
-async function getSchemaInfo (connString: string) {
+// TODO make better typings
+async function getSchemaInfo (connString: string): Promise<any> {
 	const db = getDbPool(connString);
 	try {
 		const metadataInfo = await promiseTimeout(

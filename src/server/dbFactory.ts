@@ -3,7 +3,7 @@ import ConnData from "../models/connData";
 import PgSqlProvider from "./Generators/classes/pgSqlProvider";
 import pgSqlRetriever from "./DBMetadata/pgMetadataRetriever";
 
-const processMetaData = require("./DBMetadata/metadataProcessor");
+import processMetaData from "./DBMetadata/metadataProcessor";
 import { pgSQL, msSQL} from "./DBMetadata/columnTypeTranslators";
 
 import MSSqlProvider from "./Generators/classes/msSqlProvider";

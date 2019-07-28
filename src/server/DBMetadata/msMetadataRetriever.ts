@@ -33,7 +33,8 @@ const query = `select
                                     where t.TABLE_TYPE = 'BASE TABLE' and t.TABLE_NAME = c.TABLE_NAME )
                 order by c.TABLE_NAME`;
 
-async function getSchemaInfo (connString: string) {
+// TODO make better typings				
+async function getSchemaInfo (connString: string): Promise<any> {
 	try {
 		const pool = await getDbPool(connString);
 		//TODO strongly type query

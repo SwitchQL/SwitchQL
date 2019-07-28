@@ -1,6 +1,6 @@
-const TypeBuilder = require("./classes/typeBuilder");
-const MutationBuilder = require("./classes/mutationBuilder");
-const QueryBuilder = require("./classes/queryBuilder");
+import TypeBuilder from "./classes/typeBuilder";
+import MutationBuilder from "./classes/mutationBuilder";
+import QueryBuilder from "./classes/queryBuilder";
 import IDBProvider from './classes/dbProvider'
 import ProcessedTable from '../DBMetadata/classes/processedTable';
 

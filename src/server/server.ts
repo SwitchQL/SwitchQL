@@ -37,6 +37,7 @@ ipcMain.on(events.URL, async (event: any, connData: string) => {
 
 		event.sender.send(events.DATA, JSON.stringify(gqlData));
 	} catch (err) {
+		console.log(err);
 		event.sender.send(events.APP_ERROR, JSON.stringify(err));
 	}
 });
