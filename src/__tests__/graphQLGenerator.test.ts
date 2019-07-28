@@ -12,14 +12,13 @@ describe("Mutation Generation Tests", () => {
 		expect(result).toBe("");
 	});
 
-	// TODO Fix Test
-	// it("Should match the snapshot", () => {
-	// 	const { mutations: result } = generateGraphQL(
-	// 		input.tables,
-	// 		new PgSqlProvider("postgres://test@test.com:5432/test")
-	// 	);
-	// 	expect(result).toMatchSnapshot();
-	// });
+	it("Should match the snapshot", () => {
+		const { mutations: result } = generateGraphQL(
+			input.tables as any,
+			new PgSqlProvider("postgres://test@test.com:5432/test")
+		);
+		expect(result).toMatchSnapshot();
+	});
 });
 
 describe("Query Generation Tests", () => {
@@ -31,24 +30,22 @@ describe("Query Generation Tests", () => {
 		expect(result).toBe("");
 	});
 
-	// TODO Fix Test
-	// it("Should match the snapshot", () => {
-	// 	const { queries: result } = generateGraphQL(
-	// 		input.tables,
-	// 		new PgSqlProvider("postgres://test@test.com:5432/test")
-	// 	);
-	// 	expect(result).toMatchSnapshot();
-	// });
+	it("Should match the snapshot", () => {
+		const { queries: result } = generateGraphQL(
+			input.tables as any,
+			new PgSqlProvider("postgres://test@test.com:5432/test")
+		);
+		expect(result).toMatchSnapshot();
+	});
 });
 
 describe("Type generation tests", () => {
-	// TODO Fix Test
-	// it("Should match the snapshot", () => {
-	// 	const { types: output } = generateGraphQL(
-	// 		input.tables,
-	// 		new PgSqlProvider("postgres://test@test.com:5432/test")
-	// 	);
+	it("Should match the snapshot", () => {
+		const { types: output } = generateGraphQL(
+			input.tables as any,
+			new PgSqlProvider("postgres://test@test.com:5432/test")
+		);
 
-	// 	expect(output).toMatchSnapshot();
-	// });
+		expect(output).toMatchSnapshot();
+	});
 });
