@@ -25,7 +25,7 @@ module.exports = {
 			children: false,
 		},
 		before () {
-			spawn("electron", [path.join("build/electron", "main.js")], {
+			spawn("electron", [path.join("build/electron", "main.js"), "--inspect=9223"], {
 				shell: true,
 				env: process.env,
 				stdio: "inherit",
