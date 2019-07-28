@@ -3,7 +3,6 @@ import ProcessedTable from "../models/processedTable"
 import ColumnTypeTranslator from "./columnTypeTranslators";
 import ProcessedField from "../models/processedField";
 
-// TODO do better typings
 function processMetadata (translateColumnType: ColumnTypeTranslator) {
 	return (columnData: { [key: string]: any}[]) => {
 		if (!columnData || columnData.length === 0) { throw new Error("Metadata is null or empty"); }
@@ -16,7 +15,6 @@ function processMetadata (translateColumnType: ColumnTypeTranslator) {
 		let props: ProcessedField[] = [];
 
 		let lookupFields: { [key: string]: any }  = {};
-
 		const lookup: { [key: string]: any } = {};
 		const toRef: { [key: string]: any } = {};
 

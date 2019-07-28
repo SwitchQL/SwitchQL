@@ -9,8 +9,14 @@ import { pgSQL, msSQL} from "./DBMetadata/columnTypeTranslators";
 import MSSqlProvider from "./Generators/provider/msSqlProvider";
 import msSqlRetriever from "./DBMetadata/msMetadataRetriever";
 import DBType from "./models/dbType";
+import IMetadataRetriever from "./DBMetadata/metadataRetriever";
+import IDBProvider from "./Generators/provider/dbProvider";
 
-function dbFactory (connData: ConnData) {
+function dbFactory (connData: ConnData): { 
+	retriever: IMetadataRetriever, 
+	processMetaData: Function, 
+	provider: IDBProvider
+} {
 	let connString = "";
 	switch (connData.type) {
 		case DBType.PostgreSQL:

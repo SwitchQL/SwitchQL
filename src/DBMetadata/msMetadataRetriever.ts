@@ -1,6 +1,7 @@
 import { ConnectionPool } from 'mssql'
 import { createHash } from "crypto";
 import ConnData from "../models/connData";
+import DBMetadata from '../models/dbMetadata';
 
 const poolCache: { [ key: string]: ConnectionPool } = {};
 
@@ -32,12 +33,11 @@ const query = `select
                     and exists (select * from Northwind.INFORMATION_SCHEMA.TABLES t 
                                     where t.TABLE_TYPE = 'BASE TABLE' and t.TABLE_NAME = c.TABLE_NAME )
                 order by c.TABLE_NAME`;
-
-// TODO make better typings				
-async function getSchemaInfo (connString: string): Promise<any> {
+			
+async function getSchemaInfo (connString: string): Promise<DBMetadata[]> {
 	try {
 		const pool = await getDbPool(connString);
-		//TODO strongly type query
+		//cast to any due to bug in typings library
 		const metadata = await pool.query(<any>query);
 
 		return metadata.recordset;

@@ -11,7 +11,6 @@ let schemaMetaData: string;
 let mutationsMetaData: string;
 let queriesMetaData: string;
 
-//TODO strong typings for events
 ipcMain.on(events.URL, async (event: any, connData: string) => {
 	try {
 		const cd: ConnData = JSON.parse(connData);
@@ -42,7 +41,6 @@ ipcMain.on(events.URL, async (event: any, connData: string) => {
 	}
 });
 
-//TODO strong typings for events
 ipcMain.on(events.DIRECTORY, async (event: any, directory: string) => {
 	try {
 		const zip = new JSZip();

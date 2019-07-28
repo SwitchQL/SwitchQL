@@ -2,6 +2,7 @@ import ConnData from "../models/connData";
 import * as pgInit from 'pg-promise'
 import { createHash } from 'crypto'
 import { promiseTimeout } from '../util'
+import DBMetadata from "../models/dbMetadata";
 
 
 
@@ -31,8 +32,7 @@ const metadataQuery = `SELECT
                           AND (constraint_type = 'FOREIGN KEY' or (constraint_type is null OR constraint_type <> 'FOREIGN KEY'))
                         ORDER BY t.table_name`;
 
-// TODO make better typings
-async function getSchemaInfo (connString: string): Promise<any> {
+async function getSchemaInfo (connString: string): Promise<DBMetadata[]> {
 	const db = getDbPool(connString);
 	try {
 		const metadataInfo = await promiseTimeout(

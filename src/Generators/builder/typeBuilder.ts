@@ -6,7 +6,6 @@ import ProcessedField from "../../models/processedField";
 
 const tab = `  `;
 
-// TODO pull in private classes
 class TypeBuilder {
 	private graphqlCode: string
 	private typeSchemaCode: string
@@ -14,7 +13,7 @@ class TypeBuilder {
 	private mutationCode: string
 
 	constructor (private provider: IDBProvider) {
-		this.graphqlCode = init(this.provider);
+		this.graphqlCode = this.init();
 		this.typeSchemaCode = "";
 		this.rootQueryCode = `const RootQuery = new GraphQLObjectType({\n${tab}name: 'RootQueryType',\n${tab}fields: {\n`;
 		this.mutationCode = `const Mutation = new GraphQLObjectType({\n${tab}name: 'Mutation',\n${tab}fields: {\n`;
@@ -49,7 +48,7 @@ class TypeBuilder {
 			// check the field current name and give it a graphQL type
 			typeQuery += `\n${tab.repeat(2)}${
 				field.name
-			}: { type: ${tableDataTypeToGraphqlType(field.type)} }`;
+			}: { type: ${this.tableDataTypeToGraphqlType(field.type)} }`;
 
 			// later try to maintain the foreign key field to be the primary value?? NO
 			if (field.inRelationship) {
@@ -81,7 +80,7 @@ class TypeBuilder {
 
 			const relatedTableRelationType = column.relation[rel].refType;
 
-			subQuery += `\n${tab.repeat(2)}${createSubQueryName(
+			subQuery += `\n${tab.repeat(2)}${this.createSubQueryName(
 				relatedTableRelationType,
 				rtDisplayName
 			)}: {\n${tab.repeat(3)}type: `;
@@ -145,7 +144,7 @@ class TypeBuilder {
 			table.displayName
 		}Type,\n${tab.repeat(3)}args: {\n${tab.repeat(4)}${
 			idColumn.name
-		}: { type: ${tableDataTypeToGraphqlType(idColumn.type)} }\n${tab.repeat(
+		}: { type: ${this.tableDataTypeToGraphqlType(idColumn.type)} }\n${tab.repeat(
 			3
 		)}},\n${tab.repeat(3)}resolve(parent, args) {\n${tab.repeat(4)}`;
 
@@ -189,7 +188,7 @@ class TypeBuilder {
 
 			// dont need the ID for adding new row because generated in SQL
 			if (!field.primaryKey) {
-				mutationQuery += `${tab.repeat(4)}${field.name}: ${buildMutationArgType(
+				mutationQuery += `${tab.repeat(4)}${field.name}: ${this.buildMutationArgType(
 					field
 				)}`;
 				fieldNames += `${field.name}, `;
@@ -230,7 +229,7 @@ class TypeBuilder {
 			if (!firstLoop) mutationQuery += ",\n";
 			firstLoop = false;
 
-			mutationQuery += `${tab.repeat(4)}${field.name}: ${buildMutationArgType(
+			mutationQuery += `${tab.repeat(4)}${field.name}: ${this.buildMutationArgType(
 				field
 			)}`;
 		}
@@ -267,7 +266,7 @@ class TypeBuilder {
 			3
 		)}args: {\n${tab.repeat(4)}${
 			idColumn.name
-		}: { type: ${tableDataTypeToGraphqlType(idColumn.type)} }\n${tab.repeat(
+		}: { type: ${this.tableDataTypeToGraphqlType(idColumn.type)} }\n${tab.repeat(
 			3
 		)}},\n${tab.repeat(3)}resolve(parent, args) {\n`;
 
@@ -279,97 +278,100 @@ class TypeBuilder {
 		return mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
 	}
 
-	// TODO add strong typing
-	addNewLine (codeSegment: string) {
-		(<any>this)[codeSegment] += ",\n";
+	addNewLine (codeSegment:  "graphqlCode" | 
+							  "typeSchemaCode" | 
+							  "rootQueryCode" | 
+							  "mutationCode") {
+		(<any>this)[codeSegment] += ",\n"
 	}
-}
 
-function createSubQueryName (relationType: string, relatedTable: string) {
-	switch (relationType) {
-		case "one to one":
-			return `related${toTitleCase(relatedTable)}`;
-
-		case "one to many":
-			return `everyRelated${toTitleCase(relatedTable)}`;
-
-		case "many to one":
-			return `related${toTitleCase(relatedTable)}`;
-
-		default:
-			return `everyRelated${toTitleCase(relatedTable)}`;
-	}
-}
-
-function init (dbProvider: IDBProvider) {
-	let str = `const graphql = require('graphql');\nconst graphql_iso_date = require('graphql-iso-date');\n`;
-	str += dbProvider.connection();
-
-	str += `\nconst { 
-  GraphQLObjectType,
-  GraphQLSchema,
-  GraphQLID,
-  GraphQLString, 
-  GraphQLInt, 
-  GraphQLBoolean,
-  GraphQLList,
-  GraphQLFloat,
-  GraphQLNonNull
-} = graphql;
-  \n`;
-
-	str += `const { 
-  GraphQLDate,
-  GraphQLTime,
-  GraphQLDateTime
-} = graphql_iso_date;
-  \n`;
-
-	return str;
-}
-
-function tableDataTypeToGraphqlType (type: string) {
-	switch (type) {
-		case "ID":
-			return "GraphQLID";
-		case "String":
-			return "GraphQLString";
-		case "Integer":
-			return "GraphQLInt";
-		case "Float":
-			return "GraphQLFloat";
-		case "Boolean":
-			return "GraphQLBoolean";
-		case "Date":
-			return "GraphQLDate";
-		case "Time":
-			return "GraphQLTime";
-		case "DateTime":
-			return "GraphQLDateTime";
-		default:
-			return "GraphQLString";
-	}
-}
-
-function buildMutationArgType (column: ProcessedField) {
-	const mutationQuery = `{ type: ${checkifColumnRequired(
-		column.required,
-		"front"
-	)}${tableDataTypeToGraphqlType(column.type)}${checkifColumnRequired(
-		column.required,
-		"back"
-	)} }`;
-	return mutationQuery;
-}
-
-function checkifColumnRequired (required: boolean, position: string) {
-	if (required) {
-		if (position === "front") {
-			return "new GraphQLNonNull(";
+	private createSubQueryName (relationType: string, relatedTable: string) {
+		switch (relationType) {
+			case "one to one":
+				return `related${toTitleCase(relatedTable)}`;
+	
+			case "one to many":
+				return `everyRelated${toTitleCase(relatedTable)}`;
+	
+			case "many to one":
+				return `related${toTitleCase(relatedTable)}`;
+	
+			default:
+				return `everyRelated${toTitleCase(relatedTable)}`;
 		}
-		return ")";
 	}
-	return "";
+
+	private init () {
+		let str = `const graphql = require('graphql');\nconst graphql_iso_date = require('graphql-iso-date');\n`;
+		str += this.provider.connection();
+	
+		str += `\nconst { 
+	  GraphQLObjectType,
+	  GraphQLSchema,
+	  GraphQLID,
+	  GraphQLString, 
+	  GraphQLInt, 
+	  GraphQLBoolean,
+	  GraphQLList,
+	  GraphQLFloat,
+	  GraphQLNonNull
+	} = graphql;
+	  \n`;
+	
+		str += `const { 
+	  GraphQLDate,
+	  GraphQLTime,
+	  GraphQLDateTime
+	} = graphql_iso_date;
+	  \n`;
+	
+		return str;
+	}
+
+	private tableDataTypeToGraphqlType (type: string) {
+		switch (type) {
+			case "ID":
+				return "GraphQLID";
+			case "String":
+				return "GraphQLString";
+			case "Integer":
+				return "GraphQLInt";
+			case "Float":
+				return "GraphQLFloat";
+			case "Boolean":
+				return "GraphQLBoolean";
+			case "Date":
+				return "GraphQLDate";
+			case "Time":
+				return "GraphQLTime";
+			case "DateTime":
+				return "GraphQLDateTime";
+			default:
+				return "GraphQLString";
+		}
+	}
+
+	private buildMutationArgType (column: ProcessedField) {
+		const mutationQuery = `{ type: ${this.checkifColumnRequired(
+			column.required,
+			"front"
+		)}${this.tableDataTypeToGraphqlType(column.type)}${this.checkifColumnRequired(
+			column.required,
+			"back"
+		)} }`;
+		return mutationQuery;
+	}
+
+	private checkifColumnRequired (required: boolean, position: string) {
+		if (required) {
+			if (position === "front") {
+				return "new GraphQLNonNull(";
+			}
+			return ")";
+		}
+		return "";
+	}
 }
+
 
 export default TypeBuilder;

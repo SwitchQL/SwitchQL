@@ -6,7 +6,7 @@ export function toTitleCase (str: string) {
 
 export function promiseTimeout<T> (msDelay: number, promise: Promise<T>) {
 	// promise that rejects in <ms> milliseconds
-	const timeout = new Promise((resolve, reject) => {
+	const timeout = new Promise<T>((resolve, reject) => {
 		const id = setTimeout(() => {
 			clearTimeout(id);
 			reject(`Timed out in ${msDelay} ms`);

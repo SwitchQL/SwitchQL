@@ -3,7 +3,6 @@ import ColumnTypeTranslator from "../DBMetadata/columnTypeTranslators";
 /* eslint-disable no-prototype-builtins */
 import { removeWhitespace } from "../util";
 
-// TODO make better typings
 class ProcessedField {
 	name: string;
 	type: string;
