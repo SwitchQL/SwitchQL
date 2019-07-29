@@ -1,6 +1,6 @@
 import { ConnectionPool } from 'mssql'
-import { createHash } from "crypto";
-import ConnData from "../models/connData";
+import { createHash } from 'crypto';
+import ConnData from '../models/connData';
 import DBMetadata from '../models/dbMetadata';
 
 const poolCache: { [ key: string]: ConnectionPool } = {};
@@ -35,52 +35,52 @@ const query = `select
                 order by c.TABLE_NAME`;
 			
 async function getSchemaInfo (connString: string): Promise<DBMetadata[]> {
-	try {
-		const pool = await getDbPool(connString);
-		//cast to any due to bug in typings library
-		const metadata = await pool.query(<any>query);
+    try {
+        const pool = await getDbPool(connString);
+        //cast to any due to bug in typings library
+        const metadata = await pool.query(<any>query);
 
-		return metadata.recordset;
-	} catch (err) {
-		removeFromCache(connString);
-		throw err;
-	}
+        return metadata.recordset;
+    } catch (err) {
+        removeFromCache(connString);
+        throw err;
+    }
 }
 
 function buildConnectionString (info: ConnData) {
-	let connectionString = "";
-	const port = info.port || 1433;
+    let connectionString = '';
+    const port = info.port || 1433;
 
-	// Per documentation request timeout cannot be less than 1 second
-	connectionString += `mssql://${info.user}:${info.password}@${
-		info.host
-	}:${port}/${info.database}?encrypt=true&request%20timeout=${30000}`;
-	return connectionString;
+    // Per documentation request timeout cannot be less than 1 second
+    connectionString += `mssql://${info.user}:${info.password}@${
+        info.host
+    }:${port}/${info.database}?encrypt=true&request%20timeout=${30000}`;
+    return connectionString;
 }
 
 async function getDbPool (connString: string) {
-	const hash = createHash("sha256");
-	hash.update(connString);
+    const hash = createHash('sha256');
+    hash.update(connString);
 
-	const digest = hash.digest("base64");
+    const digest = hash.digest('base64');
 
-	if (poolCache[digest]) return poolCache[digest];
+    if (poolCache[digest]) return poolCache[digest];
 
-	const pool = await new ConnectionPool(connString).connect();
-	// eslint-disable-next-line require-atomic-updates
-	poolCache[digest] = pool;
+    const pool = await new ConnectionPool(connString).connect();
+    // eslint-disable-next-line require-atomic-updates
+    poolCache[digest] = pool;
 
-	return pool;
+    return pool;
 }
 
 function removeFromCache (connString: string) {
-	const hash = createHash("sha256");
-	hash.update(connString);
+    const hash = createHash('sha256');
+    hash.update(connString);
 
-	delete poolCache[hash.digest("base64")];
+    delete poolCache[hash.digest('base64')];
 }
 
 export default {
-	getSchemaInfo,
-	buildConnectionString
+    getSchemaInfo,
+    buildConnectionString
 };
