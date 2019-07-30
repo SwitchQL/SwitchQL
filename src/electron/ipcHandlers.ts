@@ -19,27 +19,6 @@ ipcMain.on(events.URL, async (event: any, connData: string) => {
         const connString =
       cd.value.length === 0 ? retriever.buildConnectionString(cd) : cd.value;
 
-<<<<<<< Updated upstream
-		const dbMetaData = await retriever.getSchemaInfo(connString);
-		const formattedMetaData = processMetaData(dbMetaData);
-
-		({
-			types: schemaMetaData,
-			mutations: mutationsMetaData,
-			queries: queriesMetaData,
-		} = generateGraphQL(formattedMetaData.tables, provider));
-
-		const gqlData = {
-			schema: schemaMetaData,
-			mutations: mutationsMetaData,
-			queries: queriesMetaData,
-		};
-
-		event.sender.send(events.DATA, JSON.stringify(gqlData));
-	} catch (err) {
-		event.sender.send(events.APP_ERROR, JSON.stringify(err));
-	}
-=======
         const dbMetaData = await retriever.getSchemaInfo(connString);
         const formattedMetaData = processMetaData(dbMetaData);
 
@@ -57,10 +36,8 @@ ipcMain.on(events.URL, async (event: any, connData: string) => {
 
         event.sender.send(events.DATA, JSON.stringify(gqlData));
     } catch (err) {
-        console.log(err);
         event.sender.send(events.APP_ERROR, JSON.stringify(err));
     }
->>>>>>> Stashed changes
 });
 
 ipcMain.on(events.DIRECTORY, async (event: any, directory: string) => {

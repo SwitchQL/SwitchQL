@@ -1,37 +1,40 @@
 /* eslint-disable no-return-assign */
 import { toTitleCase } from '../../util';
 import ProcessedTable from '../../models/processedTable';
-import IDBProvider from '../provider/dbProvider';
+import DBProvider from '../provider/dbProvider';
 import ProcessedField from '../../models/processedField';
 
 const tab = `  `;
 
 class TypeBuilder {
-    private graphqlCode: string
-    private typeSchemaCode: string
-    private rootQueryCode: string
-    private mutationCode: string
+    private graphqlCode: string;
+    private typeSchemaCode: string;
+    private rootQueryCode: string;
+    private mutationCode: string;
 
-    constructor (private provider: IDBProvider) {
+    public constructor (private provider: DBProvider) {
         this.graphqlCode = this.init();
         this.typeSchemaCode = '';
         this.rootQueryCode = `const RootQuery = new GraphQLObjectType({\n${tab}name: 'RootQueryType',\n${tab}fields: {\n`;
         this.mutationCode = `const Mutation = new GraphQLObjectType({\n${tab}name: 'Mutation',\n${tab}fields: {\n`;
     }
 
-    build () {
+    public build (): string {
         this.rootQueryCode += `\n${tab}}\n});\n\n`;
         this.mutationCode += `\n${tab}}\n});\n\n`;
 
         this.graphqlCode +=
-      this.typeSchemaCode + this.rootQueryCode + this.mutationCode;
+            this.typeSchemaCode + this.rootQueryCode + this.mutationCode;
 
         this.graphqlCode += this.provider.configureExport();
 
         return this.graphqlCode;
     }
 
-    addGraphqlTypeSchema (table: ProcessedTable, processedMetadata: { [ key: number ]: ProcessedTable }) {
+    public addGraphqlTypeSchema (
+        table: ProcessedTable,
+        processedMetadata: { [key: number]: ProcessedTable }
+    ): TypeBuilder {
         let subQuery = '';
 
         let typeQuery = `const ${
@@ -66,17 +69,25 @@ class TypeBuilder {
         return this;
     }
 
-    createSubQuery (column: ProcessedField, processedMetadata: { [key: number ]: ProcessedTable }) {
+    private createSubQuery (
+        column: ProcessedField,
+        processedMetadata: { [key: number]: ProcessedTable }
+    ): string {
         const subqueries = [];
 
         for (const rel in column.relation) {
             let subQuery = '';
 
-            const [relatedTableIdx, relatedColIdx] = rel.split('.').map(i => parseInt(i));
+            const [relatedTableIdx, relatedColIdx] = rel
+                .split('.')
+                .map(i => parseInt(i));
 
-            const { displayName: rtDisplayName, name: rtName } = processedMetadata[relatedTableIdx];
+            const { displayName: rtDisplayName, name: rtName } = processedMetadata[
+                relatedTableIdx
+            ];
 
-            const relatedFieldName = processedMetadata[relatedTableIdx].fields[relatedColIdx].name;
+            const relatedFieldName =
+                processedMetadata[relatedTableIdx].fields[relatedColIdx].name;
 
             const relatedTableRelationType = column.relation[rel].refType;
 
@@ -109,7 +120,7 @@ class TypeBuilder {
         return subqueries.join(', ');
     }
 
-    addGraphqlRootCode (table: ProcessedTable) {
+    public addGraphqlRootCode (table: ProcessedTable): TypeBuilder {
         let rootQuery = '';
 
         rootQuery += this.createFindAllRootQuery(table);
@@ -125,7 +136,7 @@ class TypeBuilder {
         return this;
     }
 
-    createFindAllRootQuery (table: ProcessedTable) {
+    private createFindAllRootQuery (table: ProcessedTable): string {
         let rootQuery = `${tab.repeat(2)}every${toTitleCase(
             table.displayName
         )}: {\n${tab.repeat(3)}type: new GraphQLList(${
@@ -134,19 +145,21 @@ class TypeBuilder {
 
         rootQuery += this.provider.select(table.name);
 
-        return rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
+        return (rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
     }
 
-    createFindByIdQuery (table: ProcessedTable, idColumn: ProcessedField) {
+    private createFindByIdQuery (table: ProcessedTable, idColumn: ProcessedField): string {
         let rootQuery = `,\n${tab.repeat(
             2
         )}${table.displayName.toLowerCase()}: {\n${tab.repeat(3)}type: ${
             table.displayName
         }Type,\n${tab.repeat(3)}args: {\n${tab.repeat(4)}${
             idColumn.name
-        }: { type: ${this.tableDataTypeToGraphqlType(idColumn.type)} }\n${tab.repeat(
+        }: { type: ${this.tableDataTypeToGraphqlType(
+            idColumn.type
+        )} }\n${tab.repeat(3)}},\n${tab.repeat(
             3
-        )}},\n${tab.repeat(3)}resolve(parent, args) {\n${tab.repeat(4)}`;
+        )}resolve(parent, args) {\n${tab.repeat(4)}`;
 
         rootQuery += this.provider.selectWithWhere(
             table.name,
@@ -155,10 +168,10 @@ class TypeBuilder {
             false
         );
 
-        return rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
+        return (rootQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
     }
 
-    addGraphqlMutationCode (table: ProcessedTable) {
+    public addGraphqlMutationCode (table: ProcessedTable): TypeBuilder {
         let mutationQuery = ``;
         mutationQuery += `${this.addMutation(table)}`;
         if (table.fields[0]) {
@@ -170,7 +183,7 @@ class TypeBuilder {
         return this;
     }
 
-    addMutation (table: ProcessedTable) {
+    private addMutation (table: ProcessedTable): string {
         let mutationQuery = `${tab.repeat(2)}add${toTitleCase(
             table.displayName
         )}: {\n${tab.repeat(3)}type: ${table.displayName}Type,\n${tab.repeat(
@@ -188,9 +201,9 @@ class TypeBuilder {
 
             // dont need the ID for adding new row because generated in SQL
             if (!field.primaryKey) {
-                mutationQuery += `${tab.repeat(4)}${field.name}: ${this.buildMutationArgType(
-                    field
-                )}`;
+                mutationQuery += `${tab.repeat(4)}${
+                    field.name
+                }: ${this.buildMutationArgType(field)}`;
                 fieldNames += `${field.name}, `;
                 argNames += `\${args.${field.name}}, `;
             } else {
@@ -206,10 +219,10 @@ class TypeBuilder {
 
         mutationQuery += this.provider.insert(table.name, fieldNames, argNames);
 
-        return mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
+        return (mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
     }
 
-    updateMutation (table: ProcessedTable) {
+    private updateMutation (table: ProcessedTable): string {
         let idColumnName;
 
         for (const field of table.fields) {
@@ -229,9 +242,9 @@ class TypeBuilder {
             if (!firstLoop) mutationQuery += ',\n';
             firstLoop = false;
 
-            mutationQuery += `${tab.repeat(4)}${field.name}: ${this.buildMutationArgType(
-                field
-            )}`;
+            mutationQuery += `${tab.repeat(4)}${
+                field.name
+            }: ${this.buildMutationArgType(field)}`;
         }
 
         mutationQuery += `\n${tab.repeat(3)}},\n${tab.repeat(
@@ -248,10 +261,10 @@ class TypeBuilder {
             idColumnName
         )}`;
 
-        return mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
+        return (mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
     }
 
-    deleteMutation (table: ProcessedTable) {
+    private deleteMutation (table: ProcessedTable): string {
         let idColumn;
 
         for (const field of table.fields) {
@@ -266,45 +279,48 @@ class TypeBuilder {
             3
         )}args: {\n${tab.repeat(4)}${
             idColumn.name
-        }: { type: ${this.tableDataTypeToGraphqlType(idColumn.type)} }\n${tab.repeat(
-            3
-        )}},\n${tab.repeat(3)}resolve(parent, args) {\n`;
+        }: { type: ${this.tableDataTypeToGraphqlType(
+            idColumn.type
+        )} }\n${tab.repeat(3)}},\n${tab.repeat(3)}resolve(parent, args) {\n`;
 
         mutationQuery += `${tab.repeat(4)}${this.provider.delete(
             table.name,
             idColumn.name
         )}`;
 
-        return mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`;
+        return (mutationQuery += `\n${tab.repeat(3)}}\n${tab.repeat(2)}}`);
     }
 
-    addNewLine (codeSegment:  'graphqlCode' | 
-							  'typeSchemaCode' | 
-							  'rootQueryCode' | 
-							  'mutationCode') {
-        (<any>this)[codeSegment] += ',\n'
+    public addNewLine (
+        codeSegment:
+        | 'graphqlCode'
+        | 'typeSchemaCode'
+        | 'rootQueryCode'
+        | 'mutationCode'
+    ): void {
+        (this as any)[codeSegment] += ',\n';
     }
 
-    private createSubQueryName (relationType: string, relatedTable: string) {
+    private createSubQueryName (relationType: string, relatedTable: string): string {
         switch (relationType) {
             case 'one to one':
                 return `related${toTitleCase(relatedTable)}`;
-	
+
             case 'one to many':
                 return `everyRelated${toTitleCase(relatedTable)}`;
-	
+
             case 'many to one':
                 return `related${toTitleCase(relatedTable)}`;
-	
+
             default:
                 return `everyRelated${toTitleCase(relatedTable)}`;
         }
     }
 
-    private init () {
+    private init (): string {
         let str = `const graphql = require('graphql');\nconst graphql_iso_date = require('graphql-iso-date');\n`;
         str += this.provider.connection();
-	
+
         str += `\nconst { 
 	  GraphQLObjectType,
 	  GraphQLSchema,
@@ -317,18 +333,18 @@ class TypeBuilder {
 	  GraphQLNonNull
 	} = graphql;
 	  \n`;
-	
+
         str += `const { 
 	  GraphQLDate,
 	  GraphQLTime,
 	  GraphQLDateTime
 	} = graphql_iso_date;
 	  \n`;
-	
+
         return str;
     }
 
-    private tableDataTypeToGraphqlType (type: string) {
+    private tableDataTypeToGraphqlType (type: string): string {
         switch (type) {
             case 'ID':
                 return 'GraphQLID';
@@ -351,18 +367,17 @@ class TypeBuilder {
         }
     }
 
-    private buildMutationArgType (column: ProcessedField) {
+    private buildMutationArgType (column: ProcessedField): string {
         const mutationQuery = `{ type: ${this.checkifColumnRequired(
             column.required,
             'front'
-        )}${this.tableDataTypeToGraphqlType(column.type)}${this.checkifColumnRequired(
-            column.required,
-            'back'
-        )} }`;
+        )}${this.tableDataTypeToGraphqlType(
+            column.type
+        )}${this.checkifColumnRequired(column.required, 'back')} }`;
         return mutationQuery;
     }
 
-    private checkifColumnRequired (required: boolean, position: string) {
+    private checkifColumnRequired (required: boolean, position: string): string {
         if (required) {
             if (position === 'front') {
                 return 'new GraphQLNonNull(';
@@ -372,6 +387,5 @@ class TypeBuilder {
         return '';
     }
 }
-
 
 export default TypeBuilder;

@@ -2,29 +2,32 @@ import ColumnTypeTranslator from '../DBMetadata/columnTypeTranslators';
 
 /* eslint-disable no-prototype-builtins */
 import { removeWhitespace } from '../util';
+import DBMetadata from './dbMetadata';
 
 class ProcessedField {
-    name: string;
-    type: string;
-    primaryKey: boolean;
-    unique: boolean
-    required: boolean
-    inRelationship: boolean
-    relation: { [key: string]: any }
-    tableNum: number
-    fieldNum: number
+    public name: string;
+    public type: string;
+    public primaryKey: boolean;
+    public unique: boolean;
+    public required: boolean;
+    public inRelationship: boolean;
+    public relation: { [key: string]: any };
+    public tableNum: number;
+    public fieldNum: number;
 
-    constructor (col: { [key: string]: any }, 
-				 tblIdx: number, 
-				 fieldIdx: number, 
-				 translateColumnType: ColumnTypeTranslator) {
-        const isPrimaryKey = col.constraint_type === 'PRIMARY KEY';
+    public constructor (
+        col: DBMetadata,
+        tblIdx: number,
+        fieldIdx: number,
+        translateColumnType: ColumnTypeTranslator
+    ) {
+        const isPrimaryKey = col.constraintType === 'PRIMARY KEY';
 
-        this.name = removeWhitespace(col.column_name);
-        this.type = isPrimaryKey ? 'ID' : translateColumnType(col.data_type);
+        this.name = removeWhitespace(col.columnName);
+        this.type = isPrimaryKey ? 'ID' : translateColumnType(col.dataType);
         this.primaryKey = isPrimaryKey;
-        this.unique = col.constraint_type === 'UNIQUE';
-        this.required = col.is_nullable === 'NO';
+        this.unique = col.constraintType === 'UNIQUE';
+        this.required = col.isNullable === 'NO';
         this.inRelationship = false;
         this.relation = {};
         this.tableNum = tblIdx;
@@ -32,15 +35,17 @@ class ProcessedField {
     }
 
     // Retroactive relationship assignment (foreign key table defined before primary key table)
-    addRetroRelationship (toRef: { [key: string]: any }, 
-						  tblCol: { [key: string]: any }, 
-						  data:  { [key: string]: any }) {
+    public addRetroRelationship (
+        toRef: { [key: string]: any },
+        tblCol: DBMetadata,
+        data: { [key: string]: any }
+    ) {
         this.inRelationship = true;
         this.type = 'ID';
-        this.relation = toRef[tblCol.table_name][tblCol.column_name];
+        this.relation = toRef[tblCol.tableName][tblCol.columnName];
 
         // iterate through each relationship (one or more) and assign a relatedTo
-        for (const refIndex in toRef[tblCol.table_name][tblCol.column_name]) {
+        for (const refIndex in toRef[tblCol.tableName][tblCol.columnName]) {
             const refLookup = refIndex.split('.');
             const relatedTo = data.tables[refLookup[0]].fields[refLookup[1]];
             const relToRefIndex = `${this.tableNum}.${this.fieldNum}`;
@@ -48,7 +53,7 @@ class ProcessedField {
             relatedTo.relation[relToRefIndex] = {
                 refTable: this.tableNum,
                 refField: this.fieldNum,
-                refType: 'many to one',
+                refType: 'many to one'
             };
 
             relatedTo.inRelationship = true;
@@ -56,39 +61,38 @@ class ProcessedField {
         }
     }
 
-    addForeignKeyRef (lookup: { [key: string]: any }, 
-					  tblCol: { [key: string]: any }, 
-					  toRef: { [key: string]: any }, 
-					  data: { [key: string]: any }) {
+    public addForeignKeyRef (
+        lookup: { [key: string]: any },
+        tblCol: DBMetadata,
+        toRef: { [key: string]: any },
+        data: { [key: string]: any }
+    ) {
         this.inRelationship = true;
         this.type = 'ID';
 
         const ref = {
             refTable: this.tableNum,
             refField: this.fieldNum,
-            refType: 'one to many',
+            refType: 'one to many'
         };
 
-        const { foreign_table_name, foreign_column_name } = tblCol;
+        const { foreignTableName, foreignColumnName } = tblCol;
 
         // Active relationship assignment (primary key table defined before foreign key table)
-        if (lookup.hasOwnProperty(foreign_table_name)) {
+        if (lookup.hasOwnProperty(foreignTableName)) {
             const relationship = {
-                refTable: lookup[foreign_table_name].INDEX,
-                refField: lookup[foreign_table_name][foreign_column_name],
-                refType: 'many to one',
+                refTable: lookup[foreignTableName].INDEX,
+                refField: lookup[foreignTableName][foreignColumnName],
+                refType: 'many to one'
             };
 
-            const refIndex = `${lookup[foreign_table_name].INDEX}.${
-                lookup[foreign_table_name][foreign_column_name]
+            const refIndex = `${lookup[foreignTableName].INDEX}.${
+                lookup[foreignTableName][foreignColumnName]
             }`;
-			
-            (<any>this.relation)[refIndex] = relationship;
 
-            const relatedTo =
-        data.tables[lookup[foreign_table_name].INDEX].fields[lookup[foreign_table_name][foreign_column_name]
-        ];
+            (this.relation as any)[refIndex] = relationship;
 
+            const relatedTo = data.tables[lookup[foreignTableName].INDEX].fields[lookup[foreignTableName][foreignColumnName]];
             const relToRefIndex = `${this.tableNum}.${this.fieldNum}`;
 
             relatedTo.relation[relToRefIndex] = ref;
@@ -97,25 +101,25 @@ class ProcessedField {
         } else {
             const refIndex = `${this.tableNum}.${this.fieldNum}`;
             const currRef = {
-                [refIndex]: ref,
+                [refIndex]: ref
             };
 
-            if (!toRef.hasOwnProperty(tblCol.foreign_table_name)) {
-                toRef[tblCol.foreign_table_name] = {
-                    [tblCol.foreign_column_name]: currRef,
+            if (!toRef.hasOwnProperty(tblCol.foreignTableName)) {
+                toRef[tblCol.foreignTableName] = {
+                    [tblCol.foreignColumnName]: currRef
                 };
 
                 return;
             }
 
-            if (!toRef[tblCol.foreign_table_name].hasOwnProperty(tblCol.foreign_column_name)) {
-                toRef[tblCol.foreign_table_name][tblCol.foreign_column_name] = currRef;
+            if (
+                !toRef[tblCol.foreignTableName].hasOwnProperty(tblCol.foreignColumnName)
+            ) {
+                toRef[tblCol.foreignTableName][tblCol.foreignColumnName] = currRef;
                 return;
             }
 
-            toRef[tblCol.foreign_table_name][tblCol.foreign_column_name][
-                refIndex
-            ] = ref;
+            toRef[tblCol.foreignTableName][tblCol.foreignColumnName][refIndex] = ref;
         }
     }
 }

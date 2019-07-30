@@ -1,4 +1,4 @@
-export function pgSQL (type: string) {
+export function pgSQL (type: string): string {
     switch (type) {
         case 'integer':
             return 'Integer';
@@ -24,7 +24,7 @@ export function pgSQL (type: string) {
     }
 }
 
-export function msSQL (type: string) {
+export function msSQL (type: string): string {
     switch (type) {
         case 'bigint':
         case 'bit':

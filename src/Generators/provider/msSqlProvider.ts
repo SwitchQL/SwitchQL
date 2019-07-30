@@ -1,4 +1,4 @@
-import IDBProvider from './dbProvider';
+import DBProvider from './dbProvider';
 
 const tab = `  `;
 
@@ -7,54 +7,54 @@ const tab = `  `;
  * mssql library automatically parameterizes all queries when
  * template literals are used.
  */
-class MSSqlProvider implements IDBProvider {
-    connection () {
+class MSSqlProvider implements DBProvider {
+    public connection (): string {
         return 'var pool\n';
     }
 
-    selectWithWhere (table: string, col: string, val: string, returnsMany: boolean) {
+    public selectWithWhere (table: string, col: string, val: string, returnsMany: boolean): string {
         let query = `return pool.query\`SELECT * FROM [${table}] WHERE "${col}" = \${${val}}\`\n`;
-        query += addPromiseResolution(returnsMany);
+        query += this.addPromiseResolution(returnsMany);
 
         return query;
     }
 
-    select (table: string) {
+    public select (table: string): string {
         let query = `return pool.query('SELECT * FROM [${table}]')\n`;
 
-        query += addPromiseResolution(true);
+        query += this.addPromiseResolution(true);
 
         return query;
     }
 
-    insert (table: string, cols: string, args: string) {
+    public insert (table: string, cols: string, args: string): string {
         let query = `return pool.query\`INSERT INTO [${table}] (${cols}) OUTPUT INSERTED.* VALUES (${args})\`\n`;
 
-        query += addPromiseResolution();
+        query += this.addPromiseResolution();
 
         return query;
     }
 
-    update (table: string, idColumnName: string) {
+    public update (table: string, idColumnName: string): string {
         let query = `${tab.repeat(
             4
         )}req.input('${idColumnName}', ${idColumnName});\n`;
 
         query += `return req.query(\`UPDATE [${table}] SET \${parameterized} OUTPUT INSERTED.* WHERE "${idColumnName}" = @${idColumnName}\`)\n`;
 
-        query += addPromiseResolution();
+        query += this.addPromiseResolution();
         return query;
     }
 
-    delete (table: string, column: string) {
+    public delete (table: string, column: string): string {
         let query = `return pool.query\`DELETE FROM [${table}] OUTPUT DELETED.* WHERE "${column}" = \${args.${column}}\`\n`;
 
-        query += addPromiseResolution();
+        query += this.addPromiseResolution();
 
         return query;
     }
 
-    parameterize () {
+    public parameterize (): string {
         let query = `${tab.repeat(4)}let updateValues = [];\n`;
 
         query += `${tab.repeat(4)}const req = pool.request();\n`;
@@ -69,7 +69,7 @@ class MSSqlProvider implements IDBProvider {
         return query;
     }
 
-    configureExport () {
+    public configureExport (): string {
         return `module.exports = function(connection) { 
               pool = connection;
               return new GraphQLSchema({
@@ -78,19 +78,19 @@ class MSSqlProvider implements IDBProvider {
               });
             }`;
     }
+
+    private addPromiseResolution (returnsMany = false): string {
+        let str = `${tab.repeat(5)}.then(data => {\n`;
+        str += `${tab.repeat(6)}return ${
+            returnsMany ? 'data.recordset' : 'data.recordset[0]'
+        };\n`;
+        str += `${tab.repeat(5)}})\n`;
+        str += `${tab.repeat(5)}.catch(err => {\n`;
+        str += `${tab.repeat(6)}return ('The error is', err);\n`;
+        str += `${tab.repeat(5)}})`;
+
+        return str;
+    }
 }
-
-const addPromiseResolution = (returnsMany = false) => {
-    let str = `${tab.repeat(5)}.then(data => {\n`;
-    str += `${tab.repeat(6)}return ${
-        returnsMany ? 'data.recordset' : 'data.recordset[0]'
-    };\n`;
-    str += `${tab.repeat(5)}})\n`;
-    str += `${tab.repeat(5)}.catch(err => {\n`;
-    str += `${tab.repeat(6)}return ('The error is', err);\n`;
-    str += `${tab.repeat(5)}})`;
-
-    return str;
-};
 
 export default MSSqlProvider;

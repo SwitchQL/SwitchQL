@@ -7,39 +7,6 @@ import './ipcHandlers';
 
 let mainWindow;
 
-const uri = isDev
-    ? format({
-        pathname: 'localhost:3000',
-        protocol: 'http:',
-        slashes: true
-    })
-    : format({
-        pathname: join(__dirname, '../index.html'),
-        protocol: 'file:',
-        slashes: true
-    });
-
-app.on('ready', function () {
-    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-    //create new window
-    mainWindow = new BrowserWindow({
-        width: width / 2,
-        height: height
-    });
-
-    //Load HTML into window
-    mainWindow.loadURL(uri);
-
-    //Quit App when closed
-    mainWindow.on('closed', function () {
-        app.quit();
-    });
-    //Build menu from template
-    const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
-    //Insert the menu
-    Menu.setApplicationMenu(mainMenu);
-});
-
 const mainMenuTemplate: MenuItemConstructorOptions[] = [
     {
         label: 'File',
@@ -76,6 +43,40 @@ const mainMenuTemplate: MenuItemConstructorOptions[] = [
         ]
     }
 ];
+
+const uri = isDev
+    ? format({
+        pathname: 'localhost:3000',
+        protocol: 'http:',
+        slashes: true
+    })
+    : format({
+        pathname: join(__dirname, '../index.html'),
+        protocol: 'file:',
+        slashes: true
+    });
+
+app.on('ready', function () {
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+    //create new window
+    mainWindow = new BrowserWindow({
+        width: width / 2,
+        height: height
+    });
+
+    //Load HTML into window
+    mainWindow.loadURL(uri);
+
+    //Quit App when closed
+    mainWindow.on('closed', function () {
+        app.quit();
+    });
+    //Build menu from template
+    const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+    //Insert the menu
+    Menu.setApplicationMenu(mainMenu);
+});
+
 
 //if mac, add empty object to menu
 if (process.platform == 'darwin') {

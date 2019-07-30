@@ -3,17 +3,17 @@ import { createHash } from 'crypto';
 import ConnData from '../models/connData';
 import DBMetadata from '../models/dbMetadata';
 
-const poolCache: { [ key: string]: ConnectionPool } = {};
+const poolCache: { [key: string]: ConnectionPool } = {};
 
 const query = `select 
-                    c.table_name, 
-                    c.column_name, 
-                    c.is_nullable, 
-                    c.data_type, 
-                    c.character_maximum_length,
-                    tc.constraint_type,
-                    kcu.TABLE_NAME as foreign_table_name,
-                    kcu.COLUMN_NAME as foreign_column_name
+                    c.table_name as tableName, 
+                    c.column_name as columnName, 
+                    c.is_nullable as isNullable, 
+                    c.data_type as dataType, 
+                    c.character_maximum_length as characterMaximumLength,
+                    tc.constraint_type as constraintType,
+                    kcu.TABLE_NAME as foreignTableName,
+                    kcu.COLUMN_NAME as foreignColumnName
                 from Northwind.INFORMATION_SCHEMA.COLUMNS c
                 left outer join Northwind.INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
                     on c.TABLE_CATALOG = cu.TABLE_CATALOG 
@@ -33,32 +33,9 @@ const query = `select
                     and exists (select * from Northwind.INFORMATION_SCHEMA.TABLES t 
                                     where t.TABLE_TYPE = 'BASE TABLE' and t.TABLE_NAME = c.TABLE_NAME )
                 order by c.TABLE_NAME`;
-			
-async function getSchemaInfo (connString: string): Promise<DBMetadata[]> {
-    try {
-        const pool = await getDbPool(connString);
-        //cast to any due to bug in typings library
-        const metadata = await pool.query(<any>query);
 
-        return metadata.recordset;
-    } catch (err) {
-        removeFromCache(connString);
-        throw err;
-    }
-}
 
-function buildConnectionString (info: ConnData) {
-    let connectionString = '';
-    const port = info.port || 1433;
-
-    // Per documentation request timeout cannot be less than 1 second
-    connectionString += `mssql://${info.user}:${info.password}@${
-        info.host
-    }:${port}/${info.database}?encrypt=true&request%20timeout=${30000}`;
-    return connectionString;
-}
-
-async function getDbPool (connString: string) {
+async function getDbPool (connString: string): Promise<ConnectionPool> {
     const hash = createHash('sha256');
     hash.update(connString);
 
@@ -73,11 +50,35 @@ async function getDbPool (connString: string) {
     return pool;
 }
 
-function removeFromCache (connString: string) {
+function removeFromCache (connString: string): void {
     const hash = createHash('sha256');
     hash.update(connString);
 
     delete poolCache[hash.digest('base64')];
+}
+
+async function getSchemaInfo (connString: string): Promise<DBMetadata[]> {
+    try {
+        const pool = await getDbPool(connString);
+        //cast to any due to bug in typings library
+        const metadata = await pool.query(query as any);
+
+        return metadata.recordset;
+    } catch (err) {
+        removeFromCache(connString);
+        throw err;
+    }
+}
+
+function buildConnectionString (info: ConnData): string {
+    let connectionString = '';
+    const port = info.port || 1433;
+
+    // Per documentation request timeout cannot be less than 1 second
+    connectionString += `mssql://${info.user}:${info.password}@${
+        info.host
+    }:${port}/${info.database}?encrypt=true&request%20timeout=${30000}`;
+    return connectionString;
 }
 
 export default {

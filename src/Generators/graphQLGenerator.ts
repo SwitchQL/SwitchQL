@@ -1,10 +1,14 @@
 import MutationBuilder from './builder/mutationBuilder';
-import IDBProvider from './provider/dbProvider'
+import DBProvider from './provider/dbProvider'
 import ProcessedTable from '../models/processedTable';
 import QueryBuilder from './builder/queryBuilder';
 import TypeBuilder from './builder/typeBuilder';
 
-function generateGraphQL (tables: { [ key: number]: ProcessedTable }, dbProvider: IDBProvider) {
+function generateGraphQL (tables: { [key: number]: ProcessedTable }, dbProvider: DBProvider): {
+    types: string;
+    mutations: string;
+    queries: string;
+} {
     if (Object.keys(tables).length === 0) { return { types: '', mutations: '', queries: '' }; }
 
     const queryBuilder = new QueryBuilder();

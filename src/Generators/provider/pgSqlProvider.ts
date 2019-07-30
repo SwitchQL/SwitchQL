@@ -1,13 +1,13 @@
-import IDBProvider from './dbProvider';
+import DBProvider from './dbProvider';
 
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-unused-expressions */
 const tab = `  `;
 
-class PgSqlProvider implements IDBProvider {
-    constructor (private connString: string) {}
+class PgSqlProvider implements DBProvider {
+    public constructor (private connString: string) { }
 
-    connection () {
+    public connection (): string {
         let conn = `const pgp = require('pg-promise')();\n`;
         conn += `const connect = {};\n`;
         conn += `// WARNING - Properly secure the connection string\n`;
@@ -16,28 +16,28 @@ class PgSqlProvider implements IDBProvider {
         return conn;
     }
 
-    selectWithWhere (table: string, col: string, val: string, returnsMany: boolean) {
+    public selectWithWhere (table: string, col: string, val: string, returnsMany: boolean): string {
         let query = `const sql = 'SELECT * FROM "${table}" WHERE "${col}" = $1';\n`;
 
         returnsMany ?
             query += `${tab.repeat(4)}return connect.conn.many(sql, ${val})\n` :
             query += `${tab.repeat(4)}return connect.conn.one(sql, ${val})\n`;
 
-        query += addPromiseResolution();
+        query += this.addPromiseResolution();
 
         return query;
     }
 
-    select (table: string) {
+    public select (table: string): string {
         let query = `const sql = 'SELECT * FROM "${table}"';\n`;
         query += `${tab.repeat(4)}return connect.conn.many(sql)\n`;
 
-        query += addPromiseResolution();
+        query += this.addPromiseResolution();
 
         return query;
     }
 
-    insert (table: string, cols: string, args: string) {
+    public insert (table: string, cols: string, args: string): string {
         const normalized = args
             .split(',')
             .map(a => a.replace(/[' | { | } | \$]/g, ''));
@@ -49,31 +49,31 @@ class PgSqlProvider implements IDBProvider {
             ', '
         )}])\n`;
 
-        query += addPromiseResolution();
+        query += this.addPromiseResolution();
 
         return query;
     }
 
-    update (table: string, idColumnName: string) {
+    public update (table: string, idColumnName: string): string {
         let query = `const sql = \`UPDATE "${table}" SET \${parameterized} WHERE "${idColumnName}" = $1 RETURNING *\`;\n`;
         query += `${tab.repeat(
             4
         )}return connect.conn.one(sql, [${idColumnName}, ...Object.values(rest)])\n`;
 
-        query += addPromiseResolution();
+        query += this.addPromiseResolution();
         return query;
     }
 
-    delete (table: string, column: string) {
+    public delete (table: string, column: string): string {
         let query = `const sql = 'DELETE FROM "${table}" WHERE "${column}" = $1 RETURNING *';\n`;
         query += `${tab.repeat(4)}return connect.conn.one(sql, args.${column})\n`;
 
-        query += addPromiseResolution();
+        query += this.addPromiseResolution();
 
         return query;
     }
 
-    parameterize () {
+    public parameterize (): string {
         let query = `${tab.repeat(4)}let updateValues = [];\n`;
         query += `${tab.repeat(4)}let idx = 2;\n\n`;
 
@@ -88,20 +88,20 @@ class PgSqlProvider implements IDBProvider {
         return query;
     }
 
-    configureExport () {
+    public configureExport (): string {
         return `module.exports = new GraphQLSchema({\n${tab}query: RootQuery,\n${tab}mutation: Mutation\n});`;
     }
+
+    private addPromiseResolution () {
+        let str = `${tab.repeat(5)}.then(data => {\n`;
+        str += `${tab.repeat(6)}return data;\n`;
+        str += `${tab.repeat(5)}})\n`;
+        str += `${tab.repeat(5)}.catch(err => {\n`;
+        str += `${tab.repeat(6)}return ('The error is', err);\n`;
+        str += `${tab.repeat(5)}})`;
+
+        return str;
+    }
 }
-
-const addPromiseResolution = () => {
-    let str = `${tab.repeat(5)}.then(data => {\n`;
-    str += `${tab.repeat(6)}return data;\n`;
-    str += `${tab.repeat(5)}})\n`;
-    str += `${tab.repeat(5)}.catch(err => {\n`;
-    str += `${tab.repeat(6)}return ('The error is', err);\n`;
-    str += `${tab.repeat(5)}})`;
-
-    return str;
-};
 
 export default PgSqlProvider;

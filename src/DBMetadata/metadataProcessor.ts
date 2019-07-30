@@ -1,30 +1,45 @@
 /* eslint-disable no-prototype-builtins */
-import ProcessedTable from '../models/processedTable'
+import ProcessedTable from '../models/processedTable';
 import ColumnTypeTranslator from './columnTypeTranslators';
 import ProcessedField from '../models/processedField';
+import DBMetadata from '../models/dbMetadata';
+
+function tableInToRef (
+    toRef: { [key: string]: any },
+    tblCol: DBMetadata
+): boolean {
+    return (
+        toRef.hasOwnProperty(tblCol.tableName) &&
+        toRef[tblCol.tableName].hasOwnProperty(tblCol.columnName)
+    );
+}
 
 function processMetadata (translateColumnType: ColumnTypeTranslator) {
-    return (columnData: { [key: string]: any}[]) => {
-        if (!columnData || columnData.length === 0) { throw new Error('Metadata is null or empty'); }
+    return (columnData: DBMetadata[]) => {
+        if (!columnData || columnData.length === 0) {
+            throw new Error('Metadata is null or empty');
+        }
 
-        if (!Array.isArray(columnData)) { throw new Error('Invalid data format. Column Data must be an array'); }
+        if (!Array.isArray(columnData)) {
+            throw new Error('Invalid data format. Column Data must be an array');
+        }
 
         let tblIdx = 0;
         let fieldIdx = 0;
-        let prevTable = columnData[0].table_name;
+        let prevTable = columnData[0].tableName;
         let props: ProcessedField[] = [];
 
-        let lookupFields: { [key: string]: any }  = {};
+        let lookupFields: { [key: string]: any } = {};
         const lookup: { [key: string]: any } = {};
         const toRef: { [key: string]: any } = {};
 
-        const data: { tables: { [key: number]: ProcessedTable }} = {
-            tables: {},
+        const data: { tables: { [key: number]: ProcessedTable } } = {
+            tables: {}
         };
 
         columnData.forEach((tblCol, index) => {
             // Previous table evaluation complete, format and assign to it the accumulated field data.
-            if (prevTable !== tblCol.table_name) {
+            if (prevTable !== tblCol.tableName) {
                 data.tables[tblIdx] = new ProcessedTable(prevTable, props);
                 lookupFields.INDEX = tblIdx;
                 lookup[prevTable] = lookupFields;
@@ -51,23 +66,19 @@ function processMetadata (translateColumnType: ColumnTypeTranslator) {
                 processed.addRetroRelationship(toRef, tblCol, data);
             }
 
-            if (tblCol.constraint_type === 'FOREIGN KEY') {
+            if (tblCol.constraintType === 'FOREIGN KEY') {
                 processed.addForeignKeyRef(lookup, tblCol, toRef, data);
             }
 
             props.push(processed);
-            lookupFields[tblCol.column_name] = fieldIdx;
+            lookupFields[tblCol.columnName] = fieldIdx;
 
-            prevTable = tblCol.table_name;
+            prevTable = tblCol.tableName;
             fieldIdx++;
         });
 
         return data;
     };
-}
-
-function tableInToRef (toRef: { [key: string]: any}, tblCol: { [key: string]: any}) {
-    return toRef.hasOwnProperty(tblCol.table_name) && toRef[tblCol.table_name].hasOwnProperty(tblCol.column_name);
 }
 
 export default processMetadata;

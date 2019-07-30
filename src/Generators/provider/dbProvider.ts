@@ -1,4 +1,4 @@
-interface IDBProvider {
+interface DBProvider {
     connection(): void;
     selectWithWhere(table: string, col: string, val: string, returnsMany: boolean): void;
     select(table: string): void;
@@ -9,4 +9,4 @@ interface IDBProvider {
     configureExport(): void;
 }
 
-export default IDBProvider
+export default DBProvider

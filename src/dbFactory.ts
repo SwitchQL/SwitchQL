@@ -9,13 +9,13 @@ import { pgSQL, msSQL} from './DBMetadata/columnTypeTranslators';
 import MSSqlProvider from './Generators/provider/msSqlProvider';
 import msSqlRetriever from './DBMetadata/msMetadataRetriever';
 import DBType from './models/dbType';
-import IMetadataRetriever from './DBMetadata/metadataRetriever';
-import IDBProvider from './Generators/provider/dbProvider';
+import MetadataRetriever from './DBMetadata/metadataRetriever';
+import DBProvider from './Generators/provider/dbProvider';
 
 function dbFactory (connData: ConnData): { 
-    retriever: IMetadataRetriever; 
+    retriever: MetadataRetriever; 
     processMetaData: Function; 
-    provider: IDBProvider;
+    provider: DBProvider;
 } {
     let connString = '';
     switch (connData.type) {
