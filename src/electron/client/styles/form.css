@@ -186,6 +186,12 @@ textarea.question {
   transition: 0.2s;
 }
 
+.question:disabled, 
+.question:disabled:hover {
+  pointer-events: none;
+  background-color: #3d4958;
+}
+
 .question:hover {
   background-color: #3d4958;
 }

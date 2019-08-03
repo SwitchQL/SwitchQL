@@ -10,11 +10,12 @@ describe('msMetadataRetriever', () => {
             port: '12345',
             host: 'testing.com',
             database: 'database',
+            schema: '',
             value: '',
             type: DBType.SQLServer
         };
         const connString =
-      'mssql://user:securePassword@testing.com:12345/database?encrypt=true&request%20timeout=30000';
+            'mssql://user:securePassword@testing.com:12345/database?encrypt=true&request%20timeout=30000';
 
         const result = retriever.buildConnectionString(formData);
 
@@ -29,10 +30,11 @@ describe('msMetadataRetriever', () => {
             host: 'testing.com',
             database: 'database',
             value: '',
+            schema: '',
             type: DBType.SQLServer
         };
         const connString =
-      'mssql://user:securePassword@testing.com:1433/database?encrypt=true&request%20timeout=30000';
+            'mssql://user:securePassword@testing.com:1433/database?encrypt=true&request%20timeout=30000';
 
         const result = retriever.buildConnectionString(formData);
 

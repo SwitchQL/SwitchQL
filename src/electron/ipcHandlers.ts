@@ -19,7 +19,7 @@ ipcMain.on(events.URL, async (event: any, connData: string) => {
         const connString =
             cd.value.length === 0 ? retriever.buildConnectionString(cd) : cd.value;
 
-        const dbMetaData = await retriever.getSchemaInfo(connString);
+        const dbMetaData = await retriever.getSchemaInfo(connString, cd.schema);
         const formattedMetaData = processMetaData(dbMetaData);
 
         ({
