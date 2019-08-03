@@ -28,6 +28,7 @@
     "electron-is-dev": "^1.1.0",
     "jszip": "^3.2.1",
     "loaders.css": "^0.1.2",
+    "lodash.some": "^4.6.0",
     "mssql": "^5.1.0",
     "normalize.css": "^8.0.1",
     "pg": "^7.9.0",

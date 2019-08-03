@@ -9,7 +9,7 @@ import DBMetadata from '../models/dbMetadata';
 const pgp = pgInit();
 const poolCache: { [key: string]: pgInit.IDatabase<{}> } = {};
 
-const metadataQuery = `SELECT
+const query = `SELECT
                           t.table_name,
                           c.column_name,
                           c.is_nullable,
@@ -28,58 +28,60 @@ const metadataQuery = `SELECT
                           LEFT JOIN information_schema.constraint_column_usage AS ccu 
                             ON tc.constraint_name = ccu.constraint_name
                         WHERE table_type = 'BASE TABLE'
-                          AND t.table_schema = 'public'
+                          AND t.table_schema = '#{schema}#'
                           AND (constraint_type = 'FOREIGN KEY' or (constraint_type is null OR constraint_type <> 'FOREIGN KEY'))
                         ORDER BY t.table_name`;
 
-async function getSchemaInfo (connString: string): Promise<DBMetadata[]> {
-    const db = getDbPool(connString);
-    try {
-        const metadataInfo = await promiseTimeout(
-            10000,
-            db.any(metadataQuery)
-        );
+async function getSchemaInfo(connString: string, schema: string): Promise<DBMetadata[]> {
+  const db = getDbPool(connString);
+  try {
+    const q = query.replace('#{schema}#', schema)
 
-        return metadataInfo;
-    } catch (err) {
-        removeFromCache(connString);
-        throw err;
-    }
+    const metadataInfo = await promiseTimeout(
+      10000,
+      db.any(q)
+    );
+
+    return metadataInfo;
+  } catch (err) {
+    removeFromCache(connString);
+    throw err;
+  }
 }
 
-function getDbPool (connString: string) {
-    const hash = createHash('sha256');
-    hash.update(connString);
+function getDbPool(connString: string) {
+  const hash = createHash('sha256');
+  hash.update(connString);
 
-    const digest = hash.digest('base64');
+  const digest = hash.digest('base64');
 
-    if (poolCache[digest]) {
-        return poolCache[digest];
-    }
+  if (poolCache[digest]) {
+    return poolCache[digest];
+  }
 
-    const db = pgp(connString);
-    poolCache[digest] = db;
+  const db = pgp(connString);
+  poolCache[digest] = db;
 
-    return db;
+  return db;
 }
 
-function removeFromCache (connString: string) {
-    const hash = createHash('sha256');
-    hash.update(connString);
+function removeFromCache(connString: string) {
+  const hash = createHash('sha256');
+  hash.update(connString);
 
-    delete poolCache[hash.digest('base64')];
+  delete poolCache[hash.digest('base64')];
 }
 
-function buildConnectionString (info: ConnData) {
-    let connectionString = '';
-    const port = info.port || 5432;
-    connectionString += `postgres://${info.user}:${info.password}@${
-        info.host
+function buildConnectionString(info: ConnData) {
+  let connectionString = '';
+  const port = info.port || 5432;
+  connectionString += `postgres://${info.user}:${info.password}@${
+    info.host
     }:${port}/${info.database}`;
-    return connectionString;
+  return connectionString;
 }
 
 export default {
-    getSchemaInfo: getSchemaInfo,
-    buildConnectionString,
+  getSchemaInfo: getSchemaInfo,
+  buildConnectionString,
 };

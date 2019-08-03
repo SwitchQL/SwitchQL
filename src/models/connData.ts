@@ -8,6 +8,7 @@ interface ConnData {
     password: string;
     database: string;
     type: DBType;
+    schema: string;
 }
 
 export default ConnData

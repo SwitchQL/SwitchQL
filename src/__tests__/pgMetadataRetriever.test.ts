@@ -11,6 +11,7 @@ test('takes in object with data returns properly formatted string', () => {
             host: 'stampy.db.elephantsql.com',
             database: 'database',
             value: '',
+            schema: '',
             type: DBType.PostgreSQL
         })
     ).toBe(
