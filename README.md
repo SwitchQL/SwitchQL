@@ -31,6 +31,9 @@ Against these database providers
 
 ### Contributing
 
+Please view the [contribution](contributing.md) guidelines for the project
+
+
 Feel free to open issues and pull requests. We're always welcome support from the community.
 
 To run this project locally:
