@@ -1,12 +1,12 @@
 interface DBMetadata {
-    table_name: string;
-    column_name: string;
-    is_nullable: string;
-    data_type: string;
-    character_maximum_length: string;
-    constraint_type: string;
-    foreign_table_name: string;
-    foreign_column_name: string;
+    tableName: string;
+    columnName: string;
+    isNullable: string;
+    dataType: string;
+    characterMaximumLength: string;
+    constraintType: string;
+    foreignTableName: string;
+    foreignColumnName: string;
 }
 
 export default DBMetadata
