@@ -6,14 +6,14 @@ import DBMetadata from '../models/dbMetadata';
 const poolCache: { [key: string]: ConnectionPool } = {};
 
 const query = `select 
-                    c.table_name, 
-                    c.column_name, 
-                    c.is_nullable, 
-                    c.data_type, 
-                    c.character_maximum_length,
-                    tc.constraint_type,
-                    kcu.TABLE_NAME as foreign_table_name,
-                    kcu.COLUMN_NAME as foreign_column_name
+                    c.table_name as "tableName", 
+                    c.column_name as "columnName", 
+                    c.is_nullable as "isNullable", 
+                    c.data_type as "dataType", 
+                    c.character_maximum_length as "characterMaximumLength",
+                    tc.constraint_type as "constraintType",
+                    kcu.TABLE_NAME as "foreignTableName",
+                    kcu.COLUMN_NAME as "foreignColumnName"
                 from #{schema}#.INFORMATION_SCHEMA.COLUMNS c
                 left outer join #{schema}#.INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
                     on c.TABLE_CATALOG = cu.TABLE_CATALOG 
