@@ -2,6 +2,7 @@ import { ConnectionPool } from 'mssql'
 import { createHash } from 'crypto';
 import ConnData from '../models/connData';
 import DBMetadata from '../models/dbMetadata';
+import { URL } from 'url'
 
 const poolCache: { [key: string]: ConnectionPool } = {};
 
@@ -14,30 +15,31 @@ const query = `select
                     tc.constraint_type as "constraintType",
                     kcu.TABLE_NAME as "foreignTableName",
                     kcu.COLUMN_NAME as "foreignColumnName"
-                from #{schema}#.INFORMATION_SCHEMA.COLUMNS c
-                left outer join #{schema}#.INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
+                from #{database}#.INFORMATION_SCHEMA.COLUMNS c
+                left outer join #{database}#.INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
                     on c.TABLE_CATALOG = cu.TABLE_CATALOG 
                     and c.TABLE_SCHEMA = cu.TABLE_SCHEMA 
                     and c.TABLE_NAME = cu.TABLE_NAME 
                     and c.COLUMN_NAME = cu.COLUMN_NAME
-                left outer join #{schema}#.INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+                left outer join #{database}#.INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
                     on cu.TABLE_CATALOG = tc.TABLE_CATALOG 
                     and cu.TABLE_SCHEMA = tc.TABLE_SCHEMA 
                     and cu.TABLE_NAME = tc.TABLE_NAME  
                     and cu.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
-                left outer join #{schema}#.INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc
+                left outer join #{database}#.INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc
                     on cu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME 
-                left outer join #{schema}#.INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu 
+                left outer join #{database}#.INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu 
                     on kcu.CONSTRAINT_NAME = rc.UNIQUE_CONSTRAINT_NAME 
                 where (tc.CONSTRAINT_TYPE is null or tc.CONSTRAINT_TYPE in ('PRIMARY KEY', 'FOREIGN KEY'))
-                    and exists (select * from #{schema}#.INFORMATION_SCHEMA.TABLES t 
+                    and exists (select * from #{database}#.INFORMATION_SCHEMA.TABLES t 
                                     where t.TABLE_TYPE = 'BASE TABLE' and t.TABLE_NAME = c.TABLE_NAME )
                 order by c.TABLE_NAME`;
 
-async function getSchemaInfo(connString: string, schema: string): Promise<DBMetadata[]> {
+async function getSchemaInfo(connString: string): Promise<DBMetadata[]> {
     try {
         const pool = await getDbPool(connString);
-        const q = query.replace('#{schema}#', schema)
+        const db = new URL(connString);
+        const q = query.replace(/#{database}#/g, db.pathname.replace('/', ''))
 
         //cast to any due to bug in typings library
         const metadata = await pool.query(<any>q);
