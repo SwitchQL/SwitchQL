@@ -1,13 +1,14 @@
 import IDBProvider from './dbProvider';
+import ProcessedField from '../../models/processedField';
 
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-unused-expressions */
 const tab = `  `;
 
 class PgSqlProvider implements IDBProvider {
-    constructor (private connString: string) {}
+    constructor(private connString: string) { }
 
-    connection () {
+    connection() {
         let conn = `const pgp = require('pg-promise')();\n`;
         conn += `const connect = {};\n`;
         conn += `// WARNING - Properly secure the connection string\n`;
@@ -16,7 +17,7 @@ class PgSqlProvider implements IDBProvider {
         return conn;
     }
 
-    selectWithWhere (table: string, col: string, val: string, returnsMany: boolean) {
+    selectWithWhere(table: string, col: string, val: string, returnsMany: boolean) {
         let query = `const sql = 'SELECT * FROM "${table}" WHERE "${col}" = $1';\n`;
 
         returnsMany ?
@@ -28,7 +29,7 @@ class PgSqlProvider implements IDBProvider {
         return query;
     }
 
-    select (table: string) {
+    select(table: string) {
         let query = `const sql = 'SELECT * FROM "${table}"';\n`;
         query += `${tab.repeat(4)}return connect.conn.many(sql)\n`;
 
@@ -37,7 +38,7 @@ class PgSqlProvider implements IDBProvider {
         return query;
     }
 
-    insert (table: string, cols: string, args: string) {
+    insert(table: string, cols: string, args: string) {
         const normalized = args
             .split(',')
             .map(a => a.replace(/[' | { | } | \$]/g, ''));
@@ -54,7 +55,7 @@ class PgSqlProvider implements IDBProvider {
         return query;
     }
 
-    update (table: string, idColumnName: string) {
+    update(table: string, idColumnName: string) {
         let query = `const sql = \`UPDATE "${table}" SET \${parameterized} WHERE "${idColumnName}" = $1 RETURNING *\`;\n`;
         query += `${tab.repeat(
             4
@@ -64,7 +65,7 @@ class PgSqlProvider implements IDBProvider {
         return query;
     }
 
-    delete (table: string, column: string) {
+    delete(table: string, column: string) {
         let query = `const sql = 'DELETE FROM "${table}" WHERE "${column}" = $1 RETURNING *';\n`;
         query += `${tab.repeat(4)}return connect.conn.one(sql, args.${column})\n`;
 
@@ -73,7 +74,7 @@ class PgSqlProvider implements IDBProvider {
         return query;
     }
 
-    parameterize () {
+    parameterize(fields: ProcessedField[]) {
         let query = `${tab.repeat(4)}let updateValues = [];\n`;
         query += `${tab.repeat(4)}let idx = 2;\n\n`;
 
@@ -88,7 +89,7 @@ class PgSqlProvider implements IDBProvider {
         return query;
     }
 
-    configureExport () {
+    configureExport() {
         return `module.exports = new GraphQLSchema({\n${tab}query: RootQuery,\n${tab}mutation: Mutation\n});`;
     }
 }

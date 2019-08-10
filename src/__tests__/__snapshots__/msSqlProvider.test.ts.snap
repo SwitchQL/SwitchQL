@@ -1,5 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`MSSqlProvider Should correctly generate code to wrap binary data in a buffer 1`] = `
+"        let updateValues = [];
+        const req = pool.request();
+        for (const prop in rest) {
+            const data = ['binaryCol'].includes(prop) ? Buffer.from(rest[prop]) : rest[prop]
+            req.input(\`\${prop}\`, data);
+            updateValues.push(\`\${prop} = @\${prop}\`);
+        }
+
+        const parameterized = updateValues.join(\\", \\");
+"
+`;
+
 exports[`MSSqlProvider Should generate code for configureExport that matches the snapshot 1`] = `
 "module.exports = function(connection) { 
               pool = connection;
@@ -34,7 +47,8 @@ exports[`MSSqlProvider Should generate code for paramaterize that matches the sn
 "        let updateValues = [];
         const req = pool.request();
         for (const prop in rest) {
-            req.input(\`\${prop}\`, rest[prop]);
+            const data = rest[prop]
+            req.input(\`\${prop}\`, data);
             updateValues.push(\`\${prop} = @\${prop}\`);
         }
 

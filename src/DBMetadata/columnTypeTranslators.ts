@@ -58,10 +58,12 @@ export function msSQL(type: string) {
         case 'nchar':
         case 'nvarchar':
         case 'ntext':
-        case 'binary':
-        case 'image':
-        case 'varbinary':
             return 'String';
+
+        case 'binary':
+        case 'varbinary':
+        case 'image':
+            return 'IntegerList'
 
         default:
             throw new Error(`Unsupported column type found: ${type}`);

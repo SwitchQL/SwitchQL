@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import MSSqlProvider from '../Generators/provider/msSqlProvider';
 import IDBProvider from '../Generators/provider/dbProvider';
+import processed from './sampleFiles/processedMetadata';
 
 describe('MSSqlProvider', () => {
     let provider: IDBProvider;
@@ -88,8 +89,18 @@ describe('MSSqlProvider', () => {
     });
 
     it('Should generate code for paramaterize that matches the snapshot', () => {
-        const result = provider.parameterize();
+        const cols = processed.tables[0].fields as any
+        const result = provider.parameterize(cols);
         expect(result).toMatchSnapshot();
+    });
+
+    it('Should correctly generate code to wrap binary data in a buffer', () => {
+        const cols = processed.tables[0].fields as any
+        cols.push({ name: "binaryCol", type: "IntegerList" })
+        const result = provider.parameterize(cols);
+
+        expect(result).toMatchSnapshot();
+        expect(result).toContain("['binaryCol'].includes(prop) ? Buffer.from(rest[prop])")
     });
 
     it('Should generate code for configureExport that matches the snapshot', () => {
