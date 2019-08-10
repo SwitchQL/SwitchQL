@@ -1,4 +1,5 @@
 import IDBProvider from './dbProvider';
+import ProcessedField from '../../models/processedField';
 
 const tab = `  `;
 
@@ -8,18 +9,18 @@ const tab = `  `;
  * template literals are used.
  */
 class MSSqlProvider implements IDBProvider {
-    connection () {
+    connection() {
         return 'var pool\n';
     }
 
-    selectWithWhere (table: string, col: string, val: string, returnsMany: boolean) {
+    selectWithWhere(table: string, col: string, val: string, returnsMany: boolean) {
         let query = `return pool.query\`SELECT * FROM [${table}] WHERE "${col}" = \${${val}}\`\n`;
         query += addPromiseResolution(returnsMany);
 
         return query;
     }
 
-    select (table: string) {
+    select(table: string) {
         let query = `return pool.query('SELECT * FROM [${table}]')\n`;
 
         query += addPromiseResolution(true);
@@ -27,7 +28,7 @@ class MSSqlProvider implements IDBProvider {
         return query;
     }
 
-    insert (table: string, cols: string, args: string) {
+    insert(table: string, cols: string, args: string) {
         let query = `return pool.query\`INSERT INTO [${table}] (${cols}) OUTPUT INSERTED.* VALUES (${args})\`\n`;
 
         query += addPromiseResolution();
@@ -35,7 +36,7 @@ class MSSqlProvider implements IDBProvider {
         return query;
     }
 
-    update (table: string, idColumnName: string) {
+    update(table: string, idColumnName: string) {
         let query = `${tab.repeat(
             4
         )}req.input('${idColumnName}', ${idColumnName});\n`;
@@ -46,7 +47,7 @@ class MSSqlProvider implements IDBProvider {
         return query;
     }
 
-    delete (table: string, column: string) {
+    delete(table: string, column: string) {
         let query = `return pool.query\`DELETE FROM [${table}] OUTPUT DELETED.* WHERE "${column}" = \${args.${column}}\`\n`;
 
         query += addPromiseResolution();
@@ -54,13 +55,25 @@ class MSSqlProvider implements IDBProvider {
         return query;
     }
 
-    parameterize () {
+    parameterize(fields: ProcessedField[]) {
         let query = `${tab.repeat(4)}let updateValues = [];\n`;
 
         query += `${tab.repeat(4)}const req = pool.request();\n`;
         query += `${tab.repeat(4)}for (const prop in rest) {\n`;
 
-        query += `${tab.repeat(6)}req.input(\`\${prop}\`, rest[prop]);\n`;
+        // Binary data needs to be sent as a buffer to the database clients in order to serialize correctly
+        const binaryFieldNames = fields
+            .filter(f => f.type === "IntegerList")
+            .map(n => `'${n.name}'`)
+            .join(", ")
+
+        if (binaryFieldNames)
+            query += `${tab.repeat(6)}const data = [${binaryFieldNames}].includes(prop) ? Buffer.from(rest[prop]) : rest[prop]\n`;
+        else
+            query += `${tab.repeat(6)}const data = rest[prop]\n`;
+
+
+        query += `${tab.repeat(6)}req.input(\`\${prop}\`, data);\n`;
         query += `${tab.repeat(6)}updateValues.push(\`\${prop} = @\${prop}\`);\n`;
         query += `${tab.repeat(4)}}\n\n`;
 
@@ -69,7 +82,7 @@ class MSSqlProvider implements IDBProvider {
         return query;
     }
 
-    configureExport () {
+    configureExport() {
         return `module.exports = function(connection) { 
               pool = connection;
               return new GraphQLSchema({
@@ -84,7 +97,7 @@ const addPromiseResolution = (returnsMany = false) => {
     let str = `${tab.repeat(5)}.then(data => {\n`;
     str += `${tab.repeat(6)}return ${
         returnsMany ? 'data.recordset' : 'data.recordset[0]'
-    };\n`;
+        };\n`;
     str += `${tab.repeat(5)}})\n`;
     str += `${tab.repeat(5)}.catch(err => {\n`;
     str += `${tab.repeat(6)}return ('The error is', err);\n`;

@@ -1,3 +1,5 @@
+import ProcessedField from "../../models/processedField";
+
 interface IDBProvider {
     connection(): void;
     selectWithWhere(table: string, col: string, val: string, returnsMany: boolean): void;
@@ -5,7 +7,7 @@ interface IDBProvider {
     insert(table: string, cols: string, args: string): void;
     update(table: string, idColumnName: string): void;
     delete(table: string, column: string): void;
-    parameterize(): void;
+    parameterize(fields: ProcessedField[]): void;
     configureExport(): void;
 }
 
