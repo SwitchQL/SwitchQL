@@ -35,7 +35,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-tabs": "^2.3.0",
-    "react-toastify": "^4.5.2"
+    "react-toastify": "^7.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",
